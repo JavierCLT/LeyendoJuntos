@@ -277,8 +277,8 @@ class MetodoLectura {
       // For phrases, split into words and letters
       this.contenido.frase.split(' ').forEach((palabra, idx) => {
         const palabraDiv = document.createElement('div');
-        // Add flexbox centering to word container
-        palabraDiv.className = 'flex justify-center items-center mb-4';
+        // Add flexbox centering to word container and margin for separation
+        palabraDiv.className = 'flex justify-center items-center mb-4 space-x-2'; // Add mb-4 for margin between words, space-x-2 for space between letters
         
         // Render each letter inside the word
         palabra.split('').forEach((letra, letraIdx, arr) => {
@@ -291,7 +291,7 @@ class MetodoLectura {
     } else if ('palabra' in this.contenido) {
       // For single words
       const palabraDiv = document.createElement('div');
-      palabraDiv.className = 'flex justify-center items-center mb-4';
+      palabraDiv.className = 'flex justify-center items-center mb-4 space-x-2'; // Add mb-4 for margin below the word, space-x-2 for spacing between letters
       
       this.contenido.palabra.split('').forEach((letra, index) => {
         palabraDiv.appendChild(this.renderLetra(letra, index));
@@ -301,7 +301,7 @@ class MetodoLectura {
     } else if ('consonante' in this.contenido && 'vocal' in this.contenido) {
       // For syllables
       const silabaDiv = document.createElement('div');
-      silabaDiv.className = 'flex justify-center items-center mb-4';
+      silabaDiv.className = 'flex justify-center items-center mb-4 space-x-2'; // mb-4 for margin between syllables
 
       // Render consonant and vowel separately
       this.contenido.consonante.split('').forEach((letra, index) => {
