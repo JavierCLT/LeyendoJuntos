@@ -104,7 +104,7 @@ class MetodoLectura {
 
     // Contact button functionality
     document.getElementById('contactButton').addEventListener('click', () => {
-      window.open('https://www.linkedin.com/in/tu-perfil-linkedin/', '_blank');
+      window.open('https://www.linkedin.com/in/javiersz/', '_blank');
     });
   }
 
