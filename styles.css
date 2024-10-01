@@ -53,8 +53,11 @@
     --tw-contain-layout: ;
     --tw-contain-paint: ;
     --tw-contain-style: ;
-    box-sizing: border-box;
-    border: 0 solid #e5e7eb;
+}
+
+/* Prevent touch zooming on the "Siguiente" button */
+#siguiente-button {
+    touch-action: manipulation;
 }
 
 /* Backdrop styles */
