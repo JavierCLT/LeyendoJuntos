@@ -313,5 +313,13 @@ class MetodoLectura {
 
 // Initialize the app when the DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-  new MetodoLectura();
+  const metodoLectura = new MetodoLectura();
+
+  // Add fade-out effect to the h1 title after 5 seconds
+  setTimeout(() => {
+    const titleElement = document.querySelector('h1');
+    if (titleElement) {
+      titleElement.classList.add('fade-out');
+    }
+  }, 5000); // 5 seconds
 });
