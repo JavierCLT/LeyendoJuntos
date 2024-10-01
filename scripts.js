@@ -228,98 +228,99 @@ class MetodoLectura {
     return this.consonantColors[consonant];
   }
 
-  renderLetra(letra, index, isLastInWord = false) {
-    const span = document.createElement('span');
-    const nextLetra = this.contenido.consonante && this.contenido.consonante[index + 1];
-    
-    // Handle special consonant combinations like 'ch', 'll', etc.
-    if ((letra === 'c' && nextLetra === 'h') || 
-        (letra === 'l' && nextLetra === 'l') ||
-        (letra === 'r' && nextLetra === 'r') ||
-        (letra === 'c' && nextLetra === 'c')) {
-      letra = letra + nextLetra;
-      this.contenido.consonante = this.contenido.consonante.slice(0, index + 1) + this.contenido.consonante.slice(index + 2);
-    }
+ renderLetra(letra, index, isLastInWord = false) {
+  const span = document.createElement('span');
+  const nextLetra = this.contenido.consonante && this.contenido.consonante[index + 1];
+  
+  // Handle special consonant combinations like 'ch', 'll', etc.
+  if ((letra === 'c' && nextLetra === 'h') || 
+      (letra === 'l' && nextLetra === 'l') ||
+      (letra === 'r' && nextLetra === 'r') ||
+      (letra === 'c' && nextLetra === 'c')) {
+    letra = letra + nextLetra;
+    this.contenido.consonante = this.contenido.consonante.slice(0, index + 1) + this.contenido.consonante.slice(index + 2);
+  }
 
-    span.textContent = letra;
+  span.textContent = letra;
 
-    // Determine if the letter is a consonant or a vowel
-    const isConsonant = !vocales.includes(letra.toLowerCase());
+  // Determine if the letter is a consonant or a vowel
+  const isConsonant = !vocales.includes(letra.toLowerCase());
 
-    // Apply colors to consonants
-    if (isConsonant) {
-      span.style.color = this.getConsonantColor(letra.toLowerCase());
-    } else {
-      span.style.color = 'black';
-    }
+  // Apply colors to consonants
+  if (isConsonant) {
+    span.style.color = this.getConsonantColor(letra.toLowerCase());
+  } else {
+    span.style.color = 'black';
+  }
 
-    // Tailwind classes for centering and styling
-    span.classList.add('inline-block', 'font-bold', 'text-center', 'mx-1'); // mx-1 adds small horizontal margin
+  // Tailwind classes for centering and styling
+  span.classList.add('inline-block', 'font-bold', 'mx-1'); // mx-1 adds small horizontal margin
 
-    // Adjust font size based on the level
-    const sizeClass = this.nivel === 1 ? 'text-6xl' : 
-                      this.nivel === 2 ? 'text-5xl' : 
-                      this.nivel === 3 ? 'text-4xl' : 'text-3xl';
-    span.classList.add(sizeClass);
+  // Adjust font size based on the level
+  const sizeClass = this.nivel === 1 ? 'text-6xl' : 
+                    this.nivel === 2 ? 'text-5xl' : 
+                    this.nivel === 3 ? 'text-4xl' : 'text-3xl';
+  span.classList.add(sizeClass);
 
-    return span;
+  return span;
 }
 
   renderContenido() {
-    const container = document.getElementById('contenidoContainer');
-    container.innerHTML = '';
-    
-    // Add flexbox and centering classes to the main container
-    container.className = 'flex flex-wrap justify-center items-center';
+  const container = document.getElementById('contenidoContainer');
+  container.innerHTML = '';
+  
+  // Add flexbox and centering classes to the main container
+  container.className = 'flex flex-wrap justify-center items-center';
 
-    // Render a phrase, word, or syllables depending on the level
-    if ('frase' in this.contenido) {
-      // For phrases, split into words and letters
-      this.contenido.frase.split(' ').forEach((palabra, idx) => {
-        const palabraDiv = document.createElement('div');
-        // Add flexbox centering to word container and margin for separation
-        palabraDiv.className = 'flex justify-center items-center mb-4 space-x-2'; // Add mb-4 for margin between words, space-x-2 for space between letters
-        
-        // Render each letter inside the word
-        palabra.split('').forEach((letra, letraIdx, arr) => {
-          palabraDiv.appendChild(this.renderLetra(letra, `${idx}-${letraIdx}`, letraIdx === arr.length - 1));
-        });
-        
-        // Append word to the main container
-        container.appendChild(palabraDiv);
-      });
-    } else if ('palabra' in this.contenido) {
-      // For single words
+  // Render a phrase, word, or syllables depending on the level
+  if ('frase' in this.contenido) {
+    // For phrases, split into words and letters
+    this.contenido.frase.split(' ').forEach((palabra, idx) => {
       const palabraDiv = document.createElement('div');
-      palabraDiv.className = 'flex justify-center items-center mb-4 space-x-2'; // Add mb-4 for margin below the word, space-x-2 for spacing between letters
+      // Add flexbox centering to word container and margin for separation
+      palabraDiv.className = 'flex justify-center items-center mb-4 space-x-2'; // Add mb-4 for margin between words, space-x-2 for space between letters
       
-      this.contenido.palabra.split('').forEach((letra, index) => {
-        palabraDiv.appendChild(this.renderLetra(letra, index));
+      // Render each letter inside the word
+      palabra.split('').forEach((letra, letraIdx, arr) => {
+        palabraDiv.appendChild(this.renderLetra(letra, `${idx}-${letraIdx}`, letraIdx === arr.length - 1));
       });
       
+      // Append word to the main container
       container.appendChild(palabraDiv);
-    } else if ('consonante' in this.contenido && 'vocal' in this.contenido) {
-      // For syllables
-      const silabaDiv = document.createElement('div');
-      silabaDiv.className = 'flex justify-center items-center mb-4 space-x-2'; // mb-4 for margin between syllables
+    });
+  } else if ('palabra' in this.contenido) {
+    // For single words
+    const palabraDiv = document.createElement('div');
+    palabraDiv.className = 'flex justify-center items-center mb-4 space-x-2'; // Add mb-4 for margin below the word, space-x-2 for spacing between letters
+    
+    this.contenido.palabra.split('').forEach((letra, index) => {
+      palabraDiv.appendChild(this.renderLetra(letra, index));
+    });
+    
+    container.appendChild(palabraDiv);
+  } else if ('consonante' in this.contenido && 'vocal' in this.contenido) {
+    // For syllables
+    const silabaDiv = document.createElement('div');
+    silabaDiv.className = 'flex justify-center items-center mb-4 space-x-2'; // mb-4 for margin between syllables
 
-      // Render consonant and vowel separately
-      this.contenido.consonante.split('').forEach((letra, index) => {
-        silabaDiv.appendChild(this.renderLetra(letra, 'c' + index));
-      });
-      this.contenido.vocal.split('').forEach((letra, index) => {
-        silabaDiv.appendChild(this.renderLetra(letra, 'v' + index));
-      });
+    // Render consonant and vowel separately
+    this.contenido.consonante.split('').forEach((letra, index) => {
+      silabaDiv.appendChild(this.renderLetra(letra, 'c' + index));
+    });
+    this.contenido.vocal.split('').forEach((letra, index) => {
+      silabaDiv.appendChild(this.renderLetra(letra, 'v' + index));
+    });
 
-      container.appendChild(silabaDiv);
-    } else {
-      // Handle error case
-      const errorSpan = document.createElement('span');
-      errorSpan.textContent = 'Error';
-      errorSpan.className = 'text-3xl text-red-500';
-      container.appendChild(errorSpan);
-    }
+    container.appendChild(silabaDiv);
+  } else {
+    // Handle error case
+    const errorSpan = document.createElement('span');
+    errorSpan.textContent = 'Error';
+    errorSpan.className = 'text-3xl text-red-500';
+    container.appendChild(errorSpan);
+  }
 }
+
 
   render() {
     this.renderContenido();
