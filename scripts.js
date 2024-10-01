@@ -98,6 +98,36 @@ class MetodoLectura {
     document.querySelectorAll('.level-button').forEach(button => {
       button.addEventListener('click', (e) => this.setNivel(parseInt(e.target.dataset.level)));
     });
+
+    // Share button functionality
+    document.getElementById('shareButton').addEventListener('click', () => this.shareApp());
+
+    // Contact button functionality
+    document.getElementById('contactButton').addEventListener('click', () => {
+      window.open('https://www.linkedin.com/in/tu-perfil-linkedin/', '_blank');
+    });
+  }
+
+  shareApp() {
+    if (navigator.share) {
+      navigator.share({
+        title: 'Leyendo Juntos',
+        text: 'Estoy usando esta aplicación para enseñar a leer a mi hijo, pruébala tú también.',
+        url: window.location.href
+      }).then(() => {
+        console.log('Compartido exitosamente.');
+      }).catch((error) => {
+        console.error('Error al compartir:', error);
+      });
+    } else {
+      navigator.clipboard.writeText(window.location.href)
+        .then(() => {
+          alert('Enlace copiado al portapapeles');
+        })
+        .catch((error) => {
+          console.error('Error al copiar el enlace:', error);
+        });
+    }
   }
 
   // Modified: Random syllable selection for Level 1
