@@ -104,7 +104,7 @@ class MetodoLectura {
 
     // Contact button functionality
     document.getElementById('contactButton').addEventListener('click', () => {
-      window.open('https://www.linkedin.com/in/tu-perfil-linkedin/', '_blank');
+      window.open('https://www.linkedin.com/in/javiersz/', '_blank');
     });
   }
 
@@ -112,7 +112,7 @@ class MetodoLectura {
     if (navigator.share) {
       navigator.share({
         title: 'Leyendo Juntos',
-        text: 'Estoy usando esta aplicación para enseñar a leer a mi hijo, pruébala tú también.',
+        text: 'Estoy usando esta aplicación para enseñar a leer a mi hijo, ¡pruébala!',
         url: window.location.href
       }).then(() => {
         console.log('Compartido exitosamente.');
