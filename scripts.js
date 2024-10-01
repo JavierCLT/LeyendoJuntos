@@ -100,11 +100,14 @@ class MetodoLectura {
     });
   }
 
+  // Modified: Random syllable selection for Level 1
   generarSilabaSimple() {
     const tipos = ['vc', 'cv', 'vv'];
     const tipoAleatorio = tipos[Math.floor(Math.random() * tipos.length)];
-    const combinacionAleatoria = combinacionesDosLetras[tipoAleatorio].shift();
-    combinacionesDosLetras[tipoAleatorio].push(combinacionAleatoria);
+    const combinaciones = combinacionesDosLetras[tipoAleatorio];
+
+    // Pick a random combination
+    const combinacionAleatoria = combinaciones[Math.floor(Math.random() * combinaciones.length)];
 
     if (tipoAleatorio === 'vc') {
       return { consonante: combinacionAleatoria[1], vocal: combinacionAleatoria[0] };
@@ -115,16 +118,20 @@ class MetodoLectura {
     }
   }
 
+  // Modified: Random word selection for Level 2 (three-letter combinations)
   generarContenidoNivel2() {
-    const combinacionAleatoria = combinacionesTresLetras.cvc.shift();
-    combinacionesTresLetras.cvc.push(combinacionAleatoria);
+    const combinaciones = combinacionesTresLetras.cvc;
+
+    // Pick a random combination
+    const combinacionAleatoria = combinaciones[Math.floor(Math.random() * combinaciones.length)];
 
     return {
       consonante: combinacionAleatoria.slice(0, -1),
-      vocal: combinacionAleatoria.slice(-1)
+      vocal: combinacionAleatoria.slice(-1),
     };
   }
 
+  // Generates content based on the current level
   generarContenido() {
     let siguiente;
     try {
@@ -153,7 +160,7 @@ class MetodoLectura {
     this.render();
   }
 
- setNivel(newNivel) {
+  setNivel(newNivel) {
     this.nivel = newNivel;
     this.generarContenido();
     this.updateLevelButtons();
@@ -172,49 +179,40 @@ class MetodoLectura {
     });
   }
 
-  
-  
   getConsonantColor(consonant) {
-  // Handle special cases like "ch", "ll", "rr", "cc"
-  if (consonant.toLowerCase() === 'ch' || consonant.toLowerCase() === 'll' || consonant.toLowerCase() === 'rr' || consonant.toLowerCase() === 'cc') {
-    consonant = consonant.toLowerCase();
-  }
+    if (consonant.toLowerCase() === 'ch' || consonant.toLowerCase() === 'll' || consonant.toLowerCase() === 'rr' || consonant.toLowerCase() === 'cc') {
+      consonant = consonant.toLowerCase();
+    }
 
-  if (!this.consonantColors[consonant]) {
-    let newColor;
-    // Ensure new color is not the same as the last applied consonant color
-    do {
-      newColor = colores[this.colorIndex];
-      this.colorIndex = (this.colorIndex + 1) % colores.length;
-    } while (newColor === lastConsonantColor);  // Avoid assigning the same color consecutively
-    
-    this.consonantColors[consonant] = newColor;
-    lastConsonantColor = newColor;  // Set the last consonant color
-  }
+    if (!this.consonantColors[consonant]) {
+      let newColor;
+      do {
+        newColor = colores[this.colorIndex];
+        this.colorIndex = (this.colorIndex + 1) % colores.length;
+      } while (newColor === lastConsonantColor);
+      
+      this.consonantColors[consonant] = newColor;
+      lastConsonantColor = newColor;
+    }
 
-  return this.consonantColors[consonant];
-}
+    return this.consonantColors[consonant];
+  }
 
   renderLetra(letra, index, isLastInWord = false) {
     const span = document.createElement('span');
-  
-  // Detect if "ch", "ll", "rr", or "cc" is at this position and treat them as a unit
-  const nextLetra = this.contenido.consonante && this.contenido.consonante[index + 1];
-  
-  // Handle special consonant combinations
-  if ((letra === 'c' && nextLetra === 'h') || 
-      (letra === 'l' && nextLetra === 'l') ||
-      (letra === 'r' && nextLetra === 'r') ||
-      (letra === 'c' && nextLetra === 'c')) {
-    letra = letra + nextLetra;  // Combine the special case into a single unit
-    this.contenido.consonante = this.contenido.consonante.slice(0, index + 1) + this.contenido.consonante.slice(index + 2); // Skip the next letter
-  }
-
-  span.textContent = letra;
-
-  // Check if the letter is a consonant
-  const isConsonant = !vocales.includes(letra.toLowerCase());
+    const nextLetra = this.contenido.consonante && this.contenido.consonante[index + 1];
     
+    if ((letra === 'c' && nextLetra === 'h') || 
+        (letra === 'l' && nextLetra === 'l') ||
+        (letra === 'r' && nextLetra === 'r') ||
+        (letra === 'c' && nextLetra === 'c')) {
+      letra = letra + nextLetra;
+      this.contenido.consonante = this.contenido.consonante.slice(0, index + 1) + this.contenido.consonante.slice(index + 2);
+    }
+
+    span.textContent = letra;
+    const isConsonant = !vocales.includes(letra.toLowerCase());
+
     if (isConsonant) {
       span.style.color = this.getConsonantColor(letra.toLowerCase());
     } else {
@@ -225,8 +223,7 @@ class MetodoLectura {
     if (isLastInWord && this.nivel === 4) {
       span.classList.add('mr-4');
     }
-    
-    // Adjust font size based on level
+
     const sizeClass = this.nivel === 1 ? 'text-6xl' : 
                       this.nivel === 2 ? 'text-5xl' : 
                       this.nivel === 3 ? 'text-4xl' : 'text-3xl';
@@ -278,3 +275,4 @@ class MetodoLectura {
 document.addEventListener('DOMContentLoaded', () => {
   new MetodoLectura();
 });
+
