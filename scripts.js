@@ -321,5 +321,5 @@ document.addEventListener('DOMContentLoaded', () => {
     if (titleElement) {
       titleElement.classList.add('fade-out');
     }
-  }, 5000); // 5 seconds
+  }, 3000); // 5 seconds
 });
