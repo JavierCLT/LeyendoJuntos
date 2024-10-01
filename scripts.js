@@ -74,7 +74,7 @@ const frasesNivel4 = [
   'La puerta está abierta', 'La ventana está cerrada', 'El coche es rápido',
   'La bici es pequeña', 'El tren es largo', 'Una casa bonita',
   'La pared es blanca', 'Un parque para niños', 'Un libro pequeño',
-  'Mi amigo se llama Michael', 'Mi padre es mayor que yo',
+  'Mi amigo se llama Adam', 'Mi padre es mayor que yo',
   'Mis zapatos están limpios', 'La moto hace mucho ruido'
 ];
 
