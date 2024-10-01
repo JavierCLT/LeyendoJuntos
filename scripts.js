@@ -268,35 +268,58 @@ class MetodoLectura {
   renderContenido() {
     const container = document.getElementById('contenidoContainer');
     container.innerHTML = '';
+    
+    // Add flexbox and centering classes to the main container
     container.className = 'flex flex-wrap justify-center items-center';
 
+    // Render a phrase, word, or syllables depending on the level
     if ('frase' in this.contenido) {
+      // For phrases, split into words and letters
       this.contenido.frase.split(' ').forEach((palabra, idx) => {
         const palabraDiv = document.createElement('div');
-        palabraDiv.className = 'flex mr-4 mb-2';
+        // Add flexbox centering to word container
+        palabraDiv.className = 'flex justify-center items-center mb-4';
+        
+        // Render each letter inside the word
         palabra.split('').forEach((letra, letraIdx, arr) => {
           palabraDiv.appendChild(this.renderLetra(letra, `${idx}-${letraIdx}`, letraIdx === arr.length - 1));
         });
+        
+        // Append word to the main container
         container.appendChild(palabraDiv);
       });
     } else if ('palabra' in this.contenido) {
+      // For single words
+      const palabraDiv = document.createElement('div');
+      palabraDiv.className = 'flex justify-center items-center mb-4';
+      
       this.contenido.palabra.split('').forEach((letra, index) => {
-        container.appendChild(this.renderLetra(letra, index));
+        palabraDiv.appendChild(this.renderLetra(letra, index));
       });
+      
+      container.appendChild(palabraDiv);
     } else if ('consonante' in this.contenido && 'vocal' in this.contenido) {
+      // For syllables
+      const silabaDiv = document.createElement('div');
+      silabaDiv.className = 'flex justify-center items-center mb-4';
+
+      // Render consonant and vowel separately
       this.contenido.consonante.split('').forEach((letra, index) => {
-        container.appendChild(this.renderLetra(letra, 'c' + index));
+        silabaDiv.appendChild(this.renderLetra(letra, 'c' + index));
       });
       this.contenido.vocal.split('').forEach((letra, index) => {
-        container.appendChild(this.renderLetra(letra, 'v' + index));
+        silabaDiv.appendChild(this.renderLetra(letra, 'v' + index));
       });
+
+      container.appendChild(silabaDiv);
     } else {
+      // Handle error case
       const errorSpan = document.createElement('span');
       errorSpan.textContent = 'Error';
       errorSpan.className = 'text-3xl text-red-500';
       container.appendChild(errorSpan);
     }
-  }
+}
 
   render() {
     this.renderContenido();
