@@ -232,6 +232,7 @@ class MetodoLectura {
     const span = document.createElement('span');
     const nextLetra = this.contenido.consonante && this.contenido.consonante[index + 1];
     
+    // Handle special consonant combinations like 'ch', 'll', etc.
     if ((letra === 'c' && nextLetra === 'h') || 
         (letra === 'l' && nextLetra === 'l') ||
         (letra === 'r' && nextLetra === 'r') ||
@@ -241,26 +242,28 @@ class MetodoLectura {
     }
 
     span.textContent = letra;
+
+    // Determine if the letter is a consonant or a vowel
     const isConsonant = !vocales.includes(letra.toLowerCase());
 
+    // Apply colors to consonants
     if (isConsonant) {
       span.style.color = this.getConsonantColor(letra.toLowerCase());
     } else {
       span.style.color = 'black';
     }
 
-    span.classList.add('inline-block', 'font-bold');
-    if (isLastInWord && this.nivel === 4) {
-      span.classList.add('mr-4');
-    }
+    // Tailwind classes for centering and styling
+    span.classList.add('inline-block', 'font-bold', 'text-center', 'mx-1'); // mx-1 adds small horizontal margin
 
+    // Adjust font size based on the level
     const sizeClass = this.nivel === 1 ? 'text-6xl' : 
                       this.nivel === 2 ? 'text-5xl' : 
                       this.nivel === 3 ? 'text-4xl' : 'text-3xl';
     span.classList.add(sizeClass);
 
     return span;
-  }
+}
 
   renderContenido() {
     const container = document.getElementById('contenidoContainer');
