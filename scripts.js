@@ -272,7 +272,7 @@ class MetodoLectura {
         const palabraDiv = document.createElement('div');
         palabraDiv.className = 'flex mr-4 mb-2';
         palabra.split('').forEach((letra, letraIdx, arr) => {
-          palabraDiv.appendChild(this.renderLetra(letra, ${idx}-${letraIdx}, letraIdx === arr.length - 1));
+          palabraDiv.appendChild(this.renderLetra(letra, `${idx}-${letraIdx}`, letraIdx === arr.length - 1));
         });
         container.appendChild(palabraDiv);
       });
