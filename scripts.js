@@ -104,7 +104,7 @@ class MetodoLectura {
 
     // Contact button functionality
     document.getElementById('contactButton').addEventListener('click', () => {
-      window.open('https://www.linkedin.com/in/javiersz/', '_blank');
+      window.open('https://www.linkedin.com/in/tu-perfil-linkedin/', '_blank');
     });
   }
 
@@ -192,8 +192,18 @@ class MetodoLectura {
 
   setNivel(newNivel) {
     this.nivel = newNivel;
+    this.updateMarginForNivel();
     this.generarContenido();
     this.updateLevelButtons();
+  }
+
+  updateMarginForNivel() {
+    const contenidoContainer = document.getElementById('contenidoContainer');
+    if (this.nivel === 4) {
+      contenidoContainer.style.marginLeft = '2em';
+    } else {
+      contenidoContainer.style.marginLeft = '0';
+    }
   }
 
   updateLevelButtons() {
