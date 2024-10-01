@@ -30,16 +30,23 @@
         <main id="contenidoContainer" class="flex-grow flex justify-center items-center text-6xl md:text-7xl lg:text-8xl font-bold text-center"></main>
         
         <footer class="w-full max-w-md mx-auto pb-6">
-            <button id="nextButton" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg mb-4 transition duration-300 ease-in-out transform hover:scale-105" style="touch-action: manipulation;">
-                Siguiente
-            </button>
-            <div class="grid grid-cols-4 gap-2">
-                <button class="level-button bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out" data-level="1">Nivel 1</button>
-                <button class="level-button bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out" data-level="2">Nivel 2</button>
-                <button class="level-button bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out" data-level="3">Nivel 3</button>
-                <button class="level-button bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out" data-level="4">Nivel 4</button>
-            </div>
-        </footer>
+    <button id="nextButton" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg mb-4 transition duration-300 ease-in-out transform hover:scale-105" style="touch-action: manipulation;">
+        Siguiente
+    </button>
+
+    <div class="grid grid-cols-4 gap-2 mb-4">
+        <button class="level-button bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out" data-level="1">Nivel 1</button>
+        <button class="level-button bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out" data-level="2">Nivel 2</button>
+        <button class="level-button bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out" data-level="3">Nivel 3</button>
+        <button class="level-button bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out" data-level="4">Nivel 4</button>
+    </div>
+
+    <!-- New buttons for Compartir and Contacto -->
+    <div class="grid grid-cols-2 gap-2">
+        <button id="shareButton" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out">Compartir</button>
+        <button id="contactButton" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out">Contacto</button>
+    </div>
+</footer>
     </div>
     <script src="scripts.js"></script>
 </body>
