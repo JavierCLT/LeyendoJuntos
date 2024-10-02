@@ -193,7 +193,7 @@ class MetodoLectura {
       }
     } catch (error) {
       console.error("Error generando contenido:", error);
-      siguiente = { consonante: 'e', vocal: 'r' };
+      siguiente = { consonante: 'er', vocal: 'r' }; // Adjusted to a valid default
     }
 
     this.contenido = siguiente;
@@ -248,7 +248,7 @@ class MetodoLectura {
   }
 
   // Render a single letter or consonant combination
-  renderLetra(letra, index, isCombined = false) {
+  renderLetra(letra, isCombined = false) {
     const span = document.createElement('span');
     span.textContent = letra;
     const isConsonant = !vocales.includes(letra.toLowerCase());
@@ -281,20 +281,23 @@ class MetodoLectura {
     if ('frase' in this.contenido) {
       // Handle phrases: Split into words, then process each word
       this.contenido.frase.split(' ').forEach((palabra, idx) => {
-        const palabraDiv = document.createElement('div');
-        palabraDiv.className = 'flex mr-4 mb-2';
+        const palabraSpan = document.createElement('span');
+        palabraSpan.className = 'inline-block mr-4 mb-2'; // Changed from 'flex' to 'inline-block'
         const processedPalabra = this.processConsonantsAndVowels(palabra);
-        processedPalabra.forEach(({ letra, isConsonant, isCombined }, letraIdx, arr) => {
-          palabraDiv.appendChild(this.renderLetra(letra, letraIdx, isCombined));
+        processedPalabra.forEach(({ letra, isConsonant, isCombined }) => {
+          palabraSpan.appendChild(this.renderLetra(letra, isCombined));
         });
-        container.appendChild(palabraDiv);
+        container.appendChild(palabraSpan);
       });
     } else if ('palabra' in this.contenido) {
       // Handle single words
+      const palabraSpan = document.createElement('span');
+      palabraSpan.className = 'inline-block mb-2'; // Changed from 'flex' to 'inline-block'
       const processedPalabra = this.processConsonantsAndVowels(this.contenido.palabra);
       processedPalabra.forEach(({ letra, isConsonant, isCombined }) => {
-        container.appendChild(this.renderLetra(letra, 0, isCombined)); // Index not used in renderLetra
+        palabraSpan.appendChild(this.renderLetra(letra, isCombined));
       });
+      container.appendChild(palabraSpan);
     } else if ('consonante' in this.contenido && 'vocal' in this.contenido) {
       // Handle syllables: consonant + vowel
       const consonantes = this.contenido.consonante;
@@ -302,7 +305,7 @@ class MetodoLectura {
 
       const processedConsonantes = this.processConsonants(consonantes);
       processedConsonantes.forEach(({ letra, isConsonant, isCombined }) => {
-        container.appendChild(this.renderLetra(letra, 0, isCombined)); // Index not used in renderLetra
+        container.appendChild(this.renderLetra(letra, isCombined));
       });
 
       const processedVocales = vocalesContent.split('').map(letra => ({
@@ -311,7 +314,7 @@ class MetodoLectura {
         isCombined: false
       }));
       processedVocales.forEach(({ letra }) => {
-        container.appendChild(this.renderLetra(letra, 0, false)); // Index not used in renderLetra
+        container.appendChild(this.renderLetra(letra, false));
       });
     } else {
       // Handle errors
@@ -327,15 +330,17 @@ class MetodoLectura {
     const processed = [];
     let i = 0;
     while (i < word.length) {
-      let currentChar = word[i].toLowerCase();
+      let currentChar = word[i];
+      let currentCharLower = currentChar.toLowerCase();
       let combined = false;
 
       // Check for consonant combinations
       if (i < word.length - 1) {
         const pair = word.substring(i, i + 2).toLowerCase();
         if (consonantCombinations.includes(pair)) {
+          const originalPair = word.substring(i, i + 2); // Preserve original casing
           processed.push({
-            letra: pair,
+            letra: originalPair,
             isConsonant: true,
             isCombined: true
           });
@@ -346,9 +351,9 @@ class MetodoLectura {
       }
 
       // Determine if current character is consonant or vowel
-      const isConsonant = !vocales.includes(currentChar);
+      const isConsonant = !vocales.includes(currentCharLower);
       processed.push({
-        letra: currentChar,
+        letra: currentChar, // Preserve original casing
         isConsonant: isConsonant,
         isCombined: false
       });
@@ -362,15 +367,17 @@ class MetodoLectura {
     const processed = [];
     let i = 0;
     while (i < consonantes.length) {
-      let currentChar = consonantes[i].toLowerCase();
+      let currentChar = consonantes[i];
+      let currentCharLower = currentChar.toLowerCase();
       let combined = false;
 
       // Check for consonant combinations
       if (i < consonantes.length - 1) {
         const pair = consonantes.substring(i, i + 2).toLowerCase();
         if (consonantCombinations.includes(pair)) {
+          const originalPair = consonantes.substring(i, i + 2); // Preserve original casing
           processed.push({
-            letra: pair,
+            letra: originalPair,
             isConsonant: true,
             isCombined: true
           });
@@ -382,7 +389,7 @@ class MetodoLectura {
 
       // Single consonant
       processed.push({
-        letra: currentChar,
+        letra: currentChar, // Preserve original casing
         isConsonant: true,
         isCombined: false
       });
