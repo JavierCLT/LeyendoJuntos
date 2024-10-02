@@ -280,7 +280,7 @@ class MetodoLectura {
         const palabraDiv = document.createElement('div');
         palabraDiv.className = 'flex mr-4 mb-2';
         palabra.split('').forEach((letra, letraIdx, arr) => {
-          palabraDiv.appendChild(this.renderLetra(letra, `${idx}-${letraIdx}`, letraIdx === arr.length - 1));
+          palabraDiv.appendChild(this.renderLetra(letra, letraIdx, letraIdx === arr.length - 1));
         });
         container.appendChild(palabraDiv);
       });
@@ -290,10 +290,10 @@ class MetodoLectura {
       });
     } else if ('consonante' in this.contenido && 'vocal' in this.contenido) {
       this.contenido.consonante.split('').forEach((letra, index) => {
-        container.appendChild(this.renderLetra(letra, 'c' + index));
+        container.appendChild(this.renderLetra(letra, index));
       });
       this.contenido.vocal.split('').forEach((letra, index) => {
-        container.appendChild(this.renderLetra(letra, 'v' + index));
+        container.appendChild(this.renderLetra(letra, index));
       });
     } else {
       const errorSpan = document.createElement('span');
