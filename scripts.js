@@ -1,7 +1,16 @@
+// Define your color palette
 const colores = ['#c1121f', '#2a9d8f', '#e9c46a', '#219ebc', '#f4a261', '#e76f51'];
-const vocales = ['a', 'e', 'i', 'o', 'u', 'á', 'é', 'í', 'ó', 'ú'];
-let lastConsonantColor = '';  // Track the last consonant color applied
 
+// Define vowels (including accented ones)
+const vocales = ['a', 'e', 'i', 'o', 'u', 'á', 'é', 'í', 'ó', 'ú'];
+
+// Track the last consonant color applied
+let lastConsonantColor = '';
+
+// Define consonant combinations
+const consonantCombinations = ['ch', 'll', 'rr', 'cc', 'qu'];
+
+// Define two-letter combinations
 const combinacionesDosLetras = {
   vc: [
     'al', 'an', 'ar', 'as',
@@ -37,6 +46,7 @@ const combinacionesDosLetras = {
   ],
 };
 
+// Define three-letter combinations
 const combinacionesTresLetras = {
   cvc: [
     'sol', 'mar', 'pan', 'sal', 'luz', 'fin', 'rey', 'voz', 'pie', 'paz', 
@@ -56,6 +66,7 @@ const combinacionesTresLetras = {
   ],
 };
 
+// Define words for Level 3
 const palabrasNivel3 = [
   'casa', 'perro', 'gato', 'árbol', 'flor', 'sol', 'luna', 'estrella',
   'agua', 'fuego', 'tierra', 'aire', 'libro', 'mesa', 'silla', 'cama',
@@ -66,6 +77,7 @@ const palabrasNivel3 = [
   'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez'
 ];
 
+// Define phrases for Level 4
 const frasesNivel4 = [
   'El sol brilla', 'La luna es blanca', 'El perro ladra', 'El gato maulla',
   'La flor es roja', 'El cielo es azul', 'La casa es grande', 'El árbol es alto',
@@ -78,6 +90,7 @@ const frasesNivel4 = [
   'Mis zapatos están limpios', 'La moto hace mucho ruido'
 ];
 
+// MetodoLectura Class
 class MetodoLectura {
   constructor() {
     this.nivel = 1;
@@ -127,6 +140,7 @@ class MetodoLectura {
     }
   }
 
+  // Generate simple syllable for Level 1
   generarSilabaSimple() {
     const tipos = ['vc', 'cv', 'vv'];
     const tipoAleatorio = tipos[Math.floor(Math.random() * tipos.length)];
@@ -144,6 +158,7 @@ class MetodoLectura {
     }
   }
 
+  // Generate content for Level 2 (three-letter combinations)
   generarContenidoNivel2() {
     const combinaciones = combinacionesTresLetras.cvc;
 
@@ -156,6 +171,7 @@ class MetodoLectura {
     };
   }
 
+  // Generate content based on the current level
   generarContenido() {
     let siguiente;
     try {
@@ -213,6 +229,7 @@ class MetodoLectura {
     });
   }
 
+  // Assign colors to consonants and combinations
   getConsonantColor(consonant) {
     consonant = consonant.toLowerCase();
     if (!this.uniqueConsonants.has(consonant)) {
@@ -230,6 +247,7 @@ class MetodoLectura {
     return this.consonantColors[consonant];
   }
 
+  // Render a single letter or consonant combination
   renderLetra(letra, index, isCombined = false) {
     const span = document.createElement('span');
     span.textContent = letra;
@@ -254,60 +272,49 @@ class MetodoLectura {
     return span;
   }
 
+  // Render the content based on the current level and content type
   renderContenido() {
     const container = document.getElementById('contenidoContainer');
     container.innerHTML = '';
     container.className = 'flex flex-wrap justify-center items-center';
 
     if ('frase' in this.contenido) {
+      // Handle phrases: Split into words, then process each word
       this.contenido.frase.split(' ').forEach((palabra, idx) => {
         const palabraDiv = document.createElement('div');
         palabraDiv.className = 'flex mr-4 mb-2';
-        palabra.split('').forEach((letra, letraIdx, arr) => {
-          palabraDiv.appendChild(this.renderLetra(letra, letraIdx, letraIdx === arr.length - 1));
+        const processedPalabra = this.processConsonantsAndVowels(palabra);
+        processedPalabra.forEach(({ letra, isConsonant, isCombined }, letraIdx, arr) => {
+          palabraDiv.appendChild(this.renderLetra(letra, letraIdx, isCombined));
         });
         container.appendChild(palabraDiv);
       });
     } else if ('palabra' in this.contenido) {
-      this.contenido.palabra.split('').forEach((letra, index) => {
-        container.appendChild(this.renderLetra(letra, index));
+      // Handle single words
+      const processedPalabra = this.processConsonantsAndVowels(this.contenido.palabra);
+      processedPalabra.forEach(({ letra, isConsonant, isCombined }) => {
+        container.appendChild(this.renderLetra(letra, 0, isCombined)); // Index not used in renderLetra
       });
     } else if ('consonante' in this.contenido && 'vocal' in this.contenido) {
+      // Handle syllables: consonant + vowel
       const consonantes = this.contenido.consonante;
-      const vocales = this.contenido.vocal;
-      let i = 0;
-      while (i < consonantes.length) {
-        let letra = consonantes[i];
-        let combined = false;
+      const vocalesContent = this.contenido.vocal;
 
-        // Detect consonant combinations
-        if (i < consonantes.length - 1) {
-          const nextLetra = consonantes[i + 1];
-          if (
-            (letra === 'c' && nextLetra === 'h') || 
-            (letra === 'l' && nextLetra === 'l') ||
-            (letra === 'r' && nextLetra === 'r') ||
-            (letra === 'c' && nextLetra === 'c') ||
-            (letra === 'q' && nextLetra === 'u')
-          ) {
-            letra += nextLetra; // Combine the letters
-            i += 2; // Skip the next letter as it's part of the combination
-            combined = true;
-          } else {
-            i += 1;
-          }
-        } else {
-          i += 1;
-        }
+      const processedConsonantes = this.processConsonants(consonantes);
+      processedConsonantes.forEach(({ letra, isConsonant, isCombined }) => {
+        container.appendChild(this.renderLetra(letra, 0, isCombined)); // Index not used in renderLetra
+      });
 
-        container.appendChild(this.renderLetra(letra, i, combined));
-      }
-
-      // Render vowels
-      vocales.split('').forEach((letra, index) => {
-        container.appendChild(this.renderLetra(letra, index, false));
+      const processedVocales = vocalesContent.split('').map(letra => ({
+        letra,
+        isConsonant: false,
+        isCombined: false
+      }));
+      processedVocales.forEach(({ letra }) => {
+        container.appendChild(this.renderLetra(letra, 0, false)); // Index not used in renderLetra
       });
     } else {
+      // Handle errors
       const errorSpan = document.createElement('span');
       errorSpan.textContent = 'Error';
       errorSpan.className = 'text-3xl text-red-500';
@@ -315,13 +322,83 @@ class MetodoLectura {
     }
   }
 
+  // Process a word to separate consonants and vowels, handling combinations
+  processConsonantsAndVowels(word) {
+    const processed = [];
+    let i = 0;
+    while (i < word.length) {
+      let currentChar = word[i].toLowerCase();
+      let combined = false;
+
+      // Check for consonant combinations
+      if (i < word.length - 1) {
+        const pair = word.substring(i, i + 2).toLowerCase();
+        if (consonantCombinations.includes(pair)) {
+          processed.push({
+            letra: pair,
+            isConsonant: true,
+            isCombined: true
+          });
+          i += 2;
+          combined = true;
+          continue;
+        }
+      }
+
+      // Determine if current character is consonant or vowel
+      const isConsonant = !vocales.includes(currentChar);
+      processed.push({
+        letra: currentChar,
+        isConsonant: isConsonant,
+        isCombined: false
+      });
+      i += 1;
+    }
+    return processed;
+  }
+
+  // Process consonant string to handle combinations
+  processConsonants(consonantes) {
+    const processed = [];
+    let i = 0;
+    while (i < consonantes.length) {
+      let currentChar = consonantes[i].toLowerCase();
+      let combined = false;
+
+      // Check for consonant combinations
+      if (i < consonantes.length - 1) {
+        const pair = consonantes.substring(i, i + 2).toLowerCase();
+        if (consonantCombinations.includes(pair)) {
+          processed.push({
+            letra: pair,
+            isConsonant: true,
+            isCombined: true
+          });
+          i += 2;
+          combined = true;
+          continue;
+        }
+      }
+
+      // Single consonant
+      processed.push({
+        letra: currentChar,
+        isConsonant: true,
+        isCombined: false
+      });
+      i += 1;
+    }
+    return processed;
+  }
+
+  // Render the content and update buttons
   render() {
     this.renderContenido();
     this.updateLevelButtons();
   }
 }
 
-// Fix the misplaced function that caused the syntax error
+// Function to create ripple effect on buttons
 function createRipple(event) {
   const button = event.currentTarget;
 
@@ -343,6 +420,7 @@ function createRipple(event) {
   button.appendChild(circle);
 }
 
+// Add ripple effect to all buttons
 const buttons = document.getElementsByTagName("button");
 for (const button of buttons) {
   button.addEventListener("click", createRipple);
