@@ -23,29 +23,27 @@
 </head>
 <body class="font-['Andika_Basic'] bg-white h-screen flex justify-center items-center">
     <div class="container mx-auto flex flex-col justify-between h-screen max-w-2xl px-4">
-        <header class="text-center pt-4">
+        <header class="text-center pt-2"> <!-- Reduced top padding -->
             <h1 class="text-2xl md:text-3xl text-gray-800">Leyendojuntos.com</h1>
         </header>
         
-        <main id="contenidoContainer" class="flex-grow flex justify-center items-center text-6xl md:text-7xl lg:text-8xl font-bold text-center" style="margin-top: 1em;"></main>
+        <main id="contenidoContainer" class="flex-grow flex justify-center items-center text-6xl md:text-7xl lg:text-8xl font-bold text-center"></main>
         
-        <footer class="w-full max-w-md mx-auto pb-4">
-            <button id="nextButton" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg mb-4 transition duration-300 ease-in-out transform hover:scale-105" style="touch-action: manipulation;">
+        <footer class="w-full max-w-md mx-auto pb-2"> <!-- Reduced bottom padding -->
+            <button id="nextButton" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg mb-2 transition duration-300 ease-in-out transform hover:scale-105" style="touch-action: manipulation;">
                 Siguiente
             </button>
-
             <!-- Level Buttons -->
-            <div class="grid grid-cols-4 gap-2 mb-4">
+            <div class="grid grid-cols-4 gap-2 mb-2"> <!-- Reduced margin bottom -->
                 <button class="level-button bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out" data-level="1">Nivel 1</button>
                 <button class="level-button bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out" data-level="2">Nivel 2</button>
                 <button class="level-button bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out" data-level="3">Nivel 3</button>
                 <button class="level-button bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out" data-level="4">Nivel 4</button>
             </div>
-
             <!-- Bottom Buttons -->
-            <div class="flex justify-center space-x-2 mx-auto max-w-xs"> <!-- Added max-w-xs to limit button container width and centered it -->
-                <button id="shareButton" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold text-sm py-2 px-4 rounded-lg transition duration-300 ease-in-out">Compartir</button>
-                <button id="contactButton" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold text-sm py-2 px-4 rounded-lg transition duration-300 ease-in-out">Contacto</button>
+            <div class="flex justify-center gap-2 w-full"> <!-- Changed to gap-2 for consistency and removed max-w-xs -->
+                <button id="shareButton" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold text-sm py-2 px-4 rounded-lg transition duration-300 ease-in-out max-w-[calc(50%-0.25rem)]">Compartir</button>
+                <button id="contactButton" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold text-sm py-2 px-4 rounded-lg transition duration-300 ease-in-out max-w-[calc(50%-0.25rem)]">Contacto</button>
             </div>
         </footer>
     </div>
