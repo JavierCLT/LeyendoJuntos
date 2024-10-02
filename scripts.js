@@ -101,6 +101,126 @@ class MetodoLectura {
     });
   }
 
+    // Share button functionality
+    document.getElementById('shareButton').addEventListener('click', () => this.shareApp());
+
+    // Contact button functionality
+    document.getElementById('contactButton').addEventListener('click', () => {
+      window.open('https://www.linkedin.com/in/javiersz/', '_blank');
+    });
+  }
+
+  shareApp() {
+    if (navigator.share) {
+      navigator.share({
+        title: 'Leyendo Juntos',
+        text: 'Estoy usando esta aplicación para enseñar a leer a mi hijo, ¡pruébala!',
+        url: window.location.href
+      }).then(() => {
+        console.log('Compartido exitosamente.');
+      }).catch((error) => {
+        console.error('Error al compartir:', error);
+      });
+    } else {
+      navigator.clipboard.writeText(window.location.href)
+        .then(() => {
+          alert('Enlace copiado al portapapeles');
+        })
+        .catch((error) => {
+          console.error('Error al copiar el enlace:', error);
+        });
+    }
+  }
+
+  // Modified: Random syllable selection for Level 1
+  generarSilabaSimple() {
+    const tipos = ['vc', 'cv', 'vv'];
+    const tipoAleatorio = tipos[Math.floor(Math.random() * tipos.length)];
+    const combinaciones = combinacionesDosLetras[tipoAleatorio];
+
+    // Pick a random combination
+    const combinacionAleatoria = combinaciones[Math.floor(Math.random() * combinaciones.length)];
+
+    if (tipoAleatorio === 'vc') {
+      return { consonante: combinacionAleatoria[1], vocal: combinacionAleatoria[0] };
+    } else if (tipoAleatorio === 'cv') {
+      return { consonante: combinacionAleatoria[0], vocal: combinacionAleatoria[1] };
+    } else {
+      return { consonante: combinacionAleatoria[0], vocal: combinacionAleatoria[1] };
+    }
+  }
+
+  // Modified: Random word selection for Level 2 (three-letter combinations)
+  generarContenidoNivel2() {
+    const combinaciones = combinacionesTresLetras.cvc;
+
+    // Pick a random combination
+    const combinacionAleatoria = combinaciones[Math.floor(Math.random() * combinaciones.length)];
+
+    return {
+      consonante: combinacionAleatoria.slice(0, -1),
+      vocal: combinacionAleatoria.slice(-1),
+    };
+  }
+
+  // Generates content based on the current level
+  generarContenido() {
+    let siguiente;
+    try {
+      switch (this.nivel) {
+        case 1:
+          siguiente = this.generarSilabaSimple();
+          break;
+        case 2:
+          siguiente = this.generarContenidoNivel2();
+          break;
+        case 3:
+          siguiente = { palabra: palabrasNivel3[Math.floor(Math.random() * palabrasNivel3.length)] };
+          break;
+        case 4:
+          siguiente = { frase: frasesNivel4[Math.floor(Math.random() * frasesNivel4.length)] };
+          break;
+        default:
+          siguiente = this.generarSilabaSimple();
+      }
+    } catch (error) {
+      console.error("Error generando contenido:", error);
+      siguiente = { consonante: 'e', vocal: 'r' };
+    }
+
+    this.contenido = siguiente;
+    this.render();
+  }
+
+  setNivel(newNivel) {
+    this.nivel = newNivel;
+    this.updateMarginForNivel();
+    this.generarContenido();
+    this.updateLevelButtons();
+  }
+
+  updateMarginForNivel() {
+    const contenidoContainer = document.getElementById('contenidoContainer');
+    if (this.nivel === 4) {
+      contenidoContainer.style.marginLeft = '2em';
+    } else {
+      contenidoContainer.style.marginLeft = '0';
+    }
+  }
+
+  updateLevelButtons() {
+    document.querySelectorAll('.level-button').forEach(button => {
+      const buttonLevel = parseInt(button.dataset.level);
+      if (buttonLevel === this.nivel) {
+        button.classList.remove('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
+        button.classList.add('bg-green-500', 'hover:bg-green-600', 'text-white');
+      } else {
+        button.classList.remove('bg-green-500', 'hover:bg-green-600', 'text-white');
+        button.classList.add('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
+      }
+    });
+  }
+
   // Modified color logic for consonants
   getConsonantColor(consonant) {
     consonant = consonant.toLowerCase();
@@ -192,9 +312,36 @@ class MetodoLectura {
     this.renderContenido();
     this.updateLevelButtons();
   }
+
+
+function createRipple(event) {
+  const button = event.currentTarget;
+
+  const circle = document.createElement("span");
+  const diameter = Math.max(button.clientWidth, button.clientHeight);
+  const radius = diameter / 2;
+
+  circle.style.width = circle.style.height = `${diameter}px`;
+  circle.style.left = `${event.clientX - button.offsetLeft - radius}px`;
+  circle.style.top = `${event.clientY - button.offsetTop - radius}px`;
+  circle.classList.add("ripple");
+
+  const ripple = button.getElementsByClassName("ripple")[0];
+
+  if (ripple) {
+    ripple.remove();
+  }
+
+  button.appendChild(circle);
+}
+
+const buttons = document.getElementsByTagName("button");
+for (const button of buttons) {
+  button.addEventListener("click", createRipple);
 }
 
 // Initialize the app when the DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
   const metodoLectura = new MetodoLectura();
-});
+
+ 
