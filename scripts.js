@@ -99,12 +99,7 @@ class MetodoLectura {
     document.querySelectorAll('.level-button').forEach(button => {
       button.addEventListener('click', (e) => this.setNivel(parseInt(e.target.dataset.level)));
     });
-  }
-
-    // Share button functionality
     document.getElementById('shareButton').addEventListener('click', () => this.shareApp());
-
-    // Contact button functionality
     document.getElementById('contactButton').addEventListener('click', () => {
       window.open('https://www.linkedin.com/in/javiersz/', '_blank');
     });
@@ -312,8 +307,9 @@ class MetodoLectura {
     this.renderContenido();
     this.updateLevelButtons();
   }
+}
 
-
+// Fix the misplaced function that caused the syntax error
 function createRipple(event) {
   const button = event.currentTarget;
 
@@ -343,5 +339,4 @@ for (const button of buttons) {
 // Initialize the app when the DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
   const metodoLectura = new MetodoLectura();
-
- 
+});
