@@ -127,7 +127,6 @@ class MetodoLectura {
     }
   }
 
-  // Modified: Random syllable selection for Level 1
   generarSilabaSimple() {
     const tipos = ['vc', 'cv', 'vv'];
     const tipoAleatorio = tipos[Math.floor(Math.random() * tipos.length)];
@@ -145,7 +144,6 @@ class MetodoLectura {
     }
   }
 
-  // Modified: Random word selection for Level 2 (three-letter combinations)
   generarContenidoNivel2() {
     const combinaciones = combinacionesTresLetras.cvc;
 
@@ -158,7 +156,6 @@ class MetodoLectura {
     };
   }
 
-  // Generates content based on the current level
   generarContenido() {
     let siguiente;
     try {
@@ -216,7 +213,6 @@ class MetodoLectura {
     });
   }
 
-  // Modified color logic for consonants
   getConsonantColor(consonant) {
     consonant = consonant.toLowerCase();
     if (!this.uniqueConsonants.has(consonant)) {
@@ -234,20 +230,8 @@ class MetodoLectura {
     return this.consonantColors[consonant];
   }
 
-  renderLetra(letra, index, isLastInWord = false) {
+  renderLetra(letra, index, isCombined = false) {
     const span = document.createElement('span');
-    const nextLetra = this.contenido.consonante && this.contenido.consonante[index + 1];
-
-    // Special handling for combinations: "ch", "ll", "rr", "cc", and now "qu"
-    if ((letra === 'c' && nextLetra === 'h') || 
-        (letra === 'l' && nextLetra === 'l') ||
-        (letra === 'r' && nextLetra === 'r') ||
-        (letra === 'c' && nextLetra === 'c') ||
-        (letra === 'q' && nextLetra === 'u')) {
-      letra = letra + nextLetra;  // Combine two letters into one
-      this.contenido.consonante = this.contenido.consonante.slice(0, index + 1) + this.contenido.consonante.slice(index + 2);
-    }
-
     span.textContent = letra;
     const isConsonant = !vocales.includes(letra.toLowerCase());
 
@@ -258,7 +242,7 @@ class MetodoLectura {
     }
 
     span.classList.add('inline-block', 'font-bold');
-    if (isLastInWord && this.nivel === 4) {
+    if (isCombined && this.nivel === 4) {
       span.classList.add('mr-4');
     }
 
@@ -289,11 +273,39 @@ class MetodoLectura {
         container.appendChild(this.renderLetra(letra, index));
       });
     } else if ('consonante' in this.contenido && 'vocal' in this.contenido) {
-      this.contenido.consonante.split('').forEach((letra, index) => {
-        container.appendChild(this.renderLetra(letra, index));
-      });
-      this.contenido.vocal.split('').forEach((letra, index) => {
-        container.appendChild(this.renderLetra(letra, index));
+      const consonantes = this.contenido.consonante;
+      const vocales = this.contenido.vocal;
+      let i = 0;
+      while (i < consonantes.length) {
+        let letra = consonantes[i];
+        let combined = false;
+
+        // Detect consonant combinations
+        if (i < consonantes.length - 1) {
+          const nextLetra = consonantes[i + 1];
+          if (
+            (letra === 'c' && nextLetra === 'h') || 
+            (letra === 'l' && nextLetra === 'l') ||
+            (letra === 'r' && nextLetra === 'r') ||
+            (letra === 'c' && nextLetra === 'c') ||
+            (letra === 'q' && nextLetra === 'u')
+          ) {
+            letra += nextLetra; // Combine the letters
+            i += 2; // Skip the next letter as it's part of the combination
+            combined = true;
+          } else {
+            i += 1;
+          }
+        } else {
+          i += 1;
+        }
+
+        container.appendChild(this.renderLetra(letra, i, combined));
+      }
+
+      // Render vowels
+      vocales.split('').forEach((letra, index) => {
+        container.appendChild(this.renderLetra(letra, index, false));
       });
     } else {
       const errorSpan = document.createElement('span');
