@@ -29,24 +29,24 @@
         
         <main id="contenidoContainer" class="flex-grow flex justify-center items-center text-6xl md:text-7xl lg:text-8xl font-bold text-center" style="margin-top: 1em;"></main>
         
-        <footer class="w-full max-w-md mx-auto pb-4"> <!-- Reduced pb-4 for closer positioning -->
+        <footer class="w-full max-w-md mx-auto pb-4">
             <button id="nextButton" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg mb-4 transition duration-300 ease-in-out transform hover:scale-105" style="touch-action: manipulation;">
                 Siguiente
             </button>
 
             <!-- Level Buttons -->
-            <div class="grid grid-cols-4 gap-2 mb-4"> <!-- Reduced mb-4 for closer positioning -->
+            <div class="grid grid-cols-4 gap-2 mb-4">
                 <button class="level-button bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out" data-level="1">Nivel 1</button>
                 <button class="level-button bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out" data-level="2">Nivel 2</button>
                 <button class="level-button bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out" data-level="3">Nivel 3</button>
                 <button class="level-button bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out" data-level="4">Nivel 4</button>
             </div>
 
-            <!-- Bottom Buttons (fill the available width with space between) -->
-            <div class="flex justify-center space-x-2 mt-2"> <!-- Adjusted for centering and gap -->
-    <button id="shareButton" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold text-sm py-2 px-4 rounded-lg transition duration-300 ease-in-out">Compartir</button>
-    <button id="contactButton" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold text-sm py-2 px-4 rounded-lg transition duration-300 ease-in-out">Contacto</button>
-</div>
+            <!-- Bottom Buttons -->
+            <div class="flex justify-center space-x-2 mx-auto max-w-xs"> <!-- Added max-w-xs to limit button container width and centered it -->
+                <button id="shareButton" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold text-sm py-2 px-4 rounded-lg transition duration-300 ease-in-out">Compartir</button>
+                <button id="contactButton" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold text-sm py-2 px-4 rounded-lg transition duration-300 ease-in-out">Contacto</button>
+            </div>
         </footer>
     </div>
     <script src="scripts.js"></script>
