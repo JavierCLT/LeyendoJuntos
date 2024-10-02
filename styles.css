@@ -67,7 +67,7 @@
 
 /* Responsive */
 @media (min-width: 768px) {
-  .md\:text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+  .md\:text-3xl { font-size: 2rem; line-height: 2rem; }
   .md\:text-7xl { font-size: 4.5rem; line-height: 1; }
 }
 
