@@ -276,7 +276,7 @@ class MetodoLectura {
   renderContenido() {
     const container = document.getElementById('contenidoContainer');
     container.innerHTML = '';
-    container.className = 'flex flex-wrap justify-center items-center';
+    container.className = 'flex-grow text-center text-6xl md:text-7xl lg:text-8xl font-bold'; // Updated classes to match HTML
 
     if ('frase' in this.contenido) {
       // Handle phrases: Split into words, then process each word
