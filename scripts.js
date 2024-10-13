@@ -208,22 +208,27 @@ class MetodoLectura {
   container.className = 'flex flex-wrap justify-center items-center';
 
   if ('frase' in this.contenido) {
-    this.contenido.frase.split(' ').forEach((palabra, idx) => {
+    // Handling phrases
+    this.contenido.frase.split(' ').forEach((palabra) => {
       const palabraDiv = document.createElement('div');
-      palabraDiv.className = 'flex mr-4 mb-2';
-      palabra.split('').forEach((letra, letraIdx, arr) => {
-        palabraDiv.appendChild(this.renderLetra(letra, letraIdx, letraIdx === arr.length - 1));
+      palabraDiv.className = 'inline-block mx-2 mb-2';  // Ensures spacing between words
+      palabra.split('').forEach((letra) => {
+        const letraSpan = this.renderLetra(letra);
+        palabraDiv.appendChild(letraSpan);
       });
       container.appendChild(palabraDiv);
     });
   } else if ('palabra' in this.contenido) {
+    // Handling single words
     const palabraDiv = document.createElement('div');
-    palabraDiv.className = 'flex mr-4 mb-2';
-    this.contenido.palabra.split('').forEach((letra, index) => {
-      palabraDiv.appendChild(this.renderLetra(letra, index));
+    palabraDiv.className = 'inline-block mx-2 mb-2';  // Ensures spacing between words
+    this.contenido.palabra.split('').forEach((letra) => {
+      const letraSpan = this.renderLetra(letra);
+      palabraDiv.appendChild(letraSpan);
     });
     container.appendChild(palabraDiv);
   } else if ('consonante' in this.contenido && 'vocal' in this.contenido) {
+    // Handling syllables
     const consonantes = this.contenido.consonante;
     const vocales = this.contenido.vocal;
     let i = 0;
@@ -244,11 +249,13 @@ class MetodoLectura {
         i += 1;
       }
 
-      container.appendChild(this.renderLetra(letra, i, combined));
+      const letraSpan = this.renderLetra(letra, i, combined);
+      container.appendChild(letraSpan);
     }
 
     vocales.split('').forEach((letra, index) => {
-      container.appendChild(this.renderLetra(letra, index, false));
+      const letraSpan = this.renderLetra(letra, index, false);
+      container.appendChild(letraSpan);
     });
   } else {
     const errorSpan = document.createElement('span');
@@ -257,6 +264,7 @@ class MetodoLectura {
     container.appendChild(errorSpan);
   }
 }
+
 
 
   render() {
