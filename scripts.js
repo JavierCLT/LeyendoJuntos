@@ -46,10 +46,8 @@ class MetodoLectura {
       window.open('https://www.linkedin.com/in/javiersz/', '_blank');
     });
 
-    // Tutorial button contour highlight effect
     const tutorialButton = document.getElementById('tutorialButton');
     tutorialButton.classList.add('animate-pulse');
-    
     setTimeout(() => {
       tutorialButton.classList.remove('animate-pulse');
     }, 2000);
@@ -100,8 +98,12 @@ class MetodoLectura {
     };
   }
 
+  // Function to generate content and ensure words don't repeat until all are shown
   generarContenido() {
     let siguiente;
+    let wordsArray;
+    let shownWords;
+
     try {
       switch (this.nivel) {
         case 1:
@@ -111,10 +113,14 @@ class MetodoLectura {
           siguiente = this.generarContenidoNivel2();
           break;
         case 3:
-          siguiente = { palabra: palabrasNivel3[Math.floor(Math.random() * palabrasNivel3.length)] };
+          wordsArray = palabrasNivel3;
+          shownWords = shownWordsLevel3;
+          siguiente = this.getUniqueWord(wordsArray, shownWords);
           break;
         case 4:
-          siguiente = { frase: frasesNivel4[Math.floor(Math.random() * frasesNivel4.length)] };
+          wordsArray = frasesNivel4;
+          shownWords = shownWordsLevel4;
+          siguiente = this.getUniqueWord(wordsArray, shownWords);
           break;
         default:
           siguiente = this.generarSilabaSimple();
@@ -126,6 +132,20 @@ class MetodoLectura {
 
     this.contenido = siguiente;
     this.render();
+  }
+
+  // Function to get unique words and reset when all have been shown
+  getUniqueWord(wordsArray, shownWords) {
+    if (shownWords.length === wordsArray.length) {
+      shownWords.length = 0;  // Reset the shown words
+    }
+
+    const remainingWords = wordsArray.filter(word => !shownWords.includes(word));
+    const randomWord = remainingWords[Math.floor(Math.random() * remainingWords.length)];
+
+    shownWords.push(randomWord);  // Add to shown words to avoid repetition
+
+    return { palabra: randomWord };
   }
 
   setNivel(newNivel) {
@@ -246,28 +266,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Ripple effect for button clicks
   function createRipple(event) {
-  const button = event.currentTarget;
-  const rect = button.getBoundingClientRect();  // Get button's bounding box
+    const button = event.currentTarget;
+    const rect = button.getBoundingClientRect();  // Get button's bounding box
 
-  const circle = document.createElement("span");
-  const diameter = Math.max(rect.width, rect.height);
-  const radius = diameter / 2;
+    const circle = document.createElement("span");
+    const diameter = Math.max(rect.width, rect.height);
+    const radius = diameter / 2;
 
-  circle.style.width = circle.style.height = `${diameter}px`;
+    circle.style.width = circle.style.height = `${diameter}px`;
 
-  // Adjust positioning to be relative to the button itself
-  circle.style.left = `${event.clientX - rect.left - radius}px`;
-  circle.style.top = `${event.clientY - rect.top - radius}px`;
+    // Adjust positioning to be relative to the button itself
+    circle.style.left = `${event.clientX - rect.left - radius}px`;
+    circle.style.top = `${event.clientY - rect.top - radius}px`;
 
-  circle.classList.add("ripple");
+    circle.classList.add("ripple");
 
-  const ripple = button.getElementsByClassName("ripple")[0];
-  if (ripple) {
-    ripple.remove();
+    const ripple = button.getElementsByClassName("ripple")[0];
+    if (ripple) {
+      ripple.remove();
+    }
+
+    button.appendChild(circle);
   }
-
-  button.appendChild(circle);
-}
 
   const buttons = document.getElementsByTagName("button");
   for (const button of buttons) {
