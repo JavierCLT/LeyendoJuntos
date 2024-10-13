@@ -283,7 +283,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const popup = document.getElementById('popup');
   const overlay = document.getElementById('overlay');
   const closePopupButton = document.getElementById('closePopup');
-  const tutorialButton = document.getElementById('tutorialButton');
   const scrollIndicator = document.getElementById('scrollIndicator');
 
   // Function to show popup
