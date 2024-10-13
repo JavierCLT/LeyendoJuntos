@@ -106,10 +106,10 @@ class MetodoLectura {
 
     // Tutorial button contour highlight effect
     const tutorialButton = document.getElementById('tutorialButton');
-    tutorialButton.classList.add('ring-4', 'ring-blue-500', 'animate-pulse');
+    tutorialButton.classList.add('animate-pulse');
     
     setTimeout(() => {
-      tutorialButton.classList.remove('animate-pulse', 'ring-4', 'ring-blue-500');
+      tutorialButton.classList.remove('animate-pulse');
     }, 2000);
   }
 
