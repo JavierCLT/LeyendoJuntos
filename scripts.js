@@ -283,11 +283,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const popup = document.getElementById('popup');
   const overlay = document.getElementById('overlay');
   const closePopupButton = document.getElementById('closePopup');
+  const tutorialButton = document.getElementById('tutorialButton');
+  const scrollIndicator = document.getElementById('scrollIndicator');
 
   // Function to show popup
   function showPopup() {
     popup.style.display = 'block';
     overlay.style.display = 'block';
+    checkScrollIndicator();
   }
 
   // Function to hide popup
@@ -296,6 +299,21 @@ document.addEventListener('DOMContentLoaded', () => {
     overlay.style.display = 'none';
   }
 
+  function checkScrollIndicator() {
+    if (popup.scrollHeight > popup.clientHeight) {
+      scrollIndicator.classList.remove('hidden');
+    } else {
+      scrollIndicator.classList.add('hidden');
+    }
+  }
+
+  popup.addEventListener('scroll', () => {
+    if (popup.scrollHeight - popup.scrollTop <= popup.clientHeight + 20) {
+      scrollIndicator.classList.add('hidden');
+    } else {
+      scrollIndicator.classList.remove('hidden');
+    }
+  });
   // Event listener for tutorial button click
   tutorialButton.addEventListener('click', showPopup);
 
@@ -304,4 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Hide popup if overlay is clicked
   overlay.addEventListener('click', hidePopup);
+  
+  // Check scroll indicator on window resize
+  window.addEventListener('resize', checkScrollIndicator);
 });
