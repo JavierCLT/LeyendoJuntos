@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (popup && scrollIndicator) {
     popup.addEventListener('scroll', () => {
       // Hide the indicator after scrolling 50 pixels
-      if (popup.scrollTop > 20) {
+      if (popup.scrollTop > 5) {
         scrollIndicator.classList.add('hidden');
       } else {
         scrollIndicator.classList.remove('hidden');
