@@ -333,10 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
   // Event listener for tutorial button click
-  tutorialButton.addEventListener('click', () => {
-    hasScrolled = false;
-    showPopup();
-  });
+  tutorialButton.addEventListener('click', showPopup);
 
   // Event listener for closing the popup
   closePopupButton.addEventListener('click', hidePopup);
