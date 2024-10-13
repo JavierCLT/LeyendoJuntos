@@ -18,7 +18,7 @@ const combinacionesTresLetras = {
 
 const palabrasNivel3 = ['casa', 'perro', 'gato', 'árbol', 'flor', 'sol', 'luna', 'estrella', 'agua', 'fuego', 'tierra', 'aire', 'libro', 'mesa', 'silla', 'cama', 'puerta', 'ventana', 'coche', 'bici', 'tren', 'avión', 'barco', 'pez', 'pájaro', 'mano', 'pie', 'ojo', 'nariz', 'boca', 'oreja', 'diente', 'pelo', 'brazo', 'pierna', 'dedo', 'uña', 'corazón', 'cerebro', 'hueso', 'rojo', 'azul', 'verde', 'amarillo', 'blanco', 'negro', 'rosa', 'naranja', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez', 'niño', 'papel', 'lápiz', 'sopa', 'planta', 'escuela', 'calor', 'nieve', 'hoja', 'camisa', 'reloj', 'pelota', 'gafas', 'fruta'];
 
-const frasesNivel4 = ['El sol brilla', 'La luna es blanca', 'El perro ladra', 'El gato maulla', 'La flor es roja', 'El cielo es azul', 'La casa es grande', 'El árbol es alto', 'El pez nada', 'El pájaro vuela', 'La niña corre', 'El niño salta', 'La mesa es marrón', 'La silla es verde', 'El libro es nuevo', 'La puerta está abierta', 'La ventana está cerrada', 'El coche es rápido', 'La bici es pequeña', 'El tren es largo', 'Una casa bonita', 'La pared es blanca', 'Un parque para niños', 'Un libro pequeño', 'Mi amigo se llama Adam', 'Mi padre es mayor que yo', 'Mis zapatos están limpios', 'La moto hace mucho ruido', 'El perro está durmiendo', 'La niña lee un libro', 'Me gusta comer manzanas', 'Vamos al parque por la tarde', 'El bebé está riendo', 'Hoy jugamos al escondite', 'juego con mi hermano', 'los sábados veo películas', 'me gusta comer tomates y fresas', 'mi camiseta es azul', 'el fútbol es un deporte'];
+const frasesNivel4 = ['El sol brilla', 'La luna es blanca', 'El perro ladra', 'El gato maulla', 'La flor es roja', 'El cielo es azul', 'La casa es grande', 'El árbol es alto', 'El pez nada', 'El pájaro vuela', 'La niña corre', 'El niño salta', 'La mesa es marrón', 'La silla es verde', 'El libro es nuevo', 'La puerta está abierta', 'La ventana está cerrada', 'El coche es rápido', 'La bici es pequeña', 'El tren es largo', 'Una casa bonita', 'La pared es blanca', 'Un parque para niños', 'Un libro pequeño', 'Mi padre es mayor que yo', 'Mis zapatos están limpios', 'La moto hace mucho ruido', 'El perro está durmiendo', 'La niña lee un libro', 'Me gusta comer manzanas', 'Vamos al parque por la tarde', 'El bebé está riendo', 'Hoy jugamos al escondite', 'juego con mi hermano', 'los sábados veo películas', 'me gusta comer tomates y fresas', 'mi camiseta es azul', 'el fútbol es un deporte'];
 
 class MetodoLectura {
   constructor() {
@@ -46,8 +46,10 @@ class MetodoLectura {
       window.open('https://www.linkedin.com/in/javiersz/', '_blank');
     });
 
+    // Tutorial button contour highlight effect
     const tutorialButton = document.getElementById('tutorialButton');
     tutorialButton.classList.add('animate-pulse');
+    
     setTimeout(() => {
       tutorialButton.classList.remove('animate-pulse');
     }, 2000);
@@ -98,12 +100,8 @@ class MetodoLectura {
     };
   }
 
-  // Function to generate content and ensure words don't repeat until all are shown
   generarContenido() {
     let siguiente;
-    let wordsArray;
-    let shownWords;
-
     try {
       switch (this.nivel) {
         case 1:
@@ -113,14 +111,10 @@ class MetodoLectura {
           siguiente = this.generarContenidoNivel2();
           break;
         case 3:
-          wordsArray = palabrasNivel3;
-          shownWords = shownWordsLevel3;
-          siguiente = this.getUniqueWord(wordsArray, shownWords);
+          siguiente = { palabra: palabrasNivel3[Math.floor(Math.random() * palabrasNivel3.length)] };
           break;
         case 4:
-          wordsArray = frasesNivel4;
-          shownWords = shownWordsLevel4;
-          siguiente = this.getUniqueWord(wordsArray, shownWords);
+          siguiente = { frase: frasesNivel4[Math.floor(Math.random() * frasesNivel4.length)] };
           break;
         default:
           siguiente = this.generarSilabaSimple();
@@ -132,20 +126,6 @@ class MetodoLectura {
 
     this.contenido = siguiente;
     this.render();
-  }
-
-  // Function to get unique words and reset when all have been shown
-  getUniqueWord(wordsArray, shownWords) {
-    if (shownWords.length === wordsArray.length) {
-      shownWords.length = 0;  // Reset the shown words
-    }
-
-    const remainingWords = wordsArray.filter(word => !shownWords.includes(word));
-    const randomWord = remainingWords[Math.floor(Math.random() * remainingWords.length)];
-
-    shownWords.push(randomWord);  // Add to shown words to avoid repetition
-
-    return { palabra: randomWord };
   }
 
   setNivel(newNivel) {
@@ -203,68 +183,57 @@ class MetodoLectura {
   }
 
   renderContenido() {
-  const container = document.getElementById('contenidoContainer');
-  container.innerHTML = '';
-  container.className = 'flex flex-wrap justify-center items-center';
+    const container = document.getElementById('contenidoContainer');
+    container.innerHTML = '';
+    container.className = 'flex flex-wrap justify-center items-center';
 
-  if ('frase' in this.contenido) {
-    // Handling phrases
-    this.contenido.frase.split(' ').forEach((palabra, idx) => {
-      const palabraDiv = document.createElement('div');
-      palabraDiv.className = 'flex mr-4 mb-2'; // Add flex to palabra div
-      palabra.split('').forEach((letra, letraIdx) => {
-        const letraSpan = this.renderLetra(letra, letraIdx);
-        palabraDiv.appendChild(letraSpan);
+    if ('frase' in this.contenido) {
+      this.contenido.frase.split(' ').forEach((palabra, idx) => {
+        const palabraDiv = document.createElement('div');
+        palabraDiv.className = 'flex mr-4 mb-2';
+        palabra.split('').forEach((letra, letraIdx, arr) => {
+          palabraDiv.appendChild(this.renderLetra(letra, letraIdx, letraIdx === arr.length - 1));
+        });
+        container.appendChild(palabraDiv);
       });
-      container.appendChild(palabraDiv);
-    });
-  } else if ('palabra' in this.contenido) {
-    // Handling single words
-    const palabraDiv = document.createElement('div');
-    palabraDiv.className = 'flex'; // Add flex to palabra div
-    this.contenido.palabra.split('').forEach((letra, index) => {
-      const letraSpan = this.renderLetra(letra, index);
-      palabraDiv.appendChild(letraSpan);
-    });
-    container.appendChild(palabraDiv);
-  } else if ('consonante' in this.contenido && 'vocal' in this.contenido) {
-    // Handling syllables
-    const consonantes = this.contenido.consonante;
-    const vocales = this.contenido.vocal;
-    const silabaDiv = document.createElement('div');
-    silabaDiv.className = 'flex';
+    } else if ('palabra' in this.contenido) {
+      this.contenido.palabra.split('').forEach((letra, index) => {
+        container.appendChild(this.renderLetra(letra, index));
+      });
+    } else if ('consonante' in this.contenido && 'vocal' in this.contenido) {
+      const consonantes = this.contenido.consonante;
+      const vocales = this.contenido.vocal;
+      let i = 0;
+      while (i < consonantes.length) {
+        let letra = consonantes[i];
+        let combined = false;
 
-    let i = 0;
-    while (i < consonantes.length) {
-      let letra = consonantes[i];
-      if (i < consonantes.length - 1) {
-        const nextLetra = consonantes[i + 1];
-        if ((letra === 'c' && nextLetra === 'h') || (letra === 'l' && nextLetra === 'l') || 
-            (letra === 'r' && nextLetra === 'r') || (letra === 'c' && nextLetra === 'c') || 
-            (letra === 'q' && nextLetra === 'u')) {
-          letra += nextLetra;
-          i += 2;
+        if (i < consonantes.length - 1) {
+          const nextLetra = consonantes[i + 1];
+          if ((letra === 'c' && nextLetra === 'h') || (letra === 'l' && nextLetra === 'l') || (letra === 'r' && nextLetra === 'r') || (letra === 'c' && nextLetra === 'c') || (letra === 'q' && nextLetra === 'u')) {
+            letra += nextLetra;
+            i += 2;
+            combined = true;
+          } else {
+            i += 1;
+          }
         } else {
           i += 1;
         }
-      } else {
-        i += 1;
+
+        container.appendChild(this.renderLetra(letra, i, combined));
       }
-      silabaDiv.appendChild(this.renderLetra(letra, i));
+
+      vocales.split('').forEach((letra, index) => {
+        container.appendChild(this.renderLetra(letra, index, false));
+      });
+    } else {
+      const errorSpan = document.createElement('span');
+      errorSpan.textContent = 'Error';
+      errorSpan.className = 'text-3xl text-red-500';
+      container.appendChild(errorSpan);
     }
-
-    vocales.split('').forEach((letra, index) => {
-      silabaDiv.appendChild(this.renderLetra(letra, index));
-    });
-
-    container.appendChild(silabaDiv);
-  } else {
-    const errorSpan = document.createElement('span');
-    errorSpan.textContent = 'Error';
-    errorSpan.className = 'text-3xl text-red-500';
-    container.appendChild(errorSpan);
   }
-}
 
   render() {
     this.renderContenido();
@@ -277,28 +246,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Ripple effect for button clicks
   function createRipple(event) {
-    const button = event.currentTarget;
-    const rect = button.getBoundingClientRect();  // Get button's bounding box
+  const button = event.currentTarget;
+  const rect = button.getBoundingClientRect();  // Get button's bounding box
 
-    const circle = document.createElement("span");
-    const diameter = Math.max(rect.width, rect.height);
-    const radius = diameter / 2;
+  const circle = document.createElement("span");
+  const diameter = Math.max(rect.width, rect.height);
+  const radius = diameter / 2;
 
-    circle.style.width = circle.style.height = `${diameter}px`;
+  circle.style.width = circle.style.height = `${diameter}px`;
 
-    // Adjust positioning to be relative to the button itself
-    circle.style.left = `${event.clientX - rect.left - radius}px`;
-    circle.style.top = `${event.clientY - rect.top - radius}px`;
+  // Adjust positioning to be relative to the button itself
+  circle.style.left = `${event.clientX - rect.left - radius}px`;
+  circle.style.top = `${event.clientY - rect.top - radius}px`;
 
-    circle.classList.add("ripple");
+  circle.classList.add("ripple");
 
-    const ripple = button.getElementsByClassName("ripple")[0];
-    if (ripple) {
-      ripple.remove();
-    }
-
-    button.appendChild(circle);
+  const ripple = button.getElementsByClassName("ripple")[0];
+  if (ripple) {
+    ripple.remove();
   }
+
+  button.appendChild(circle);
+}
 
   const buttons = document.getElementsByTagName("button");
   for (const button of buttons) {
