@@ -305,7 +305,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function checkScrollIndicator() {
-    if (scrollIndicator) {
+    if (scrollIndicator && popup) {
       if (popup.scrollHeight > popup.clientHeight) {
         scrollIndicator.classList.remove('hidden');
       } else {
@@ -314,15 +314,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  let hasScrolled = false;
-
-  if (popup) {
+  if (popup && scrollIndicator) {
     popup.addEventListener('scroll', () => {
-      if (!hasScrolled) {
-        hasScrolled = true;
-        if (scrollIndicator) {
-          scrollIndicator.classList.add('hidden');
-        }
+      // Hide the indicator after scrolling 50 pixels
+      if (popup.scrollTop > 20) {
+        scrollIndicator.classList.add('hidden');
+      } else {
+        scrollIndicator.classList.remove('hidden');
       }
     });
   }
