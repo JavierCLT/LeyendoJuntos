@@ -39,8 +39,8 @@ const combinacionesDosLetras = {
 
 const combinacionesTresLetras = {
   cvc: [
-    'sol', 'mar', 'pan', 'sal', 'luz', 'fin', 'rey', 'voz', 'pie', 'paz', 
-    'té', 'cal', 'del', 'hay', 'mis', 'ver', 'oro', 'sur', 'zar', 
+    'sol', 'mar', 'pan', 'sal', 'luz', 'fin', 'rey', 'voz', 'pie', 'paz',
+    'té', 'cal', 'del', 'hay', 'mis', 'ver', 'oro', 'sur', 'zar',
     'son', 'uno', 'dos', 'tres', 'muy', 'sin', 'las', 'por', 'más', 'ser',
     'con', 'bra', 'bre', 'bri', 'bro', 'bru',
     'cla', 'cle', 'cli', 'clo', 'clu',
@@ -78,7 +78,6 @@ const frasesNivel4 = [
   'Mis zapatos están limpios', 'La moto hace mucho ruido'
 ];
 
-
 class MetodoLectura {
   constructor() {
     this.nivel = 1;
@@ -104,6 +103,14 @@ class MetodoLectura {
     document.getElementById('contactButton').addEventListener('click', () => {
       window.open('https://www.linkedin.com/in/javiersz/', '_blank');
     });
+
+    // Tutorial button contour highlight effect
+    const tutorialButton = document.getElementById('tutorialButton');
+    tutorialButton.classList.add('ring-4', 'ring-blue-500', 'animate-pulse');
+    
+    setTimeout(() => {
+      tutorialButton.classList.remove('animate-pulse', 'ring-4', 'ring-blue-500');
+    }, 2000);
   }
 
   shareApp() {
