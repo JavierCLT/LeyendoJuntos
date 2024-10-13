@@ -326,4 +326,12 @@ document.addEventListener('DOMContentLoaded', () => {
   for (const button of buttons) {
     button.addEventListener("click", createRipple);
   }
+
+  // Highlight tutorial button on page load
+  const tutorialButton = document.getElementById('tutorialButton');
+  tutorialButton.classList.add('highlight');
+
+  setTimeout(() => {
+    tutorialButton.classList.remove('highlight');
+  }, 2000);
 });
