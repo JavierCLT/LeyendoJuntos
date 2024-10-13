@@ -1,1 +1,3 @@
-
+export const combinacionesTresLetras = {
+  cvc: ['sol', 'mar', 'pan', 'sal', 'luz', 'fin', 'rey', 'voz', 'pie', 'paz', 'té', 'cal', 'del', 'hay', 'mis', 'ver', 'oro', 'sur', 'zar', 'son', 'uno', 'dos', 'tres', 'muy', 'sin', 'las', 'por', 'más', 'ser', 'con', 'bra', 'bre', 'bri', 'bro', 'bru', 'cla', 'cle', 'cli', 'clo', 'clu', 'cra', 'cre', 'cri', 'cro', 'cru', 'dra', 'dre', 'dri', 'dro', 'dru', 'fra', 'fre', 'fri', 'fro', 'fru', 'gra', 'gre', 'gri', 'gro', 'gru', 'pla', 'ple', 'pli', 'plo', 'plu', 'pra', 'pre', 'pri', 'pro', 'pru', 'tra', 'tre', 'tri', 'tro', 'tru', 'bla', 'ble', 'bli', 'blo', 'blu', 'cha', 'che', 'chi', 'cho', 'chu'],
+};
