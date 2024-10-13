@@ -304,23 +304,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Ripple effect for button clicks
   function createRipple(event) {
-    const button = event.currentTarget;
-    const circle = document.createElement("span");
-    const diameter = Math.max(button.clientWidth, button.clientHeight);
-    const radius = diameter / 2;
+  const button = event.currentTarget;
+  const rect = button.getBoundingClientRect();  // Get button's bounding box
 
-    circle.style.width = circle.style.height = `${diameter}px`;
-    circle.style.left = `${event.clientX - button.offsetLeft - radius}px`;
-    circle.style.top = `${event.clientY - button.offsetTop - radius}px`;
-    circle.classList.add("ripple");
+  const circle = document.createElement("span");
+  const diameter = Math.max(rect.width, rect.height);
+  const radius = diameter / 2;
 
-    const ripple = button.getElementsByClassName("ripple")[0];
-    if (ripple) {
-      ripple.remove();
-    }
+  circle.style.width = circle.style.height = `${diameter}px`;
 
-    button.appendChild(circle);
+  // Adjust positioning to be relative to the button itself
+  circle.style.left = `${event.clientX - rect.left - radius}px`;
+  circle.style.top = `${event.clientY - rect.top - radius}px`;
+
+  circle.classList.add("ripple");
+
+  const ripple = button.getElementsByClassName("ripple")[0];
+  if (ripple) {
+    ripple.remove();
   }
+
+  button.appendChild(circle);
+}
 
   const buttons = document.getElementsByTagName("button");
   for (const button of buttons) {
