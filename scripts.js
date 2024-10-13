@@ -299,11 +299,25 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function checkScrollIndicator() {
-    if (popup.scrollHeight > popup.clientHeight) {
-      scrollIndicator.classList.remove('hidden');
-    } else {
-      scrollIndicator.classList.add('hidden');
+    if (scrollIndicator) {
+      if (popup.scrollHeight > popup.clientHeight) {
+        scrollIndicator.classList.remove('hidden');
+      } else {
+        scrollIndicator.classList.add('hidden');
+      }
     }
+  }
+
+  if (popup) {
+    popup.addEventListener('scroll', () => {
+      if (scrollIndicator) {
+        if (popup.scrollHeight - popup.scrollTop <= popup.clientHeight + 20) {
+          scrollIndicator.classList.add('hidden');
+        } else {
+          scrollIndicator.classList.remove('hidden');
+        }
+      }
+    });
   }
 
   popup.addEventListener('scroll', () => {
