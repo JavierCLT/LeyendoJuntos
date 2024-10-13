@@ -323,6 +323,20 @@ document.addEventListener('DOMContentLoaded', () => {
         scrollIndicator.classList.remove('hidden');
       }
     });
+  }function checkScrollIndicator() {
+    if (scrollIndicator && popup) {
+      if (popup.scrollHeight > popup.clientHeight && popup.scrollTop < 5) {
+        scrollIndicator.classList.remove('hidden');
+      } else {
+        scrollIndicator.classList.add('hidden');
+      }
+    }
+  }
+
+  if (popup && scrollIndicator) {
+    popup.addEventListener('scroll', () => {
+      checkScrollIndicator();
+    });
   }
 
   popup.addEventListener('scroll', () => {
