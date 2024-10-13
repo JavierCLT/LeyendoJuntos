@@ -202,8 +202,7 @@ class MetodoLectura {
     return span;
   }
 
- rendercontenido the last time it worked well:
- renderContenido() {
+  renderContenido() {
     const container = document.getElementById('contenidoContainer');
     container.innerHTML = '';
     container.className = 'flex flex-wrap justify-center items-center';
