@@ -94,9 +94,9 @@
   bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
-  color: #888;
+  color: #4a5568;
   opacity: 1;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.2s ease;
 }
 
 .scroll-indicator.bounce {
