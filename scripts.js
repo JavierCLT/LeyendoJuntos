@@ -131,8 +131,6 @@ class MetodoLectura {
     const tipos = ['vc', 'cv', 'vv'];
     const tipoAleatorio = tipos[Math.floor(Math.random() * tipos.length)];
     const combinaciones = combinacionesDosLetras[tipoAleatorio];
-
-    // Pick a random combination
     const combinacionAleatoria = combinaciones[Math.floor(Math.random() * combinaciones.length)];
 
     if (tipoAleatorio === 'vc') {
@@ -145,14 +143,10 @@ class MetodoLectura {
   }
 
   generarContenidoNivel2() {
-    const combinaciones = combinacionesTresLetras.cvc;
-
-    // Pick a random combination
-    const combinacionAleatoria = combinaciones[Math.floor(Math.random() * combinaciones.length)];
-
+    const combinacionAleatoria = combinacionesTresLetras.cvc[Math.floor(Math.random() * combinacionesTresLetras.cvc.length)];
     return {
       consonante: combinacionAleatoria.slice(0, -1),
-      vocal: combinacionAleatoria.slice(-1),
+      vocal: combinacionAleatoria.slice(-1)
     };
   }
 
@@ -186,18 +180,8 @@ class MetodoLectura {
 
   setNivel(newNivel) {
     this.nivel = newNivel;
-    this.updateMarginForNivel();
     this.generarContenido();
     this.updateLevelButtons();
-  }
-
-  updateMarginForNivel() {
-    const contenidoContainer = document.getElementById('contenidoContainer');
-    if (this.nivel === 4) {
-      contenidoContainer.style.marginLeft = '2em';
-    } else {
-      contenidoContainer.style.marginLeft = '0';
-    }
   }
 
   updateLevelButtons() {
@@ -216,21 +200,19 @@ class MetodoLectura {
   getConsonantColor(consonant) {
     consonant = consonant.toLowerCase();
     if (!this.uniqueConsonants.has(consonant)) {
-      this.uniqueConsonants.add(consonant);  // Track this consonant as unique
+      this.uniqueConsonants.add(consonant);
     }
 
-    // Assign a color only if it has not been assigned yet
     if (!this.consonantColors[consonant]) {
       let newColor = colores[this.colorIndex];
-      this.colorIndex = (this.colorIndex + 1) % colores.length;  // Loop back if we run out of colors
+      this.colorIndex = (this.colorIndex + 1) % colores.length;
       this.consonantColors[consonant] = newColor;
-      lastConsonantColor = newColor;
     }
 
     return this.consonantColors[consonant];
   }
 
-  renderLetra(letra, index, isCombined = false) {
+  renderLetra(letra, index) {
     const span = document.createElement('span');
     span.textContent = letra;
     const isConsonant = !vocales.includes(letra.toLowerCase());
@@ -242,13 +224,9 @@ class MetodoLectura {
     }
 
     span.classList.add('inline-block', 'font-bold');
-    if (isCombined && this.nivel === 4) {
-      span.classList.add('mr-4');
-    }
-
-    const sizeClass = this.nivel === 1 ? 'text-6xl' : 
-                      this.nivel === 2 ? 'text-5xl' : 
-                      this.nivel === 3 ? 'text-4xl' : 'text-3xl';
+    const sizeClass = this.nivel === 1 ? 'text-6xl' :
+      this.nivel === 2 ? 'text-5xl' :
+        this.nivel === 3 ? 'text-4xl' : 'text-3xl';
     span.classList.add(sizeClass);
 
     return span;
@@ -280,18 +258,11 @@ class MetodoLectura {
         let letra = consonantes[i];
         let combined = false;
 
-        // Detect consonant combinations
         if (i < consonantes.length - 1) {
           const nextLetra = consonantes[i + 1];
-          if (
-            (letra === 'c' && nextLetra === 'h') || 
-            (letra === 'l' && nextLetra === 'l') ||
-            (letra === 'r' && nextLetra === 'r') ||
-            (letra === 'c' && nextLetra === 'c') ||
-            (letra === 'q' && nextLetra === 'u')
-          ) {
-            letra += nextLetra; // Combine the letters
-            i += 2; // Skip the next letter as it's part of the combination
+          if ((letra === 'c' && nextLetra === 'h') || (letra === 'l' && nextLetra === 'l') || (letra === 'r' && nextLetra === 'r') || (letra === 'c' && nextLetra === 'c') || (letra === 'q' && nextLetra === 'u')) {
+            letra += nextLetra;
+            i += 2;
             combined = true;
           } else {
             i += 1;
@@ -303,7 +274,6 @@ class MetodoLectura {
         container.appendChild(this.renderLetra(letra, i, combined));
       }
 
-      // Render vowels
       vocales.split('').forEach((letra, index) => {
         container.appendChild(this.renderLetra(letra, index, false));
       });
@@ -319,65 +289,33 @@ class MetodoLectura {
     this.renderContenido();
     this.updateLevelButtons();
   }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const metodoLectura = new MetodoLectura();
 
-  // Tutorial button functionality
-  const tutorialButton = document.getElementById('tutorialButton');
-  const popup = document.getElementById('popup');
-  const overlay = document.getElementById('overlay');
-  const closePopup = document.getElementById('closePopup');
+  // Ripple effect for button clicks
+  function createRipple(event) {
+    const button = event.currentTarget;
+    const circle = document.createElement("span");
+    const diameter = Math.max(button.clientWidth, button.clientHeight);
+    const radius = diameter / 2;
 
-  function showPopup() {
-    popup.style.display = 'block';
-    overlay.style.display = 'block';
+    circle.style.width = circle.style.height = `${diameter}px`;
+    circle.style.left = `${event.clientX - button.offsetLeft - radius}px`;
+    circle.style.top = `${event.clientY - button.offsetTop - radius}px`;
+    circle.classList.add("ripple");
+
+    const ripple = button.getElementsByClassName("ripple")[0];
+    if (ripple) {
+      ripple.remove();
+    }
+
+    button.appendChild(circle);
   }
 
-  function hidePopup() {
-    popup.style.display = 'none';
-    overlay.style.display = 'none';
+  const buttons = document.getElementsByTagName("button");
+  for (const button of buttons) {
+    button.addEventListener("click", createRipple);
   }
-
-  tutorialButton.addEventListener('click', showPopup);
-  closePopup.addEventListener('click', hidePopup);
-  overlay.addEventListener('click', hidePopup);
-
-  // Highlight tutorial button on page load
-  tutorialButton.classList.add('highlight');
-  setTimeout(() => {
-    tutorialButton.classList.remove('highlight');
-  }, 2000);
-});
-
-
-// Fix the misplaced function that caused the syntax error
-function createRipple(event) {
-  const button = event.currentTarget;
-
-  const circle = document.createElement("span");
-  const diameter = Math.max(button.clientWidth, button.clientHeight);
-  const radius = diameter / 2;
-
-  circle.style.width = circle.style.height = `${diameter}px`;
-  circle.style.left = `${event.clientX - button.offsetLeft - radius}px`;
-  circle.style.top = `${event.clientY - button.offsetTop - radius}px`;
-  circle.classList.add("ripple");
-
-  const ripple = button.getElementsByClassName("ripple")[0];
-
-  if (ripple) {
-    ripple.remove();
-  }
-
-  button.appendChild(circle);
-}
-
-const buttons = document.getElementsByTagName("button");
-for (const button of buttons) {
-  button.addEventListener("click", createRipple);
-}
-
-// Initialize the app when the DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-  const metodoLectura = new MetodoLectura();
 });
