@@ -46,10 +46,8 @@ class MetodoLectura {
       window.open('https://www.linkedin.com/in/javiersz/', '_blank');
     });
 
-    // Tutorial button contour highlight effect
     const tutorialButton = document.getElementById('tutorialButton');
     tutorialButton.classList.add('animate-pulse');
-    
     setTimeout(() => {
       tutorialButton.classList.remove('animate-pulse');
     }, 2000);
@@ -100,8 +98,12 @@ class MetodoLectura {
     };
   }
 
+  // Function to generate content and ensure words don't repeat until all are shown
   generarContenido() {
     let siguiente;
+    let wordsArray;
+    let shownWords;
+
     try {
       switch (this.nivel) {
         case 1:
@@ -111,10 +113,14 @@ class MetodoLectura {
           siguiente = this.generarContenidoNivel2();
           break;
         case 3:
-          siguiente = { palabra: palabrasNivel3[Math.floor(Math.random() * palabrasNivel3.length)] };
+          wordsArray = palabrasNivel3;
+          shownWords = shownWordsLevel3;
+          siguiente = this.getUniqueWord(wordsArray, shownWords);
           break;
         case 4:
-          siguiente = { frase: frasesNivel4[Math.floor(Math.random() * frasesNivel4.length)] };
+          wordsArray = frasesNivel4;
+          shownWords = shownWordsLevel4;
+          siguiente = this.getUniqueWord(wordsArray, shownWords);
           break;
         default:
           siguiente = this.generarSilabaSimple();
@@ -126,6 +132,20 @@ class MetodoLectura {
 
     this.contenido = siguiente;
     this.render();
+  }
+
+  // Function to get unique words and reset when all have been shown
+  getUniqueWord(wordsArray, shownWords) {
+    if (shownWords.length === wordsArray.length) {
+      shownWords.length = 0;  // Reset the shown words
+    }
+
+    const remainingWords = wordsArray.filter(word => !shownWords.includes(word));
+    const randomWord = remainingWords[Math.floor(Math.random() * remainingWords.length)];
+
+    shownWords.push(randomWord);  // Add to shown words to avoid repetition
+
+    return { palabra: randomWord };
   }
 
   setNivel(newNivel) {
@@ -186,47 +206,42 @@ class MetodoLectura {
     const container = document.getElementById('contenidoContainer');
     container.innerHTML = '';
     container.className = 'flex flex-wrap justify-center items-center';
-
+    
     if ('frase' in this.contenido) {
       this.contenido.frase.split(' ').forEach((palabra, idx) => {
         const palabraDiv = document.createElement('div');
-        palabraDiv.className = 'flex mr-4 mb-2';
+        palabraDiv.className = 'flex mr-4 mb-2'; // adds spacing between words
         palabra.split('').forEach((letra, letraIdx, arr) => {
-          palabraDiv.appendChild(this.renderLetra(letra, letraIdx, letraIdx === arr.length - 1));
+          const span = this.renderLetra(letra, letraIdx);
+          palabraDiv.appendChild(span);
         });
         container.appendChild(palabraDiv);
       });
     } else if ('palabra' in this.contenido) {
+      const palabraDiv = document.createElement('div');
+      palabraDiv.className = 'flex mr-4 mb-2'; // adds spacing between letters in single word
       this.contenido.palabra.split('').forEach((letra, index) => {
-        container.appendChild(this.renderLetra(letra, index));
+        const span = this.renderLetra(letra, index);
+        palabraDiv.appendChild(span);
       });
+      container.appendChild(palabraDiv);
     } else if ('consonante' in this.contenido && 'vocal' in this.contenido) {
       const consonantes = this.contenido.consonante;
       const vocales = this.contenido.vocal;
-      let i = 0;
-      while (i < consonantes.length) {
-        let letra = consonantes[i];
-        let combined = false;
-
-        if (i < consonantes.length - 1) {
-          const nextLetra = consonantes[i + 1];
-          if ((letra === 'c' && nextLetra === 'h') || (letra === 'l' && nextLetra === 'l') || (letra === 'r' && nextLetra === 'r') || (letra === 'c' && nextLetra === 'c') || (letra === 'q' && nextLetra === 'u')) {
-            letra += nextLetra;
-            i += 2;
-            combined = true;
-          } else {
-            i += 1;
-          }
-        } else {
-          i += 1;
-        }
-
-        container.appendChild(this.renderLetra(letra, i, combined));
-      }
-
-      vocales.split('').forEach((letra, index) => {
-        container.appendChild(this.renderLetra(letra, index, false));
+      const silabaDiv = document.createElement('div');
+      silabaDiv.className = 'flex mr-4 mb-2';
+      
+      consonantes.split('').forEach((letra, index) => {
+        const span = this.renderLetra(letra, index);
+        silabaDiv.appendChild(span);
       });
+      
+      vocales.split('').forEach((letra, index) => {
+        const span = this.renderLetra(letra, index);
+        silabaDiv.appendChild(span);
+      });
+      
+      container.appendChild(silabaDiv);
     } else {
       const errorSpan = document.createElement('span');
       errorSpan.textContent = 'Error';
@@ -246,28 +261,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Ripple effect for button clicks
   function createRipple(event) {
-  const button = event.currentTarget;
-  const rect = button.getBoundingClientRect();  // Get button's bounding box
+    const button = event.currentTarget;
+    const rect = button.getBoundingClientRect();  // Get button's bounding box
 
-  const circle = document.createElement("span");
-  const diameter = Math.max(rect.width, rect.height);
-  const radius = diameter / 2;
+    const circle = document.createElement("span");
+    const diameter = Math.max(rect.width, rect.height);
+    const radius = diameter / 2;
 
-  circle.style.width = circle.style.height = `${diameter}px`;
+    circle.style.width = circle.style.height = `${diameter}px`;
 
-  // Adjust positioning to be relative to the button itself
-  circle.style.left = `${event.clientX - rect.left - radius}px`;
-  circle.style.top = `${event.clientY - rect.top - radius}px`;
+    // Adjust positioning to be relative to the button itself
+    circle.style.left = `${event.clientX - rect.left - radius}px`;
+    circle.style.top = `${event.clientY - rect.top - radius}px`;
 
-  circle.classList.add("ripple");
+    circle.classList.add("ripple");
 
-  const ripple = button.getElementsByClassName("ripple")[0];
-  if (ripple) {
-    ripple.remove();
+    const ripple = button.getElementsByClassName("ripple")[0];
+    if (ripple) {
+      ripple.remove();
+    }
+
+    button.appendChild(circle);
   }
-
-  button.appendChild(circle);
-}
 
   const buttons = document.getElementsByTagName("button");
   for (const button of buttons) {
