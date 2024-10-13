@@ -30,10 +30,7 @@
   }
 }
 
-/* Manually added ring class (Tailwind-style) */
-.ring-4 {
-  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.7);
-}
+
 .popup {
   display: none;
   position: fixed;
