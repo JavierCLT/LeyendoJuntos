@@ -34,13 +34,6 @@ class MetodoLectura {
       window.open('https://www.linkedin.com/in/javiersz/', '_blank');
     });
 
-    // Tutorial button contour highlight effect
-    const tutorialButton = document.getElementById('tutorialButton');
-    tutorialButton.classList.add('animate-pulse');
-    
-    setTimeout(() => {
-      tutorialButton.classList.remove('animate-pulse');
-    }, 2000);
   }
 
   shareApp() {
