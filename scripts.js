@@ -319,7 +319,36 @@ class MetodoLectura {
     this.renderContenido();
     this.updateLevelButtons();
   }
-}
+document.addEventListener('DOMContentLoaded', () => {
+  const metodoLectura = new MetodoLectura();
+
+  // Tutorial button functionality
+  const tutorialButton = document.getElementById('tutorialButton');
+  const popup = document.getElementById('popup');
+  const overlay = document.getElementById('overlay');
+  const closePopup = document.getElementById('closePopup');
+
+  function showPopup() {
+    popup.style.display = 'block';
+    overlay.style.display = 'block';
+  }
+
+  function hidePopup() {
+    popup.style.display = 'none';
+    overlay.style.display = 'none';
+  }
+
+  tutorialButton.addEventListener('click', showPopup);
+  closePopup.addEventListener('click', hidePopup);
+  overlay.addEventListener('click', hidePopup);
+
+  // Highlight tutorial button on page load
+  tutorialButton.classList.add('highlight');
+  setTimeout(() => {
+    tutorialButton.classList.remove('highlight');
+  }, 2000);
+});
+
 
 // Fix the misplaced function that caused the syntax error
 function createRipple(event) {
