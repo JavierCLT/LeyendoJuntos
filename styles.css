@@ -42,7 +42,7 @@
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
     z-index: 1000;
-    max-height: 90%; /* Ensure popup height doesn't exceed the screen */
+    max-height: 80%; /* Ensure popup height doesn't exceed the screen */
     overflow-y: auto; /* Enable scrolling */
     width: 90%; /* Responsive width */
     max-width: 400px; /* Limit the max width for larger screens */
