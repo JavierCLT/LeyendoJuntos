@@ -289,8 +289,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function showPopup() {
     popup.style.display = 'block';
     overlay.style.display = 'block';
+    popup.scrollTop = 0; // Reset scroll position
     checkScrollIndicator();
     if (scrollIndicator) {
+      scrollIndicator.classList.remove('hidden');
       scrollIndicator.classList.add('bounce');
       setTimeout(() => {
         scrollIndicator.classList.remove('bounce');
