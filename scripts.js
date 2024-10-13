@@ -277,7 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const overlay = document.getElementById('overlay');
   const closePopupButton = document.getElementById('closePopup');
   const scrollIndicator = document.getElementById('scrollIndicator');
-  const tutorialButton = document.getElementById('tutorialButton');
+  
 
   function showPopup() {
     popup.style.display = 'block';
