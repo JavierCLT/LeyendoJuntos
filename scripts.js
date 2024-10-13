@@ -2,81 +2,23 @@ const colores = ['#c1121f', '#2a9d8f', '#e9c46a', '#219ebc', '#f4a261', '#e76f51
 const vocales = ['a', 'e', 'i', 'o', 'u', 'á', 'é', 'í', 'ó', 'ú'];
 let lastConsonantColor = '';  // Track the last consonant color applied
 
+// Arrays to keep track of shown words for each level
+const shownWordsLevel3 = [];
+const shownWordsLevel4 = [];
+
 const combinacionesDosLetras = {
-  vc: [
-    'al', 'an', 'ar', 'as',
-    'el', 'em', 'en', 'er', 'es',
-    'id', 'im', 'in', 'ir', 'is',
-    'ob', 'ol', 'om', 'on', 'or', 'os',
-    'ul', 'un', 'ur'
-  ],
-  cv: [
-    'ba', 'be', 'bi', 'bo', 'bu',
-    'ca', 'ce', 'ci', 'co', 'cu',
-    'da', 'de', 'di', 'do', 'du',
-    'fa', 'fe', 'fi', 'fo', 'fu',
-    'ga', 'ge', 'gi', 'go', 'gu',
-    'ha', 'he', 'hi', 'ho', 'hu',
-    'ja', 'je', 'ji', 'jo', 'ju',
-    'ka', 'ke', 'ki', 'ko', 'ku',
-    'la', 'le', 'li', 'lo', 'lu',
-    'ma', 'me', 'mi', 'mo', 'mu',
-    'na', 'ne', 'ni', 'no', 'nu',
-    'pa', 'pe', 'pi', 'po', 'pu',
-    'que', 'qui',
-    'ra', 're', 'ri', 'ro', 'ru',
-    'sa', 'se', 'si', 'so', 'su',
-    'ta', 'te', 'ti', 'to', 'tu',
-    'va', 've', 'vi', 'vo', 'vu',
-    'xa', 'xe', 'xi', 'xo', 'xu',
-    'ya', 'ye', 'yi', 'yo', 'yu',
-    'za', 'ce', 'ci', 'zo', 'zu'
-  ],
-  vv: [
-    'ai', 'au', 'ei', 'eu', 'ia', 'ie', 'io', 'iu', 'oi', 'ou', 'ua', 'ue', 'ui', 'uo'
-  ],
+  vc: ['al', 'an', 'ar', 'as', 'el', 'em', 'en', 'er', 'es', 'id', 'im', 'in', 'ir', 'is', 'ob', 'ol', 'om', 'on', 'or', 'os', 'ul', 'un', 'ur'],
+  cv: ['ba', 'be', 'bi', 'bo', 'bu', 'ca', 'ce', 'ci', 'co', 'cu', 'da', 'de', 'di', 'do', 'du', 'fa', 'fe', 'fi', 'fo', 'fu', 'ga', 'ge', 'gi', 'go', 'gu', 'ha', 'he', 'hi', 'ho', 'hu', 'ja', 'je', 'ji', 'jo', 'ju', 'ka', 'ke', 'ki', 'ko', 'ku', 'la', 'le', 'li', 'lo', 'lu', 'ma', 'me', 'mi', 'mo', 'mu', 'na', 'ne', 'ni', 'no', 'nu', 'pa', 'pe', 'pi', 'po', 'pu', 'que', 'qui', 'ra', 're', 'ri', 'ro', 'ru', 'sa', 'se', 'si', 'so', 'su', 'ta', 'te', 'ti', 'to', 'tu', 'va', 've', 'vi', 'vo', 'vu', 'xa', 'xe', 'xi', 'xo', 'xu', 'ya', 'ye', 'yi', 'yo', 'yu', 'za', 'ce', 'ci', 'zo', 'zu'],
+  vv: ['ai', 'au', 'ei', 'eu', 'ia', 'ie', 'io', 'iu', 'oi', 'ou', 'ua', 'ue', 'ui', 'uo'],
 };
 
 const combinacionesTresLetras = {
-  cvc: [
-    'sol', 'mar', 'pan', 'sal', 'luz', 'fin', 'rey', 'voz', 'pie', 'paz',
-    'té', 'cal', 'del', 'hay', 'mis', 'ver', 'oro', 'sur', 'zar',
-    'son', 'uno', 'dos', 'tres', 'muy', 'sin', 'las', 'por', 'más', 'ser',
-    'con', 'bra', 'bre', 'bri', 'bro', 'bru',
-    'cla', 'cle', 'cli', 'clo', 'clu',
-    'cra', 'cre', 'cri', 'cro', 'cru',
-    'dra', 'dre', 'dri', 'dro', 'dru',
-    'fra', 'fre', 'fri', 'fro', 'fru',
-    'gra', 'gre', 'gri', 'gro', 'gru',
-    'pla', 'ple', 'pli', 'plo', 'plu',
-    'pra', 'pre', 'pri', 'pro', 'pru',
-    'tra', 'tre', 'tri', 'tro', 'tru',
-    'bla', 'ble', 'bli', 'blo', 'blu',
-    'cha', 'che', 'chi', 'cho', 'chu',
-  ],
+  cvc: ['sol', 'mar', 'pan', 'sal', 'luz', 'fin', 'rey', 'voz', 'pie', 'paz', 'té', 'cal', 'del', 'hay', 'mis', 'ver', 'oro', 'sur', 'zar', 'son', 'uno', 'dos', 'tres', 'muy', 'sin', 'las', 'por', 'más', 'ser', 'con', 'bra', 'bre', 'bri', 'bro', 'bru', 'cla', 'cle', 'cli', 'clo', 'clu', 'cra', 'cre', 'cri', 'cro', 'cru', 'dra', 'dre', 'dri', 'dro', 'dru', 'fra', 'fre', 'fri', 'fro', 'fru', 'gra', 'gre', 'gri', 'gro', 'gru', 'pla', 'ple', 'pli', 'plo', 'plu', 'pra', 'pre', 'pri', 'pro', 'pru', 'tra', 'tre', 'tri', 'tro', 'tru', 'bla', 'ble', 'bli', 'blo', 'blu', 'cha', 'che', 'chi', 'cho', 'chu'],
 };
 
-const palabrasNivel3 = [
-  'casa', 'perro', 'gato', 'árbol', 'flor', 'sol', 'luna', 'estrella',
-  'agua', 'fuego', 'tierra', 'aire', 'libro', 'mesa', 'silla', 'cama',
-  'puerta', 'ventana', 'coche', 'bici', 'tren', 'avión', 'barco', 'pez',
-  'pájaro', 'mano', 'pie', 'ojo', 'nariz', 'boca', 'oreja', 'diente',
-  'pelo', 'brazo', 'pierna', 'dedo', 'uña', 'corazón', 'cerebro', 'hueso',
-  'rojo', 'azul', 'verde', 'amarillo', 'blanco', 'negro', 'rosa', 'naranja',
-  'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez'
-];
+const palabrasNivel3 = ['casa', 'perro', 'gato', 'árbol', 'flor', 'sol', 'luna', 'estrella', 'agua', 'fuego', 'tierra', 'aire', 'libro', 'mesa', 'silla', 'cama', 'puerta', 'ventana', 'coche', 'bici', 'tren', 'avión', 'barco', 'pez', 'pájaro', 'mano', 'pie', 'ojo', 'nariz', 'boca', 'oreja', 'diente', 'pelo', 'brazo', 'pierna', 'dedo', 'uña', 'corazón', 'cerebro', 'hueso', 'rojo', 'azul', 'verde', 'amarillo', 'blanco', 'negro', 'rosa', 'naranja', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez', 'niño', 'papel', 'lápiz', 'sopa', 'planta', 'escuela', 'calor', 'nieve', 'hoja', 'camisa', 'reloj', 'pelota', 'gafas', 'fruta'];
 
-const frasesNivel4 = [
-  'El sol brilla', 'La luna es blanca', 'El perro ladra', 'El gato maulla',
-  'La flor es roja', 'El cielo es azul', 'La casa es grande', 'El árbol es alto',
-  'El pez nada', 'El pájaro vuela', 'La niña corre', 'El niño salta',
-  'La mesa es marrón', 'La silla es verde', 'El libro es nuevo',
-  'La puerta está abierta', 'La ventana está cerrada', 'El coche es rápido',
-  'La bici es pequeña', 'El tren es largo', 'Una casa bonita',
-  'La pared es blanca', 'Un parque para niños', 'Un libro pequeño',
-  'Mi amigo se llama Adam', 'Mi padre es mayor que yo',
-  'Mis zapatos están limpios', 'La moto hace mucho ruido'
-];
+const frasesNivel4 = ['El sol brilla', 'La luna es blanca', 'El perro ladra', 'El gato maulla', 'La flor es roja', 'El cielo es azul', 'La casa es grande', 'El árbol es alto', 'El pez nada', 'El pájaro vuela', 'La niña corre', 'El niño salta', 'La mesa es marrón', 'La silla es verde', 'El libro es nuevo', 'La puerta está abierta', 'La ventana está cerrada', 'El coche es rápido', 'La bici es pequeña', 'El tren es largo', 'Una casa bonita', 'La pared es blanca', 'Un parque para niños', 'Un libro pequeño', 'Mi amigo se llama Adam', 'Mi padre es mayor que yo', 'Mis zapatos están limpios', 'La moto hace mucho ruido', 'El perro está durmiendo', 'La niña lee un libro', 'Me gusta comer manzanas', 'Vamos al parque por la tarde', 'El bebé está riendo', 'Hoy jugamos al escondite', 'juego con mi hermano', 'los sábados veo películas', 'me gusta comer tomates y fresas', 'mi camiseta es azul', 'el fútbol es un deporte'];
 
 class MetodoLectura {
   constructor() {
@@ -104,10 +46,8 @@ class MetodoLectura {
       window.open('https://www.linkedin.com/in/javiersz/', '_blank');
     });
 
-    // Tutorial button contour highlight effect
     const tutorialButton = document.getElementById('tutorialButton');
     tutorialButton.classList.add('animate-pulse');
-    
     setTimeout(() => {
       tutorialButton.classList.remove('animate-pulse');
     }, 2000);
@@ -158,8 +98,12 @@ class MetodoLectura {
     };
   }
 
+  // Function to generate content and ensure words don't repeat until all are shown
   generarContenido() {
     let siguiente;
+    let wordsArray;
+    let shownWords;
+
     try {
       switch (this.nivel) {
         case 1:
@@ -169,10 +113,14 @@ class MetodoLectura {
           siguiente = this.generarContenidoNivel2();
           break;
         case 3:
-          siguiente = { palabra: palabrasNivel3[Math.floor(Math.random() * palabrasNivel3.length)] };
+          wordsArray = palabrasNivel3;
+          shownWords = shownWordsLevel3;
+          siguiente = this.getUniqueWord(wordsArray, shownWords);
           break;
         case 4:
-          siguiente = { frase: frasesNivel4[Math.floor(Math.random() * frasesNivel4.length)] };
+          wordsArray = frasesNivel4;
+          shownWords = shownWordsLevel4;
+          siguiente = this.getUniqueWord(wordsArray, shownWords);
           break;
         default:
           siguiente = this.generarSilabaSimple();
@@ -184,6 +132,20 @@ class MetodoLectura {
 
     this.contenido = siguiente;
     this.render();
+  }
+
+  // Function to get unique words and reset when all have been shown
+  getUniqueWord(wordsArray, shownWords) {
+    if (shownWords.length === wordsArray.length) {
+      shownWords.length = 0;  // Reset the shown words
+    }
+
+    const remainingWords = wordsArray.filter(word => !shownWords.includes(word));
+    const randomWord = remainingWords[Math.floor(Math.random() * remainingWords.length)];
+
+    shownWords.push(randomWord);  // Add to shown words to avoid repetition
+
+    return { palabra: randomWord };
   }
 
   setNivel(newNivel) {
@@ -304,28 +266,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Ripple effect for button clicks
   function createRipple(event) {
-  const button = event.currentTarget;
-  const rect = button.getBoundingClientRect();  // Get button's bounding box
+    const button = event.currentTarget;
+    const rect = button.getBoundingClientRect();  // Get button's bounding box
 
-  const circle = document.createElement("span");
-  const diameter = Math.max(rect.width, rect.height);
-  const radius = diameter / 2;
+    const circle = document.createElement("span");
+    const diameter = Math.max(rect.width, rect.height);
+    const radius = diameter / 2;
 
-  circle.style.width = circle.style.height = `${diameter}px`;
+    circle.style.width = circle.style.height = `${diameter}px`;
 
-  // Adjust positioning to be relative to the button itself
-  circle.style.left = `${event.clientX - rect.left - radius}px`;
-  circle.style.top = `${event.clientY - rect.top - radius}px`;
+    // Adjust positioning to be relative to the button itself
+    circle.style.left = `${event.clientX - rect.left - radius}px`;
+    circle.style.top = `${event.clientY - rect.top - radius}px`;
 
-  circle.classList.add("ripple");
+    circle.classList.add("ripple");
 
-  const ripple = button.getElementsByClassName("ripple")[0];
-  if (ripple) {
-    ripple.remove();
+    const ripple = button.getElementsByClassName("ripple")[0];
+    if (ripple) {
+      ripple.remove();
+    }
+
+    button.appendChild(circle);
   }
-
-  button.appendChild(circle);
-}
 
   const buttons = document.getElementsByTagName("button");
   for (const button of buttons) {
