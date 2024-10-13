@@ -2,10 +2,9 @@ import { combinacionesDosLetras } from './data/combinacionesDosLetras.js';
 import { combinacionesTresLetras } from './data/combinacionesTresLetras.js';
 import { palabrasNivel3 } from './data/palabrasNivel3.js';
 import { frasesNivel4 } from './data/frasesNivel4.js';
+import { consonantColorMap } from './data/colorMap.js';
 
-const colores = ['#c1121f', '#2a9d8f', '#e9c46a', '#219ebc', '#f4a261', '#e76f51'];
 const vocales = ['a', 'e', 'i', 'o', 'u', 'á', 'é', 'í', 'ó', 'ú'];
-let lastConsonantColor = '';  // Track the last consonant color applied
 
 // Arrays to keep track of shown words for each level
 const shownWordsLevel3 = [];
@@ -15,8 +14,6 @@ class MetodoLectura {
   constructor() {
     this.nivel = 1;
     this.contenido = {};
-    this.consonantColors = {};
-    this.colorIndex = 0;
     this.uniqueConsonants = new Set();
     this.init();
   }
@@ -156,14 +153,7 @@ class MetodoLectura {
     if (!this.uniqueConsonants.has(consonant)) {
       this.uniqueConsonants.add(consonant);
     }
-
-    if (!this.consonantColors[consonant]) {
-      let newColor = colores[this.colorIndex];
-      this.colorIndex = (this.colorIndex + 1) % colores.length;
-      this.consonantColors[consonant] = newColor;
-    }
-
-    return this.consonantColors[consonant];
+    return consonantColorMap[consonant] || '#000000'; // Default to black if consonant not found
   }
 
   renderLetra(letra, index) {
