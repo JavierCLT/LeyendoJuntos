@@ -290,6 +290,12 @@ document.addEventListener('DOMContentLoaded', () => {
     popup.style.display = 'block';
     overlay.style.display = 'block';
     checkScrollIndicator();
+    if (scrollIndicator) {
+      scrollIndicator.classList.add('bounce');
+      setTimeout(() => {
+        scrollIndicator.classList.remove('bounce');
+      }, 1000);
+    }
   }
 
   // Function to hide popup
@@ -308,13 +314,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  let hasScrolled = false;
+
   if (popup) {
     popup.addEventListener('scroll', () => {
-      if (scrollIndicator) {
-        if (popup.scrollHeight - popup.scrollTop <= popup.clientHeight + 20) {
+      if (!hasScrolled) {
+        hasScrolled = true;
+        if (scrollIndicator) {
           scrollIndicator.classList.add('hidden');
-        } else {
-          scrollIndicator.classList.remove('hidden');
         }
       }
     });
@@ -328,7 +335,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
   // Event listener for tutorial button click
-  tutorialButton.addEventListener('click', showPopup);
+  tutorialButton.addEventListener('click', () => {
+    hasScrolled = false;
+    showPopup();
+  });
 
   // Event listener for closing the popup
   closePopupButton.addEventListener('click', hidePopup);
