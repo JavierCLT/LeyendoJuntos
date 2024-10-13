@@ -202,69 +202,59 @@ class MetodoLectura {
     return span;
   }
 
+ rendercontenido the last time it worked well:
  renderContenido() {
-  const container = document.getElementById('contenidoContainer');
-  container.innerHTML = '';
-  container.className = 'flex flex-wrap justify-center items-center';
+    const container = document.getElementById('contenidoContainer');
+    container.innerHTML = '';
+    container.className = 'flex flex-wrap justify-center items-center';
 
-  if ('frase' in this.contenido) {
-    // Handling phrases
-    this.contenido.frase.split(' ').forEach((palabra, wordIndex) => {
-      const palabraDiv = document.createElement('div');
-      palabraDiv.className = 'flex mr-4 mb-2'; // Add flex to palabra div
-      palabra.split('').forEach((letra, letraIndex) => {
-        const letraSpan = this.renderLetra(letra, letraIndex);
-        palabraDiv.appendChild(letraSpan);
+    if ('frase' in this.contenido) {
+      this.contenido.frase.split(' ').forEach((palabra, idx) => {
+        const palabraDiv = document.createElement('div');
+        palabraDiv.className = 'flex mr-4 mb-2';
+        palabra.split('').forEach((letra, letraIdx, arr) => {
+          palabraDiv.appendChild(this.renderLetra(letra, letraIdx, letraIdx === arr.length - 1));
+        });
+        container.appendChild(palabraDiv);
       });
-      container.appendChild(palabraDiv);
-    });
-  } else if ('palabra' in this.contenido) {
-    // Handling single words
-    const palabraDiv = document.createElement('div');
-    palabraDiv.className = 'flex'; // Add flex to palabra div
-    this.contenido.palabra.split('').forEach((letra, index) => {
-      const letraSpan = this.renderLetra(letra, index);
-      palabraDiv.appendChild(letraSpan);
-    });
-    container.appendChild(palabraDiv);
-  } else if ('consonante' in this.contenido && 'vocal' in this.contenido) {
-    // Handling syllables (no changes needed here)
-    const consonantes = this.contenido.consonante;
-    const vocales = this.contenido.vocal;
-    let i = 0;
-    while (i < consonantes.length) {
-      let letra = consonantes[i];
-      let combined = false;
+    } else if ('palabra' in this.contenido) {
+      this.contenido.palabra.split('').forEach((letra, index) => {
+        container.appendChild(this.renderLetra(letra, index));
+      });
+    } else if ('consonante' in this.contenido && 'vocal' in this.contenido) {
+      const consonantes = this.contenido.consonante;
+      const vocales = this.contenido.vocal;
+      let i = 0;
+      while (i < consonantes.length) {
+        let letra = consonantes[i];
+        let combined = false;
 
-      if (i < consonantes.length - 1) {
-        const nextLetra = consonantes[i + 1];
-        if ((letra === 'c' && nextLetra === 'h') || (letra === 'l' && nextLetra === 'l') || (letra === 'r' && nextLetra === 'r') || (letra === 'c' && nextLetra === 'c') || (letra === 'q' && nextLetra === 'u')) {
-          letra += nextLetra;
-          i += 2;
-          combined = true;
+        if (i < consonantes.length - 1) {
+          const nextLetra = consonantes[i + 1];
+          if ((letra === 'c' && nextLetra === 'h') || (letra === 'l' && nextLetra === 'l') || (letra === 'r' && nextLetra === 'r') || (letra === 'c' && nextLetra === 'c') || (letra === 'q' && nextLetra === 'u')) {
+            letra += nextLetra;
+            i += 2;
+            combined = true;
+          } else {
+            i += 1;
+          }
         } else {
           i += 1;
         }
-      } else {
-        i += 1;
+
+        container.appendChild(this.renderLetra(letra, i, combined));
       }
 
-      container.appendChild(this.renderLetra(letra, i, combined));
+      vocales.split('').forEach((letra, index) => {
+        container.appendChild(this.renderLetra(letra, index, false));
+      });
+    } else {
+      const errorSpan = document.createElement('span');
+      errorSpan.textContent = 'Error';
+      errorSpan.className = 'text-3xl text-red-500';
+      container.appendChild(errorSpan);
     }
-
-    vocales.split('').forEach((letra, index) => {
-      container.appendChild(this.renderLetra(letra, index, false));
-    });
-  } else {
-    const errorSpan = document.createElement('span');
-    errorSpan.textContent = 'Error';
-    errorSpan.className = 'text-3xl text-red-500';
-    container.appendChild(errorSpan);
   }
-}
-
-
-
 
   render() {
     this.renderContenido();
