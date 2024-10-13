@@ -284,8 +284,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const overlay = document.getElementById('overlay');
   const closePopupButton = document.getElementById('closePopup');
   const scrollIndicator = document.getElementById('scrollIndicator');
+  const tutorialButton = document.getElementById('tutorialButton');
 
-  // Function to show popup
   function showPopup() {
     popup.style.display = 'block';
     overlay.style.display = 'block';
@@ -300,32 +300,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Function to hide popup
   function hidePopup() {
     popup.style.display = 'none';
     overlay.style.display = 'none';
   }
 
   function checkScrollIndicator() {
-    if (scrollIndicator && popup) {
-      if (popup.scrollHeight > popup.clientHeight) {
-        scrollIndicator.classList.remove('hidden');
-      } else {
-        scrollIndicator.classList.add('hidden');
-      }
-    }
-  }
-
-  if (popup && scrollIndicator) {
-    popup.addEventListener('scroll', () => {
-      // Hide the indicator after scrolling 50 pixels
-      if (popup.scrollTop > 5) {
-        scrollIndicator.classList.add('hidden');
-      } else {
-        scrollIndicator.classList.remove('hidden');
-      }
-    });
-  }function checkScrollIndicator() {
     if (scrollIndicator && popup) {
       if (popup.scrollHeight > popup.clientHeight && popup.scrollTop < 5) {
         scrollIndicator.classList.remove('hidden');
@@ -336,27 +316,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (popup && scrollIndicator) {
-    popup.addEventListener('scroll', () => {
-      checkScrollIndicator();
-    });
+    popup.addEventListener('scroll', checkScrollIndicator);
   }
 
-  popup.addEventListener('scroll', () => {
-    if (popup.scrollHeight - popup.scrollTop <= popup.clientHeight + 20) {
-      scrollIndicator.classList.add('hidden');
-    } else {
-      scrollIndicator.classList.remove('hidden');
-    }
-  });
-  // Event listener for tutorial button click
   tutorialButton.addEventListener('click', showPopup);
-
-  // Event listener for closing the popup
   closePopupButton.addEventListener('click', hidePopup);
-
-  // Hide popup if overlay is clicked
   overlay.addEventListener('click', hidePopup);
   
-  // Check scroll indicator on window resize
   window.addEventListener('resize', checkScrollIndicator);
 });
