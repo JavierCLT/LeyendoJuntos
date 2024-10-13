@@ -333,5 +333,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
   setTimeout(() => {
     tutorialButton.classList.remove('highlight');
-  }, 2000);
+  }, 1000);
+
+  // Show/Hide Popup logic
+  const popup = document.getElementById('popup');
+  const overlay = document.getElementById('overlay');
+  const closePopupButton = document.getElementById('closePopup');
+
+  // Function to show popup
+  function showPopup() {
+    popup.style.display = 'block';
+    overlay.style.display = 'block';
+  }
+
+  // Function to hide popup
+  function hidePopup() {
+    popup.style.display = 'none';
+    overlay.style.display = 'none';
+  }
+
+  // Event listener for tutorial button click
+  tutorialButton.addEventListener('click', showPopup);
+
+  // Event listener for closing the popup
+  closePopupButton.addEventListener('click', hidePopup);
+
+  // Hide popup if overlay is clicked
+  overlay.addEventListener('click', hidePopup);
 });
