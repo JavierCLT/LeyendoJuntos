@@ -203,52 +203,61 @@ class MetodoLectura {
   }
 
   renderContenido() {
-    const container = document.getElementById('contenidoContainer');
-    container.innerHTML = '';
-    container.className = 'flex flex-wrap justify-center items-center';
-    
-    if ('frase' in this.contenido) {
-      this.contenido.frase.split(' ').forEach((palabra, idx) => {
-        const palabraDiv = document.createElement('div');
-        palabraDiv.className = 'flex mr-4 mb-2'; // adds spacing between words
-        palabra.split('').forEach((letra, letraIdx, arr) => {
-          const span = this.renderLetra(letra, letraIdx);
-          palabraDiv.appendChild(span);
-        });
-        container.appendChild(palabraDiv);
-      });
-    } else if ('palabra' in this.contenido) {
+  const container = document.getElementById('contenidoContainer');
+  container.innerHTML = '';
+  container.className = 'flex flex-wrap justify-center items-center';
+
+  if ('frase' in this.contenido) {
+    this.contenido.frase.split(' ').forEach((palabra, idx) => {
       const palabraDiv = document.createElement('div');
-      palabraDiv.className = 'flex mr-4 mb-2'; // adds spacing between letters in single word
-      this.contenido.palabra.split('').forEach((letra, index) => {
-        const span = this.renderLetra(letra, index);
-        palabraDiv.appendChild(span);
+      palabraDiv.className = 'flex mr-4 mb-2';
+      palabra.split('').forEach((letra, letraIdx, arr) => {
+        palabraDiv.appendChild(this.renderLetra(letra, letraIdx, letraIdx === arr.length - 1));
       });
       container.appendChild(palabraDiv);
-    } else if ('consonante' in this.contenido && 'vocal' in this.contenido) {
-      const consonantes = this.contenido.consonante;
-      const vocales = this.contenido.vocal;
-      const silabaDiv = document.createElement('div');
-      silabaDiv.className = 'flex mr-4 mb-2';
-      
-      consonantes.split('').forEach((letra, index) => {
-        const span = this.renderLetra(letra, index);
-        silabaDiv.appendChild(span);
-      });
-      
-      vocales.split('').forEach((letra, index) => {
-        const span = this.renderLetra(letra, index);
-        silabaDiv.appendChild(span);
-      });
-      
-      container.appendChild(silabaDiv);
-    } else {
-      const errorSpan = document.createElement('span');
-      errorSpan.textContent = 'Error';
-      errorSpan.className = 'text-3xl text-red-500';
-      container.appendChild(errorSpan);
+    });
+  } else if ('palabra' in this.contenido) {
+    const palabraDiv = document.createElement('div');
+    palabraDiv.className = 'flex mr-4 mb-2';
+    this.contenido.palabra.split('').forEach((letra, index) => {
+      palabraDiv.appendChild(this.renderLetra(letra, index));
+    });
+    container.appendChild(palabraDiv);
+  } else if ('consonante' in this.contenido && 'vocal' in this.contenido) {
+    const consonantes = this.contenido.consonante;
+    const vocales = this.contenido.vocal;
+    let i = 0;
+    while (i < consonantes.length) {
+      let letra = consonantes[i];
+      let combined = false;
+
+      if (i < consonantes.length - 1) {
+        const nextLetra = consonantes[i + 1];
+        if ((letra === 'c' && nextLetra === 'h') || (letra === 'l' && nextLetra === 'l') || (letra === 'r' && nextLetra === 'r') || (letra === 'c' && nextLetra === 'c') || (letra === 'q' && nextLetra === 'u')) {
+          letra += nextLetra;
+          i += 2;
+          combined = true;
+        } else {
+          i += 1;
+        }
+      } else {
+        i += 1;
+      }
+
+      container.appendChild(this.renderLetra(letra, i, combined));
     }
+
+    vocales.split('').forEach((letra, index) => {
+      container.appendChild(this.renderLetra(letra, index, false));
+    });
+  } else {
+    const errorSpan = document.createElement('span');
+    errorSpan.textContent = 'Error';
+    errorSpan.className = 'text-3xl text-red-500';
+    container.appendChild(errorSpan);
   }
+}
+
 
   render() {
     this.renderContenido();
