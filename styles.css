@@ -94,10 +94,13 @@
   bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
-  animation: bounce 1s infinite;
   color: #888;
   opacity: 1;
   transition: opacity 0.3s ease;
+}
+
+.scroll-indicator.bounce {
+  animation: bounce 1s;
 }
 
 @keyframes bounce {
