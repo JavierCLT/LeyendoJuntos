@@ -129,17 +129,17 @@ class MetodoLectura {
   }
 
   updateLevelButtons() {
-    document.querySelectorAll('.level-button').forEach(button => {
-      const buttonLevel = parseInt(button.dataset.level);
-      if (buttonLevel === this.nivel) {
-        button.classList.remove('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
-        button.classList.add('bg-green-500', 'hover:bg-green-600', 'text-white');
-      } else {
-        button.classList.remove('bg-green-500', 'hover:bg-green-600', 'text-white');
-        button.classList.add('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
-      }
-    });
-  }
+  document.querySelectorAll('.level-button').forEach((button, index) => {
+    const level = index + 1;
+    if (level === this.nivel) {
+      button.classList.remove(`bg-gray-200`, `hover:bg-gray-300`);
+      button.classList.add(`bg-nivel-${level}`, `hover:bg-nivel-${level}`);
+    } else {
+      button.classList.remove(`bg-nivel-${level}`, `hover:bg-nivel-${level}`);
+      button.classList.add(`bg-gray-200`, `hover:bg-gray-300`);
+    }
+  });
+}
 
   getConsonantColor(consonant) {
     consonant = consonant.toLowerCase();
