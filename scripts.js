@@ -126,11 +126,11 @@ class MetodoLectura {
         });
     }
   }
-
-  generarSilabaSimple() {
+generarSilabaSimple() {
     const tipos = ['vc', 'cv', 'vv'];
     const tipoAleatorio = tipos[Math.floor(Math.random() * tipos.length)];
     const combinaciones = combinacionesDosLetras[tipoAleatorio];
+
     const combinacionAleatoria = combinaciones[Math.floor(Math.random() * combinaciones.length)];
 
     if (tipoAleatorio === 'vc') {
@@ -143,10 +143,11 @@ class MetodoLectura {
   }
 
   generarContenidoNivel2() {
-    const combinacionAleatoria = combinacionesTresLetras.cvc[Math.floor(Math.random() * combinacionesTresLetras.cvc.length)];
+    const combinaciones = combinacionesTresLetras.cvc;
+    const combinacionAleatoria = combinaciones[Math.floor(Math.random() * combinaciones.length)];
     return {
       consonante: combinacionAleatoria.slice(0, -1),
-      vocal: combinacionAleatoria.slice(-1)
+      vocal: combinacionAleatoria.slice(-1),
     };
   }
 
@@ -173,15 +174,20 @@ class MetodoLectura {
       console.error("Error generando contenido:", error);
       siguiente = { consonante: 'e', vocal: 'r' };
     }
-
     this.contenido = siguiente;
     this.render();
   }
 
   setNivel(newNivel) {
     this.nivel = newNivel;
+    this.updateMarginForNivel();
     this.generarContenido();
     this.updateLevelButtons();
+  }
+
+  updateMarginForNivel() {
+    const contenidoContainer = document.getElementById('contenidoContainer');
+    contenidoContainer.style.marginLeft = this.nivel === 4 ? '2em' : '0';
   }
 
   updateLevelButtons() {
@@ -202,33 +208,28 @@ class MetodoLectura {
     if (!this.uniqueConsonants.has(consonant)) {
       this.uniqueConsonants.add(consonant);
     }
-
     if (!this.consonantColors[consonant]) {
       let newColor = colores[this.colorIndex];
       this.colorIndex = (this.colorIndex + 1) % colores.length;
       this.consonantColors[consonant] = newColor;
+      lastConsonantColor = newColor;
     }
-
     return this.consonantColors[consonant];
   }
 
-  renderLetra(letra, index) {
+  renderLetra(letra, index, isCombined = false) {
     const span = document.createElement('span');
     span.textContent = letra;
     const isConsonant = !vocales.includes(letra.toLowerCase());
-
-    if (isConsonant) {
-      span.style.color = this.getConsonantColor(letra.toLowerCase());
-    } else {
-      span.style.color = 'black';
-    }
-
+    span.style.color = isConsonant ? this.getConsonantColor(letra.toLowerCase()) : 'black';
     span.classList.add('inline-block', 'font-bold');
-    const sizeClass = this.nivel === 1 ? 'text-6xl' :
-      this.nivel === 2 ? 'text-5xl' :
-        this.nivel === 3 ? 'text-4xl' : 'text-3xl';
+    if (isCombined && this.nivel === 4) {
+      span.classList.add('mr-4');
+    }
+    const sizeClass = this.nivel === 1 ? 'text-6xl' : 
+                      this.nivel === 2 ? 'text-5xl' : 
+                      this.nivel === 3 ? 'text-4xl' : 'text-3xl';
     span.classList.add(sizeClass);
-
     return span;
   }
 
@@ -257,10 +258,15 @@ class MetodoLectura {
       while (i < consonantes.length) {
         let letra = consonantes[i];
         let combined = false;
-
         if (i < consonantes.length - 1) {
           const nextLetra = consonantes[i + 1];
-          if ((letra === 'c' && nextLetra === 'h') || (letra === 'l' && nextLetra === 'l') || (letra === 'r' && nextLetra === 'r') || (letra === 'c' && nextLetra === 'c') || (letra === 'q' && nextLetra === 'u')) {
+          if (
+            (letra === 'c' && nextLetra === 'h') || 
+            (letra === 'l' && nextLetra === 'l') ||
+            (letra === 'r' && nextLetra === 'r') ||
+            (letra === 'c' && nextLetra === 'c') ||
+            (letra === 'q' && nextLetra === 'u')
+          ) {
             letra += nextLetra;
             i += 2;
             combined = true;
@@ -270,10 +276,8 @@ class MetodoLectura {
         } else {
           i += 1;
         }
-
         container.appendChild(this.renderLetra(letra, i, combined));
       }
-
       vocales.split('').forEach((letra, index) => {
         container.appendChild(this.renderLetra(letra, index, false));
       });
@@ -294,28 +298,51 @@ class MetodoLectura {
 document.addEventListener('DOMContentLoaded', () => {
   const metodoLectura = new MetodoLectura();
 
-  // Ripple effect for button clicks
-  function createRipple(event) {
-    const button = event.currentTarget;
-    const circle = document.createElement("span");
-    const diameter = Math.max(button.clientWidth, button.clientHeight);
-    const radius = diameter / 2;
+  // Tutorial button functionality
+  const tutorialButton = document.getElementById('tutorialButton');
+  const popup = document.getElementById('popup');
+  const overlay = document.getElementById('overlay');
+  const closePopup = document.getElementById('closePopup');
 
-    circle.style.width = circle.style.height = `${diameter}px`;
-    circle.style.left = `${event.clientX - button.offsetLeft - radius}px`;
-    circle.style.top = `${event.clientY - button.offsetTop - radius}px`;
-    circle.classList.add("ripple");
-
-    const ripple = button.getElementsByClassName("ripple")[0];
-    if (ripple) {
-      ripple.remove();
-    }
-
-    button.appendChild(circle);
+  function showPopup() {
+    popup.style.display = 'block';
+    overlay.style.display = 'block';
   }
 
+  function hidePopup() {
+    popup.style.display = 'none';
+    overlay.style.display = 'none';
+  }
+
+  tutorialButton.addEventListener('click', showPopup);
+  closePopup.addEventListener('click', hidePopup);
+  overlay.addEventListener('click', hidePopup);
+
+  // Highlight tutorial button on page load
+  tutorialButton.classList.add('highlight');
+  setTimeout(() => {
+    tutorialButton.classList.remove('highlight');
+  }, 2000);
+
+  // Add ripple effect to all buttons
   const buttons = document.getElementsByTagName("button");
   for (const button of buttons) {
     button.addEventListener("click", createRipple);
   }
 });
+
+function createRipple(event) {
+  const button = event.currentTarget;
+  const circle = document.createElement("span");
+  const diameter = Math.max(button.clientWidth, button.clientHeight);
+  const radius = diameter / 2;
+  circle.style.width = circle.style.height = `${diameter}px`;
+  circle.style.left = `${event.clientX - button.offsetLeft - radius}px`;
+  circle.style.top = `${event.clientY - button.offsetTop - radius}px`;
+  circle.classList.add("ripple");
+  const ripple = button.getElementsByClassName("ripple")[0];
+  if (ripple) {
+    ripple.remove();
+  }
+  button.appendChild(circle);
+}
