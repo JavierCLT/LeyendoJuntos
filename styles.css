@@ -39,11 +39,11 @@
   transform: translate(-50%, -50%);
   background-color: white;
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 15px; /* More rounded corners */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
-  width: 80%; /* Adjust this value to widen the box */
-  max-width: 600px; /* You can also add a max-width to limit the expansion */
+  width: 80%;
+  max-width: 600px;
 }
 
 .overlay {
@@ -55,4 +55,17 @@
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 999;
+}
+
+#closePopup {
+  display: block; /* Ensure the button is block-level for centering */
+  background-color: #3b82f6; /* Button color */
+  color: white;
+  padding: 10px 20px; /* Adjust for desired padding */
+  border-radius: 12px; /* Round the button */
+  font-weight: bold;
+  text-align: center;
+  margin: 20px auto 0 auto; /* Center the button and add some margin at the top */
+  cursor: pointer;
+  width: fit-content; /* Ensures the button width adjusts to its content */
 }
