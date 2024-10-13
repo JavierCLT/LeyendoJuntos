@@ -111,10 +111,10 @@ class MetodoLectura {
           siguiente = this.generarContenidoNivel2();
           break;
         case 3:
-          siguiente = { palabra: palabrasNivel3[Math.floor(Math.random() * palabrasNivel3.length)] };
+          siguiente = this.getUniqueWord(palabrasNivel3, shownWordsLevel3);
           break;
         case 4:
-          siguiente = { frase: frasesNivel4[Math.floor(Math.random() * frasesNivel4.length)] };
+          siguiente = this.getUniqueWord(frasesNivel4, shownWordsLevel4);
           break;
         default:
           siguiente = this.generarSilabaSimple();
@@ -126,6 +126,19 @@ class MetodoLectura {
 
     this.contenido = siguiente;
     this.render();
+  }
+
+  getUniqueWord(wordsArray, shownWords) {
+    if (shownWords.length === wordsArray.length) {
+      shownWords.length = 0; // Reset the shown words list
+    }
+
+    let availableWords = wordsArray.filter(word => !shownWords.includes(word));
+    let randomWord = availableWords[Math.floor(Math.random() * availableWords.length)];
+    
+    shownWords.push(randomWord);
+
+    return this.nivel === 3 ? { palabra: randomWord } : { frase: randomWord };
   }
 
   setNivel(newNivel) {
@@ -197,9 +210,12 @@ class MetodoLectura {
         container.appendChild(palabraDiv);
       });
     } else if ('palabra' in this.contenido) {
+      const palabraDiv = document.createElement('div');
+      palabraDiv.className = 'flex';
       this.contenido.palabra.split('').forEach((letra, index) => {
-        container.appendChild(this.renderLetra(letra, index));
+        palabraDiv.appendChild(this.renderLetra(letra, index));
       });
+      container.appendChild(palabraDiv);
     } else if ('consonante' in this.contenido && 'vocal' in this.contenido) {
       const consonantes = this.contenido.consonante;
       const vocales = this.contenido.vocal;
