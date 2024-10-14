@@ -19,6 +19,7 @@ class MetodoLectura {
     this.level1PoolSize = 20;
     this.shownCombinationsLevel2 = [];
     this.init();
+    this.currentLevel = null; // Add this line
   }
 
   init() {
@@ -192,9 +193,12 @@ class MetodoLectura {
   }
 
   setNivel(newNivel) {
-    this.nivel = newNivel;
-    this.generarContenido();
-    this.updateLevelButtons();
+    if (this.currentLevel !== newNivel) {
+      this.nivel = newNivel;
+      this.currentLevel = newNivel;
+      this.generarContenido();
+      this.updateLevelButtons();
+    }
   }
 
   updateLevelButtons() {
@@ -381,9 +385,24 @@ document.addEventListener('DOMContentLoaded', () => {
     popup.addEventListener('scroll', checkScrollIndicator);
   }
 
+  // This to disable double-tap zoom on mobile
+  document.addEventListener('touchstart', function(event) {
+    if (event.touches.length > 1) {
+      event.preventDefault();
+    }
+  }, { passive: false });
+
+  let lastTouchEnd = 0;
+  document.addEventListener('touchend', function(event) {
+    const now = (new Date()).getTime();
+    if (now - lastTouchEnd <= 300) {
+      event.preventDefault();
+    }
+    lastTouchEnd = now;
+  }, false);
+  
   tutorialButton.addEventListener('click', showPopup);
   closePopupButton.addEventListener('click', hidePopup);
   overlay.addEventListener('click', hidePopup);
-  
   window.addEventListener('resize', checkScrollIndicator);
 });
