@@ -17,6 +17,8 @@ class MetodoLectura {
     this.uniqueConsonants = new Set();
     this.init();
     this.shownCombinationsLevel1 = [];
+    this.level1Pool = [];
+    this.level1PoolSize = 30; // Adjust this number as needed
     this.shownCombinationsLevel2 = [];
   }
 
@@ -88,7 +90,7 @@ class MetodoLectura {
     try {
       switch (this.nivel) {
         case 1:
-          siguiente = this.getUniqueCombination(this.generarSilabaSimple, this.shownCombinationsLevel1, this.getAllPossibleLevel1Combinations());
+          siguiente = this.getUniqueLevel1Combination();
           break;
         case 2:
           siguiente = this.getUniqueCombination(this.generarContenidoNivel2, this.shownCombinationsLevel2, combinacionesTresLetras.cvc);
@@ -111,24 +113,25 @@ class MetodoLectura {
     this.render();
   }
 
-  getUniqueCombination(generatorFunction, shownCombinations, allPossibleCombinations) {
-    if (shownCombinations.length === allPossibleCombinations.length) {
-      shownCombinations.length = 0; // Reset the shown combinations list
+  getUniqueLevel1Combination() {
+    if (this.level1Pool.length === 0) {
+      this.refreshLevel1Pool();
     }
-
-    let combination;
-    do {
-      combination = generatorFunction.call(this);
-    } while (this.combinationExists(combination, shownCombinations));
-
-    shownCombinations.push(combination);
+    const combination = this.level1Pool.pop();
     return combination;
   }
 
-  combinationExists(combination, shownCombinations) {
-    return shownCombinations.some(shown => 
-      shown.consonante === combination.consonante && shown.vocal === combination.vocal
-    );
+  refreshLevel1Pool() {
+    const allCombinations = this.getAllPossibleLevel1Combinations();
+    this.level1Pool = this.shuffleArray(allCombinations).slice(0, this.level1PoolSize);
+  }
+
+  shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
   }
 
   getAllPossibleLevel1Combinations() {
