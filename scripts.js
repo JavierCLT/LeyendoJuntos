@@ -132,11 +132,11 @@ class MetodoLectura {
   document.querySelectorAll('.level-button').forEach((button, index) => {
     const level = index + 1;
     if (level === this.nivel) {
-      button.classList.remove(`bg-gray-200`, `hover:bg-gray-300`);
-      button.classList.add(`bg-nivel-${level}`, `hover:bg-nivel-${level}`);
+      button.classList.remove('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
+      button.classList.add(`active-nivel-${level}`, 'text-nivel');
     } else {
-      button.classList.remove(`bg-nivel-${level}`, `hover:bg-nivel-${level}`);
-      button.classList.add(`bg-gray-200`, `hover:bg-gray-300`);
+      button.classList.remove(`active-nivel-${level}`, 'text-nivel');
+      button.classList.add('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
     }
   });
 }
