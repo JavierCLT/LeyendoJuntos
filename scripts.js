@@ -23,6 +23,7 @@ class MetodoLectura {
   }
 
   init() {
+    this.refreshLevel1Pool();  // Populate the level1Pool initially
     this.generarContenido();
     this.setupEventListeners();
     this.render();
@@ -117,8 +118,7 @@ class MetodoLectura {
     if (this.level1Pool.length === 0) {
       this.refreshLevel1Pool();
     }
-    const combination = this.level1Pool.pop();
-    return combination;
+    return this.level1Pool.pop();
   }
 
   refreshLevel1Pool() {
