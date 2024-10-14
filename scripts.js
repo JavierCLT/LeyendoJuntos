@@ -15,11 +15,11 @@ class MetodoLectura {
     this.nivel = 1;
     this.contenido = {};
     this.uniqueConsonants = new Set();
+    this.shownCombinationsLevel1 = [];
     this.level1Pool = [];
-    this.level1PoolSize = 20;
+    this.level1PoolSize = 30;
     this.shownCombinationsLevel2 = [];
     this.init();
-    this.currentLevel = null; // Add this line
   }
 
   init() {
@@ -39,7 +39,6 @@ class MetodoLectura {
     document.getElementById('contactButton').addEventListener('click', () => {
       window.open('https://www.linkedin.com/in/javiersz/', '_blank');
     });
-
   }
 
   shareApp() {
@@ -193,26 +192,25 @@ class MetodoLectura {
   }
 
   setNivel(newNivel) {
-    if (this.currentLevel !== newNivel) {
+    if (this.nivel !== newNivel) {
       this.nivel = newNivel;
-      this.currentLevel = newNivel;
       this.generarContenido();
       this.updateLevelButtons();
     }
   }
 
   updateLevelButtons() {
-  document.querySelectorAll('.level-button').forEach((button, index) => {
-    const level = index + 1;
-    if (level === this.nivel) {
-      button.classList.remove('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
-      button.classList.add(`active-nivel-${level}`, 'text-nivel');
-    } else {
-      button.classList.remove(`active-nivel-${level}`, 'text-nivel');
-      button.classList.add('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
-    }
-  });
-}
+    document.querySelectorAll('.level-button').forEach((button, index) => {
+      const level = index + 1;
+      if (level === this.nivel) {
+        button.classList.remove('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
+        button.classList.add(`active-nivel-${level}`, 'text-nivel');
+      } else {
+        button.classList.remove(`active-nivel-${level}`, 'text-nivel');
+        button.classList.add('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
+      }
+    });
+  }
 
   getConsonantColor(consonant) {
     consonant = consonant.toLowerCase();
@@ -394,7 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let lastTouchEnd = 0;
   document.addEventListener('touchend', function(event) {
-    const now = (new Date()).getTime();
+    const now = Date.now();
     if (now - lastTouchEnd <= 300) {
       event.preventDefault();
     }
