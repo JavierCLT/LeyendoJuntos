@@ -160,3 +160,19 @@
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity)); /* White text */
 }
+
+.nivel-1 {
+  color: #22c55e; /* Nivel 1 color */
+}
+
+.nivel-2 {
+  color: #ded41f; /* Nivel 2 color */
+}
+
+.nivel-3 {
+  color: #f59918; /* Nivel 3 color */
+}
+
+.nivel-4 {
+  color: #e02c0d; /* Nivel 4 color */
+}
