@@ -130,7 +130,7 @@
 
 .active-nivel-2 {
   --tw-bg-opacity: 1;
-  background-color: rgb(197 189 34 / var(--tw-bg-opacity)); /* #c5bd22 */
+  background-color: rgb(222 212 31 / var(--tw-bg-opacity)); /* #c5bd22 */
 }
 .active-nivel-2:hover {
   --tw-bg-opacity: 1;
@@ -139,7 +139,7 @@
 
 .active-nivel-3 {
   --tw-bg-opacity: 1;
-  background-color: rgb(197 129 34 / var(--tw-bg-opacity)); /* #c58122 */
+  background-color: rgb(245 153 24 / var(--tw-bg-opacity)); /* #c58122 */
 }
 .active-nivel-3:hover {
   --tw-bg-opacity: 1;
@@ -148,7 +148,7 @@
 
 .active-nivel-4 {
   --tw-bg-opacity: 1;
-  background-color: rgb(176 53 32 / var(--tw-bg-opacity)); /* #b03520 */
+  background-color: rgb(224 44 13 / var(--tw-bg-opacity)); /* #b03520 */
 }
 .active-nivel-4:hover {
   --tw-bg-opacity: 1;
