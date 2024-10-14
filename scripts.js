@@ -16,6 +16,8 @@ class MetodoLectura {
     this.contenido = {};
     this.uniqueConsonants = new Set();
     this.init();
+    this.shownCombinationsLevel1 = [];
+    this.shownCombinationsLevel2 = [];
   }
 
   init() {
@@ -86,10 +88,10 @@ class MetodoLectura {
     try {
       switch (this.nivel) {
         case 1:
-          siguiente = this.generarSilabaSimple();
+          siguiente = this.getUniqueCombination(this.generarSilabaSimple, this.shownCombinationsLevel1, this.getAllPossibleLevel1Combinations());
           break;
         case 2:
-          siguiente = this.generarContenidoNivel2();
+          siguiente = this.getUniqueCombination(this.generarContenidoNivel2, this.shownCombinationsLevel2, combinacionesTresLetras.cvc);
           break;
         case 3:
           siguiente = this.getUniqueWord(palabrasNivel3, shownWordsLevel3);
@@ -109,6 +111,40 @@ class MetodoLectura {
     this.render();
   }
 
+  getUniqueCombination(generatorFunction, shownCombinations, allPossibleCombinations) {
+    if (shownCombinations.length === allPossibleCombinations.length) {
+      shownCombinations.length = 0; // Reset the shown combinations list
+    }
+
+    let combination;
+    do {
+      combination = generatorFunction.call(this);
+    } while (this.combinationExists(combination, shownCombinations));
+
+    shownCombinations.push(combination);
+    return combination;
+  }
+
+  combinationExists(combination, shownCombinations) {
+    return shownCombinations.some(shown => 
+      shown.consonante === combination.consonante && shown.vocal === combination.vocal
+    );
+  }
+
+  getAllPossibleLevel1Combinations() {
+    const allCombinations = [];
+    for (const type in combinacionesDosLetras) {
+      combinacionesDosLetras[type].forEach(combo => {
+        if (type === 'vc') {
+          allCombinations.push({ consonante: combo[1], vocal: combo[0] });
+        } else {
+          allCombinations.push({ consonante: combo[0], vocal: combo[1] });
+        }
+      });
+    }
+    return allCombinations;
+  }
+  
   getUniqueWord(wordsArray, shownWords) {
     if (shownWords.length === wordsArray.length) {
       shownWords.length = 0; // Reset the shown words list
