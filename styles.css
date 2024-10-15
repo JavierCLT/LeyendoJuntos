@@ -167,3 +167,6 @@ button {
   touch-action: manipulation;
 }
 
+button.level-button {
+  touch-action: manipulation;
+}
