@@ -47,6 +47,9 @@ class MetodoLectura {
         event.preventDefault(); // Prevent zoom
       }
     }, { passive: false });
+    button.addEventListener('dblclick', (event) => {
+  event.preventDefault(); // Prevent zooming
+    });
   });
 
   document.getElementById('shareButton').addEventListener('click', () => this.shareApp());
