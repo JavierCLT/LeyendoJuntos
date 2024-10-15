@@ -20,6 +20,7 @@ class MetodoLectura {
     this.level1Pool = [];
     this.level1PoolSize = 30; // Adjust this number as needed
     this.shownCombinationsLevel2 = [];
+    this.clickCooldown = false; // To prevent rapid clicks
   }
 
   init() {
@@ -32,15 +33,21 @@ class MetodoLectura {
   setupEventListeners() {
     document.getElementById('nextButton').addEventListener('click', () => this.generarContenido());
   
-  // Update level when level buttons are clicked, but do not generate content
-  document.querySelectorAll('.level-button').forEach(button => {
-    button.addEventListener('click', (e) => this.setNivel(parseInt(e.target.dataset.level)));
-  });
+    // Update level when level buttons are clicked, but do not generate content
+    document.querySelectorAll('.level-button').forEach(button => {
+      button.addEventListener('click', (e) => {
+        if (!this.clickCooldown) {
+          this.setNivel(parseInt(e.target.dataset.level));
+          this.clickCooldown = true;
+          setTimeout(() => { this.clickCooldown = false; }, 500); // Add a cooldown to prevent fast double-clicks
+        }
+      });
+    });
+    
     document.getElementById('shareButton').addEventListener('click', () => this.shareApp());
     document.getElementById('contactButton').addEventListener('click', () => {
       window.open('https://www.linkedin.com/in/javiersz/', '_blank');
     });
-
   }
 
   shareApp() {
@@ -89,57 +96,57 @@ class MetodoLectura {
   }
 
   generarContenido() {
-  let siguiente;
-  try {
-    switch (this.nivel) {
-      case 1:
-        siguiente = this.getUniqueLevel1Combination();
-        break;
-      case 2:
-        siguiente = this.getUniqueCombination(this.generarContenidoNivel2, this.shownCombinationsLevel2, combinacionesTresLetras.cvc);
-        break;
-      case 3:
-        siguiente = this.getUniqueWord(palabrasNivel3, shownWordsLevel3);
-        break;
-      case 4:
-        siguiente = this.getUniqueWord(frasesNivel4, shownWordsLevel4);
-        break;
-      default:
-        siguiente = this.generarSilabaSimple();
+    let siguiente;
+    try {
+      switch (this.nivel) {
+        case 1:
+          siguiente = this.getUniqueLevel1Combination();
+          break;
+        case 2:
+          siguiente = this.getUniqueCombination(this.generarContenidoNivel2, this.shownCombinationsLevel2, combinacionesTresLetras.cvc);
+          break;
+        case 3:
+          siguiente = this.getUniqueWord(palabrasNivel3, shownWordsLevel3);
+          break;
+        case 4:
+          siguiente = this.getUniqueWord(frasesNivel4, shownWordsLevel4);
+          break;
+        default:
+          siguiente = this.generarSilabaSimple();
+      }
+    } catch (error) {
+      console.error("Error generando contenido:", error);
+      siguiente = { consonante: 'e', vocal: 'r' };
     }
-  } catch (error) {
-    console.error("Error generando contenido:", error);
-    siguiente = { consonante: 'e', vocal: 'r' };
-  }
 
-  this.contenido = siguiente;
-  this.render();
-}
+    this.contenido = siguiente;
+    this.render();
+  }
 
   getUniqueLevel1Combination() {
-  // Ensure the pool is populated before accessing it
-  if (this.level1Pool.length === 0) {
-    this.refreshLevel1Pool(); // This should fill the pool with combinations
+    // Ensure the pool is populated before accessing it
+    if (this.level1Pool.length === 0) {
+      this.refreshLevel1Pool(); // This should fill the pool with combinations
+    }
+    const combination = this.level1Pool.pop();
+    return combination;
   }
-  const combination = this.level1Pool.pop();
-  return combination;
-}
 
   getUniqueCombination(generator, shownCombinations, allCombinations) {
-  if (shownCombinations.length === allCombinations.length) {
-    shownCombinations.length = 0; // Reset if all combinations have been shown
+    if (shownCombinations.length === allCombinations.length) {
+      shownCombinations.length = 0; // Reset if all combinations have been shown
+    }
+
+    let combination;
+    do {
+      combination = generator.call(this);  // Call the generator function (like generarContenidoNivel2)
+    } while (shownCombinations.some(shown => 
+      shown.consonante === combination.consonante && shown.vocal === combination.vocal
+    ));
+
+    shownCombinations.push(combination);  // Keep track of shown combinations
+    return combination;
   }
-
-  let combination;
-  do {
-    combination = generator.call(this);  // Call the generator function (like generarContenidoNivel2)
-  } while (shownCombinations.some(shown => 
-    shown.consonante === combination.consonante && shown.vocal === combination.vocal
-  ));
-
-  shownCombinations.push(combination);  // Keep track of shown combinations
-  return combination;
-}
   
   refreshLevel1Pool() {
     const allCombinations = this.getAllPossibleLevel1Combinations();
@@ -182,26 +189,26 @@ class MetodoLectura {
   }
 
   setNivel(newNivel) {
-  // Update the level
-  this.nivel = newNivel;
-  this.updateLevelButtons();
+    // Update the level
+    this.nivel = newNivel;
+    this.updateLevelButtons();
 
-  // Show the first word/phrase for the selected level
-  this.generarContenido();
-}
+    // Show the first word/phrase for the selected level
+    this.generarContenido();
+  }
 
   updateLevelButtons() {
-  document.querySelectorAll('.level-button').forEach((button, index) => {
-    const level = index + 1;
-    if (level === this.nivel) {
-      button.classList.remove('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
-      button.classList.add(`active-nivel-${level}`, 'text-nivel');
-    } else {
-      button.classList.remove(`active-nivel-${level}`, 'text-nivel');
-      button.classList.add('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
-    }
-  });
-}
+    document.querySelectorAll('.level-button').forEach((button, index) => {
+      const level = index + 1;
+      if (level === this.nivel) {
+        button.classList.remove('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
+        button.classList.add(`active-nivel-${level}`, 'text-nivel');
+      } else {
+        button.classList.remove(`active-nivel-${level}`, 'text-nivel');
+        button.classList.add('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
+      }
+    });
+  }
 
   getConsonantColor(consonant) {
     consonant = consonant.toLowerCase();
