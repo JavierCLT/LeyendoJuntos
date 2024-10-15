@@ -87,32 +87,32 @@ class MetodoLectura {
   }
 
   generarContenido() {
-    let siguiente;
-    try {
-      switch (this.nivel) {
-        case 1:
-          siguiente = this.getUniqueLevel1Combination();
-          break;
-        case 2:
-          siguiente = this.getUniqueCombination(this.generarContenidoNivel2, this.shownCombinationsLevel2, combinacionesTresLetras.cvc);
-          break;
-        case 3:
-          siguiente = this.getUniqueWord(palabrasNivel3, shownWordsLevel3);
-          break;
-        case 4:
-          siguiente = this.getUniqueWord(frasesNivel4, shownWordsLevel4);
-          break;
-        default:
-          siguiente = this.generarSilabaSimple();
-      }
-    } catch (error) {
-      console.error("Error generando contenido:", error);
-      siguiente = { consonante: 'e', vocal: 'r' };
+  let siguiente;
+  try {
+    switch (this.nivel) {
+      case 1:
+        siguiente = this.getUniqueLevel1Combination();
+        break;
+      case 2:
+        siguiente = this.getUniqueCombination(this.generarContenidoNivel2, this.shownCombinationsLevel2, combinacionesTresLetras.cvc);
+        break;
+      case 3:
+        siguiente = this.getUniqueWord(palabrasNivel3, shownWordsLevel3);
+        break;
+      case 4:
+        siguiente = this.getUniqueWord(frasesNivel4, shownWordsLevel4);
+        break;
+      default:
+        siguiente = this.generarSilabaSimple();
     }
-
-    this.contenido = siguiente;
-    this.render();
+  } catch (error) {
+    console.error("Error generando contenido:", error);
+    siguiente = { consonante: 'e', vocal: 'r' };
   }
+
+  this.contenido = siguiente;
+  this.render();
+}
 
   getUniqueLevel1Combination() {
   // Ensure the pool is populated before accessing it
@@ -123,6 +123,22 @@ class MetodoLectura {
   return combination;
 }
 
+  getUniqueCombination(generator, shownCombinations, allCombinations) {
+  if (shownCombinations.length === allCombinations.length) {
+    shownCombinations.length = 0; // Reset if all combinations have been shown
+  }
+
+  let combination;
+  do {
+    combination = generator.call(this);  // Call the generator function (like generarContenidoNivel2)
+  } while (shownCombinations.some(shown => 
+    shown.consonante === combination.consonante && shown.vocal === combination.vocal
+  ));
+
+  shownCombinations.push(combination);  // Keep track of shown combinations
+  return combination;
+}
+  
   refreshLevel1Pool() {
     const allCombinations = this.getAllPossibleLevel1Combinations();
     this.level1Pool = this.shuffleArray(allCombinations).slice(0, this.level1PoolSize);
