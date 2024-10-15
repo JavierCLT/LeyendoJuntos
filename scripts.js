@@ -46,7 +46,7 @@ class MetodoLectura {
     document.getElementById('contactButton').addEventListener('click', () => {
       window.open('https://www.linkedin.com/in/javiersz/', '_blank');
     });
-}
+  }
 
   shareApp() {
     if (navigator.share) {
@@ -94,58 +94,58 @@ class MetodoLectura {
   }
 
   generarContenido() {
-  let siguiente;
-  try {
-    switch (this.nivel) {
-      case 1:
-        siguiente = this.getUniqueLevel1Combination();
-        break;
-      case 2:
-        siguiente = this.getUniqueCombination(this.generarContenidoNivel2, this.shownCombinationsLevel2, combinacionesTresLetras.cvc);
-        break;
-      case 3:
-        siguiente = this.getUniqueWord(palabrasNivel3, shownWordsLevel3);
-        break;
-      case 4:
-        siguiente = this.getUniqueWord(frasesNivel4, shownWordsLevel4);
-        break;
-      default:
-        siguiente = this.generarSilabaSimple();
+    let siguiente;
+    try {
+      switch (this.nivel) {
+        case 1:
+          siguiente = this.getUniqueLevel1Combination();
+          break;
+        case 2:
+          siguiente = this.getUniqueCombination(this.generarContenidoNivel2, this.shownCombinationsLevel2, combinacionesTresLetras.cvc);
+          break;
+        case 3:
+          siguiente = this.getUniqueWord(palabrasNivel3, shownWordsLevel3);
+          break;
+        case 4:
+          siguiente = this.getUniqueWord(frasesNivel4, shownWordsLevel4);
+          break;
+        default:
+          siguiente = this.generarSilabaSimple();
+      }
+    } catch (error) {
+      console.error("Error generando contenido:", error);
+      siguiente = { consonante: 'e', vocal: 'r' };
     }
-  } catch (error) {
-    console.error("Error generando contenido:", error);
-    siguiente = { consonante: 'e', vocal: 'r' };
-  }
 
-  this.contenido = siguiente;
-  this.render();
-}
+    this.contenido = siguiente;
+    this.render();
+  }
 
   getUniqueLevel1Combination() {
-  // Ensure the pool is populated before accessing it
-  if (this.level1Pool.length === 0) {
-    this.refreshLevel1Pool(); // This should fill the pool with combinations
+    // Ensure the pool is populated before accessing it
+    if (this.level1Pool.length === 0) {
+      this.refreshLevel1Pool(); // This should fill the pool with combinations
+    }
+    const combination = this.level1Pool.pop();
+    return combination;
   }
-  const combination = this.level1Pool.pop();
-  return combination;
-}
 
   getUniqueCombination(generator, shownCombinations, allCombinations) {
-  if (shownCombinations.length === allCombinations.length) {
-    shownCombinations.length = 0; // Reset if all combinations have been shown
+    if (shownCombinations.length === allCombinations.length) {
+      shownCombinations.length = 0; // Reset if all combinations have been shown
+    }
+
+    let combination;
+    do {
+      combination = generator.call(this);  // Call the generator function (like generarContenidoNivel2)
+    } while (shownCombinations.some(shown =>
+      shown.consonante === combination.consonante && shown.vocal === combination.vocal
+    ));
+
+    shownCombinations.push(combination);  // Keep track of shown combinations
+    return combination;
   }
 
-  let combination;
-  do {
-    combination = generator.call(this);  // Call the generator function (like generarContenidoNivel2)
-  } while (shownCombinations.some(shown => 
-    shown.consonante === combination.consonante && shown.vocal === combination.vocal
-  ));
-
-  shownCombinations.push(combination);  // Keep track of shown combinations
-  return combination;
-}
-  
   refreshLevel1Pool() {
     const allCombinations = this.getAllPossibleLevel1Combinations();
     this.level1Pool = this.shuffleArray(allCombinations).slice(0, this.level1PoolSize);
@@ -172,7 +172,7 @@ class MetodoLectura {
     }
     return allCombinations;
   }
-  
+
   getUniqueWord(wordsArray, shownWords) {
     if (shownWords.length === wordsArray.length) {
       shownWords.length = 0; // Reset the shown words list
@@ -180,7 +180,7 @@ class MetodoLectura {
 
     let availableWords = wordsArray.filter(word => !shownWords.includes(word));
     let randomWord = availableWords[Math.floor(Math.random() * availableWords.length)];
-    
+
     shownWords.push(randomWord);
 
     return this.nivel === 3 ? { palabra: randomWord } : { frase: randomWord };
@@ -204,20 +204,20 @@ class MetodoLectura {
 
     // Show the first word/phrase for the selected level
     this.generarContenido();
-}
+  }
 
   updateLevelButtons() {
-  document.querySelectorAll('.level-button').forEach((button, index) => {
-    const level = index + 1;
-    if (level === this.nivel) {
-      button.classList.remove('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
-      button.classList.add(active-nivel-${level}, 'text-nivel');
-    } else {
-      button.classList.remove(active-nivel-${level}, 'text-nivel');
-      button.classList.add('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
-    }
-  });
-}
+    document.querySelectorAll('.level-button').forEach((button, index) => {
+      const level = index + 1;
+      if (level === this.nivel) {
+        button.classList.remove('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
+        button.classList.add(`active-nivel-${level}`, 'text-nivel');
+      } else {
+        button.classList.remove(`active-nivel-${level}`, 'text-nivel');
+        button.classList.add('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
+      }
+    });
+  }
 
   getConsonantColor(consonant) {
     consonant = consonant.toLowerCase();
@@ -314,28 +314,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Ripple effect for button clicks
   function createRipple(event) {
-  const button = event.currentTarget;
-  const rect = button.getBoundingClientRect();  // Get button's bounding box
+    const button = event.currentTarget;
+    const rect = button.getBoundingClientRect();  // Get button's bounding box
 
-  const circle = document.createElement("span");
-  const diameter = Math.max(rect.width, rect.height);
-  const radius = diameter / 2;
+    const circle = document.createElement("span");
+    const diameter = Math.max(rect.width, rect.height);
+    const radius = diameter / 2;
 
-  circle.style.width = circle.style.height = ${diameter}px;
+    circle.style.width = `${diameter}px`;
+    circle.style.height = `${diameter}px`;
+    circle.style.left = `${event.clientX - rect.left - radius}px`;
+    circle.style.top = `${event.clientY - rect.top - radius}px`;
 
-  // Adjust positioning to be relative to the button itself
-  circle.style.left = ${event.clientX - rect.left - radius}px;
-  circle.style.top = ${event.clientY - rect.top - radius}px;
+    circle.classList.add("ripple");
 
-  circle.classList.add("ripple");
+    const ripple = button.getElementsByClassName("ripple")[0];
+    if (ripple) {
+      ripple.remove();
+    }
 
-  const ripple = button.getElementsByClassName("ripple")[0];
-  if (ripple) {
-    ripple.remove();
+    button.appendChild(circle);
   }
-
-  button.appendChild(circle);
-}
 
   const buttons = document.getElementsByTagName("button");
   for (const button of buttons) {
@@ -355,7 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const overlay = document.getElementById('overlay');
   const closePopupButton = document.getElementById('closePopup');
   const scrollIndicator = document.getElementById('scrollIndicator');
-  
+
 
   function showPopup() {
     popup.style.display = 'block';
@@ -393,6 +392,6 @@ document.addEventListener('DOMContentLoaded', () => {
   tutorialButton.addEventListener('click', showPopup);
   closePopupButton.addEventListener('click', hidePopup);
   overlay.addEventListener('click', hidePopup);
-  
+
   window.addEventListener('resize', checkScrollIndicator);
 });
