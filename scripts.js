@@ -25,22 +25,35 @@ class MetodoLectura {
   }
 
   setupEventListeners() {
-    document.getElementById('nextButton').addEventListener('click', () => this.generarContenido());
+  document.getElementById('nextButton').addEventListener('click', () => this.generarContenido());
 
-    document.querySelectorAll('.level-button').forEach(button => {
-      button.addEventListener('click', (e) => {
-        const newNivel = parseInt(e.target.dataset.level);
-        if (newNivel !== this.nivel) {
-          this.setNivel(newNivel);
-        }
-      });
+  // Handle level button clicks
+  document.querySelectorAll('.level-button').forEach(button => {
+    button.addEventListener('click', (e) => {
+      const newNivel = parseInt(e.target.dataset.level);
+
+      // Check if the level is the same as the current level
+      if (newNivel !== this.nivel) {
+        this.setNivel(newNivel);
+      }
+
+      // Apply immediate color change for the active level
+      this.updateLevelButtons();
     });
 
-    document.getElementById('shareButton').addEventListener('click', () => this.shareApp());
-    document.getElementById('contactButton').addEventListener('click', () => {
-      window.open('https://www.linkedin.com/in/javiersz/', '_blank');
-    });
-  }
+    // Prevent zooming when double-tapping level buttons on mobile devices
+    button.addEventListener('touchstart', (event) => {
+      if (event.touches.length > 1) {
+        event.preventDefault(); // Prevent zoom
+      }
+    }, { passive: false });
+  });
+
+  document.getElementById('shareButton').addEventListener('click', () => this.shareApp());
+  document.getElementById('contactButton').addEventListener('click', () => {
+    window.open('https://www.linkedin.com/in/javiersz/', '_blank');
+  });
+}
 
   shareApp() {
     if (navigator.share) {
@@ -121,16 +134,18 @@ class MetodoLectura {
   }
 
   updateLevelButtons() {
-    document.querySelectorAll('.level-button').forEach((button, index) => {
-      const level = index + 1;
-      if (level === this.nivel) {
-        button.classList.add(`active-nivel-${level}`, 'text-nivel');
-      } else {
-        button.classList.remove(`active-nivel-${level}`, 'text-nivel');
-        button.classList.add('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
-      }
-    });
-  }
+  document.querySelectorAll('.level-button').forEach((button, index) => {
+    const level = index + 1;
+    if (level === this.nivel) {
+      button.classList.remove('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
+      button.classList.add(`active-nivel-${level}`, 'text-nivel');
+      button.classList.add('text-red-500'); // Ensure immediate red color for the active button
+    } else {
+      button.classList.remove(`active-nivel-${level}`, 'text-nivel', 'text-red-500');
+      button.classList.add('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
+    }
+  });
+}
 
   getConsonantColor(consonant) {
     return consonantColorMap[consonant.toLowerCase()] || '#000000'; // Default to black if not found
