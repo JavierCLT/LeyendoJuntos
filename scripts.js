@@ -180,10 +180,13 @@ class MetodoLectura {
   }
 
   setNivel(newNivel) {
-    this.nivel = newNivel;
-    this.generarContenido();
-    this.updateLevelButtons();
-  }
+  // Update the level
+  this.nivel = newNivel;
+  this.updateLevelButtons();
+
+  // Show the first word/phrase for the selected level
+  this.generarContenido();
+}
 
   updateLevelButtons() {
   document.querySelectorAll('.level-button').forEach((button, index) => {
