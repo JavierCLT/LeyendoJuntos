@@ -16,30 +16,25 @@ class MetodoLectura {
     this.contenido = {};
     this.uniqueConsonants = new Set();
     this.shownCombinationsLevel1 = [];
-    this.shownCombinationsLevel2 = [];
-    this.shownWordsLevel3 = [];
-    this.shownWordsLevel4 = [];
     this.level1Pool = [];
     this.level1PoolSize = 30;
+    this.shownCombinationsLevel2 = [];
     this.init();
   }
 
   init() {
     this.refreshLevel1Pool();
-    this.setupEventListeners();
     this.generarContenido();
+    this.setupEventListeners();
     this.render();
   }
 
-  setupEventListeners() {
-    // Only add event listeners once
-    document.getElementById('nextButton').addEventListener('click', () => this.generarContenido());
 
-    // Bind level buttons only to update the level, no reinitialization
+  setupEventListeners() {
+    document.getElementById('nextButton').addEventListener('click', () => this.generarContenido());
     document.querySelectorAll('.level-button').forEach(button => {
       button.addEventListener('click', (e) => this.setNivel(parseInt(e.target.dataset.level)));
     });
-
     document.getElementById('shareButton').addEventListener('click', () => this.shareApp());
     document.getElementById('contactButton').addEventListener('click', () => {
       window.open('https://www.linkedin.com/in/javiersz/', '_blank');
@@ -68,25 +63,27 @@ class MetodoLectura {
     }
   }
 
-  setNivel(newNivel) {
-    // Only update the level, don't generate new content immediately
-    if (this.nivel !== newNivel) {
-      this.nivel = newNivel;
-      this.updateLevelButtons();
+  generarSilabaSimple() {
+    const tipos = ['vc', 'cv', 'vv'];
+    const tipoAleatorio = tipos[Math.floor(Math.random() * tipos.length)];
+    const combinaciones = combinacionesDosLetras[tipoAleatorio];
+    const combinacionAleatoria = combinaciones[Math.floor(Math.random() * combinaciones.length)];
+
+    if (tipoAleatorio === 'vc') {
+      return { consonante: combinacionAleatoria[1], vocal: combinacionAleatoria[0] };
+    } else if (tipoAleatorio === 'cv') {
+      return { consonante: combinacionAleatoria[0], vocal: combinacionAleatoria[1] };
+    } else {
+      return { consonante: combinacionAleatoria[0], vocal: combinacionAleatoria[1] };
     }
   }
 
-  updateLevelButtons() {
-    document.querySelectorAll('.level-button').forEach(button => {
-      const buttonLevel = parseInt(button.dataset.level);
-      if (buttonLevel === this.nivel) {
-        button.classList.remove('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
-        button.classList.add('bg-green-500', 'hover:bg-green-600', 'text-white');
-      } else {
-        button.classList.remove('bg-green-500', 'hover:bg-green-600', 'text-white');
-        button.classList.add('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
-      }
-    });
+  generarContenidoNivel2() {
+    const combinacionAleatoria = combinacionesTresLetras.cvc[Math.floor(Math.random() * combinacionesTresLetras.cvc.length)];
+    return {
+      consonante: combinacionAleatoria.slice(0, -1),
+      vocal: combinacionAleatoria.slice(-1)
+    };
   }
 
   generarContenido() {
@@ -100,10 +97,10 @@ class MetodoLectura {
           siguiente = this.getUniqueLevel2Combination();
           break;
         case 3:
-          siguiente = this.getUniqueWord(palabrasNivel3, this.shownWordsLevel3);
+          siguiente = this.getUniqueWord(palabrasNivel3, shownWordsLevel3);
           break;
         case 4:
-          siguiente = this.getUniqueWord(frasesNivel4, this.shownWordsLevel4);
+          siguiente = this.getUniqueWord(frasesNivel4, shownWordsLevel4);
           break;
         default:
           siguiente = this.generarSilabaSimple();
@@ -126,13 +123,13 @@ class MetodoLectura {
 
   getUniqueLevel2Combination() {
     if (this.shownCombinationsLevel2.length === combinacionesTresLetras.cvc.length) {
-      this.shownCombinationsLevel2 = [];
+      this.shownCombinationsLevel2 = []; // Reset if all combinations have been shown
     }
 
     let combination;
     do {
       combination = this.generarContenidoNivel2();
-    } while (this.shownCombinationsLevel2.some(shown =>
+    } while (this.shownCombinationsLevel2.some(shown => 
       shown.consonante === combination.consonante && shown.vocal === combination.vocal
     ));
 
@@ -167,21 +164,80 @@ class MetodoLectura {
     return array;
   }
 
+  getAllPossibleLevel1Combinations() {
+    const allCombinations = [];
+    for (const type in combinacionesDosLetras) {
+      combinacionesDosLetras[type].forEach(combo => {
+        if (type === 'vc') {
+          allCombinations.push({ consonante: combo[1], vocal: combo[0] });
+        } else {
+          allCombinations.push({ consonante: combo[0], vocal: combo[1] });
+        }
+      });
+    }
+    return allCombinations;
+  }
+  
   getUniqueWord(wordsArray, shownWords) {
     if (shownWords.length === wordsArray.length) {
-      shownWords.length = 0; // Reset when all words have been shown
+      shownWords.length = 0; // Reset the shown words list
     }
 
-    const remainingWords = wordsArray.filter(word => !shownWords.includes(word));
-    const randomWord = remainingWords[Math.floor(Math.random() * remainingWords.length)];
+    let availableWords = wordsArray.filter(word => !shownWords.includes(word));
+    let randomWord = availableWords[Math.floor(Math.random() * availableWords.length)];
+    
+    shownWords.push(randomWord);
 
-    shownWords.push(randomWord);  // Keep track to avoid repetition
-    return { palabra: randomWord };
+    return this.nivel === 3 ? { palabra: randomWord } : { frase: randomWord };
   }
 
-  render() {
-    this.renderContenido();
-    this.updateLevelButtons();
+  setNivel(newNivel) {
+    if (this.nivel !== newNivel) {
+      this.nivel = newNivel;
+      this.generarContenido();
+      this.updateLevelButtons();
+    }
+  }
+
+  updateLevelButtons() {
+    document.querySelectorAll('.level-button').forEach((button, index) => {
+      const level = index + 1;
+      if (level === this.nivel) {
+        button.classList.remove('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
+        button.classList.add(`active-nivel-${level}`, 'text-nivel');
+      } else {
+        button.classList.remove(`active-nivel-${level}`, 'text-nivel');
+        button.classList.add('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
+      }
+    });
+  }
+
+  getConsonantColor(consonant) {
+    consonant = consonant.toLowerCase();
+    if (!this.uniqueConsonants.has(consonant)) {
+      this.uniqueConsonants.add(consonant);
+    }
+    return consonantColorMap[consonant] || '#000000'; // Default to black if consonant not found
+  }
+
+  renderLetra(letra, index) {
+    const span = document.createElement('span');
+    span.textContent = letra;
+    const isConsonant = !vocales.includes(letra.toLowerCase());
+
+    if (isConsonant) {
+      span.style.color = this.getConsonantColor(letra.toLowerCase());
+    } else {
+      span.style.color = 'black';
+    }
+
+    span.classList.add('inline-block', 'font-bold');
+    const sizeClass = this.nivel === 1 ? 'text-6xl' :
+      this.nivel === 2 ? 'text-5xl' :
+        this.nivel === 3 ? 'text-4xl' : 'text-3xl';
+    span.classList.add(sizeClass);
+
+    return span;
   }
 
   renderContenido() {
@@ -215,7 +271,7 @@ class MetodoLectura {
 
         if (i < consonantes.length - 1) {
           const nextLetra = consonantes[i + 1];
-          if ((letra === 'c' && nextLetra === 'h') || (letra === 'l' && nextLetra === 'l') || (letra === 'r' && nextLetra === 'r')) {
+          if ((letra === 'c' && nextLetra === 'h') || (letra === 'l' && nextLetra === 'l') || (letra === 'r' && nextLetra === 'r') || (letra === 'c' && nextLetra === 'c') || (letra === 'q' && nextLetra === 'u')) {
             letra += nextLetra;
             i += 2;
             combined = true;
@@ -232,25 +288,22 @@ class MetodoLectura {
       vocales.split('').forEach((letra, index) => {
         container.appendChild(this.renderLetra(letra, index, false));
       });
+    } else {
+      const errorSpan = document.createElement('span');
+      errorSpan.textContent = 'Error';
+      errorSpan.className = 'text-3xl text-red-500';
+      container.appendChild(errorSpan);
     }
   }
 
-  renderLetra(letra) {
-    const span = document.createElement('span');
-    span.textContent = letra;
-    span.style.color = vocales.includes(letra.toLowerCase()) ? 'black' : this.getConsonantColor(letra.toLowerCase());
-    span.classList.add('inline-block', 'font-bold');
-    span.classList.add(this.nivel === 1 ? 'text-6xl' : this.nivel === 2 ? 'text-5xl' : this.nivel === 3 ? 'text-4xl' : 'text-3xl');
-    return span;
-  }
-
-  getConsonantColor(consonant) {
-    return consonantColorMap[consonant.toLowerCase()] || '#000000'; // Default to black if not found
+  render() {
+    this.renderContenido();
+    this.updateLevelButtons();
   }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  new MetodoLectura();
+  const metodoLectura = new MetodoLectura();
 
   // Ripple effect for button clicks
   function createRipple(event) {
