@@ -31,17 +31,22 @@ class MetodoLectura {
 
   setupEventListeners() {
     document.getElementById('nextButton').addEventListener('click', () => this.generarContenido());
-  
-  // Update level when level buttons are clicked, but do not generate content
-  document.querySelectorAll('.level-button').forEach(button => {
-    button.addEventListener('click', (e) => this.setNivel(parseInt(e.target.dataset.level)));
-  });
+
+    document.querySelectorAll('.level-button').forEach(button => {
+      button.addEventListener('click', (e) => {
+        const newNivel = parseInt(e.target.dataset.level);
+
+        // Check if the level is the same as the current level
+        if (newNivel !== this.nivel) {
+          this.setNivel(newNivel);
+        }
+      });
+    });
     document.getElementById('shareButton').addEventListener('click', () => this.shareApp());
     document.getElementById('contactButton').addEventListener('click', () => {
       window.open('https://www.linkedin.com/in/javiersz/', '_blank');
     });
-
-  }
+}
 
   shareApp() {
     if (navigator.share) {
@@ -182,12 +187,23 @@ class MetodoLectura {
   }
 
   setNivel(newNivel) {
-  // Update the level
-  this.nivel = newNivel;
-  this.updateLevelButtons();
+    // Update the level
+    this.nivel = newNivel;
+    this.updateLevelButtons();
 
-  // Show the first word/phrase for the selected level
-  this.generarContenido();
+    // Disable the button for the current level
+    const levelButtons = document.querySelectorAll('.level-button');
+    levelButtons.forEach(button => {
+      const level = parseInt(button.dataset.level);
+      if (level === newNivel) {
+        button.disabled = true;  // Disable the button for the current level
+      } else {
+        button.disabled = false;  // Enable other buttons
+      }
+    });
+
+    // Show the first word/phrase for the selected level
+    this.generarContenido();
 }
 
   updateLevelButtons() {
