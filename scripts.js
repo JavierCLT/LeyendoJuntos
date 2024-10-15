@@ -11,20 +11,46 @@ class MetodoLectura {
     this.nivel = 1;
     this.contenido = {};
     this.uniqueConsonants = new Set();
-    this.shownContent = [[], [], [], []];  // One array for each level
+    this.shownContent = [[], [], [], []];
     this.contentArrays = [
       this.getAllPossibleLevel1Combinations(),
       combinacionesTresLetras.cvc,
       palabrasNivel3,
       frasesNivel4
     ];
+    this.preloadedContent = [[], [], [], []];
+    this.preloadSize = 10; // Number of items to preload for each level
     this.init();
   }
 
   init() {
+    this.preloadAllLevels();
     this.setupEventListeners();
     this.updateLevelButtons();
     this.generarContenido();
+  }
+
+  preloadAllLevels() {
+    for (let i = 0; i < 4; i++) {
+      this.preloadContentForLevel(i);
+    }
+  }
+
+  preloadContentForLevel(levelIndex) {
+    const contentArray = this.contentArrays[levelIndex];
+    const shownContent = this.shownContent[levelIndex];
+    
+    while (this.preloadedContent[levelIndex].length < this.preloadSize) {
+      let availableContent = contentArray.filter(item => 
+        !shownContent.includes(item) && !this.preloadedContent[levelIndex].includes(item)
+      );
+      if (availableContent.length === 0) {
+        shownContent.length = 0;
+        availableContent = contentArray;
+      }
+      let randomItem = availableContent[Math.floor(Math.random() * availableContent.length)];
+      this.preloadedContent[levelIndex].push(randomItem);
+    }
   }
 
   setupEventListeners() {
@@ -64,34 +90,31 @@ class MetodoLectura {
 
   generarContenido() {
     const levelIndex = this.nivel - 1;
-    const contentArray = this.contentArrays[levelIndex];
-    const shownContent = this.shownContent[levelIndex];
-
-    if (shownContent.length === contentArray.length) {
-      shownContent.length = 0;  // Reset when all content has been shown
-    }
-
-    let availableContent = contentArray.filter(item => !shownContent.includes(item));
-    let randomItem = availableContent[Math.floor(Math.random() * availableContent.length)];
     
-    shownContent.push(randomItem);
+    if (this.preloadedContent[levelIndex].length === 0) {
+      this.preloadContentForLevel(levelIndex);
+    }
+    
+    let item = this.preloadedContent[levelIndex].shift();
+    this.shownContent[levelIndex].push(item);
     
     switch (this.nivel) {
       case 1:
-        this.contenido = { consonante: randomItem.consonante, vocal: randomItem.vocal };
+        this.contenido = { consonante: item.consonante, vocal: item.vocal };
         break;
       case 2:
-        this.contenido = { consonante: randomItem.slice(0, -1), vocal: randomItem.slice(-1) };
+        this.contenido = { consonante: item.slice(0, -1), vocal: item.slice(-1) };
         break;
       case 3:
-        this.contenido = { palabra: randomItem };
+        this.contenido = { palabra: item };
         break;
       case 4:
-        this.contenido = { frase: randomItem };
+        this.contenido = { frase: item };
         break;
     }
 
     this.renderContenido();
+    this.preloadContentForLevel(levelIndex);
   }
 
   getUniqueContent(contentArray, shownContent) {
@@ -136,7 +159,7 @@ class MetodoLectura {
     if (this.nivel !== newNivel) {
       this.nivel = newNivel;
       this.updateLevelButtons();
-      this.generarContenido(); // Generate new content for the new level
+      this.generarContenido();
     }
   }
 
