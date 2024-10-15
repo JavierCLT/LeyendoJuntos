@@ -6,31 +6,23 @@ import { consonantColorMap } from './data/colorMap.js';
 
 const vocales = ['a', 'e', 'i', 'o', 'u', 'á', 'é', 'í', 'ó', 'ú'];
 
-// Arrays to keep track of shown words for each level
-const shownWordsLevel3 = [];
-const shownWordsLevel4 = [];
-
 class MetodoLectura {
   constructor() {
     this.nivel = 1;
     this.contenido = {};
     this.uniqueConsonants = new Set();
-    this.shownCombinationsLevel1 = [];
-    this.level1Pool = [];
-    this.level1PoolSize = 30;
-    this.shownCombinationsLevel2 = [];
-    this.shownWordsLevel3 = [];
-    this.shownWordsLevel4 = [];
+    this.shownContentLevel1 = [];
+    this.shownContentLevel2 = [];
+    this.shownContentLevel3 = []; 
+    this.shownContentLevel4 = [];
     this.init();
   }
 
   init() {
-    this.refreshLevel1Pool();
     this.setupEventListeners();
     this.updateLevelButtons();
     this.generarContenido(); // Generate initial content
   }
-
 
   setupEventListeners() {
     document.getElementById('nextButton').addEventListener('click', () => this.generarContenido());
@@ -65,123 +57,68 @@ class MetodoLectura {
     }
   }
 
-  generarSilabaSimple() {
-    const tipos = ['vc', 'cv', 'vv'];
-    const tipoAleatorio = tipos[Math.floor(Math.random() * tipos.length)];
-    const combinaciones = combinacionesDosLetras[tipoAleatorio];
-    const combinacionAleatoria = combinaciones[Math.floor(Math.random() * combinaciones.length)];
-
-    if (tipoAleatorio === 'vc') {
-      return { consonante: combinacionAleatoria[1], vocal: combinacionAleatoria[0] };
-    } else if (tipoAleatorio === 'cv') {
-      return { consonante: combinacionAleatoria[0], vocal: combinacionAleatoria[1] };
-    } else {
-      return { consonante: combinacionAleatoria[0], vocal: combinacionAleatoria[1] };
-    }
-  }
-
-  generarContenidoNivel2() {
-    const combinacionAleatoria = combinacionesTresLetras.cvc[Math.floor(Math.random() * combinacionesTresLetras.cvc.length)];
-    return {
-      consonante: combinacionAleatoria.slice(0, -1),
-      vocal: combinacionAleatoria.slice(-1)
-    };
-  }
+  
 
   generarContenido() {
-    let siguiente;
+  let siguiente;
+  switch (this.nivel) {
+    case 1:
+      siguiente = this.getUniqueContent(this.getAllPossibleLevel1Combinations(), this.shownContentLevel1);
+      break;
+    case 2:
+      siguiente = this.getUniqueContent(combinacionesTresLetras.cvc, this.shownContentLevel2);
+      break;
+    case 3:
+      siguiente = this.getUniqueContent(palabrasNivel3, this.shownContentLevel3);
+      break;
+    case 4:
+      siguiente = this.getUniqueContent(frasesNivel4, this.shownContentLevel4);
+      break;
+    default:
+      siguiente = this.getUniqueContent(this.getAllPossibleLevel1Combinations(), this.shownContentLevel1);
+  }
+  this.contenido = siguiente;
+  this.renderContenido();
+}
+
+  getUniqueContent(contentArray, shownContent) {
+    if (shownContent.length === contentArray.length) {
+      shownContent.length = 0; // Reset when all content has been shown
+    }
+    
+    let availableContent = contentArray.filter(item => !shownContent.includes(item));
+    let randomItem = availableContent[Math.floor(Math.random() * availableContent.length)];
+    
+    shownContent.push(randomItem);
+    
     switch (this.nivel) {
       case 1:
-        siguiente = this.getUniqueLevel1Combination();
-        break;
+        return { consonante: randomItem.consonante, vocal: randomItem.vocal };
       case 2:
-        siguiente = this.getUniqueLevel2Combination();
-        break;
+        return { consonante: randomItem.slice(0, -1), vocal: randomItem.slice(-1) };
       case 3:
-        siguiente = this.getUniqueWord(palabrasNivel3, this.shownWordsLevel3);
-        break;
+        return { palabra: randomItem };
       case 4:
-        siguiente = this.getUniqueWord(frasesNivel4, this.shownWordsLevel4);
-        break;
+        return { frase: randomItem };
       default:
-        siguiente = this.generarSilabaSimple();
+        return { consonante: randomItem.consonante, vocal: randomItem.vocal };
     }
-    this.contenido = siguiente;
-    this.renderContenido();
-  }
-
-  getUniqueLevel1Combination() {
-    if (this.level1Pool.length === 0) {
-      this.refreshLevel1Pool();
-    }
-    return this.level1Pool.pop();
-  }
-
-  getUniqueLevel2Combination() {
-    if (this.shownCombinationsLevel2.length === combinacionesTresLetras.cvc.length) {
-      this.shownCombinationsLevel2 = [];
-    }
-    let combination;
-    do {
-      combination = this.generarContenidoNivel2();
-    } while (this.shownCombinationsLevel2.some(shown => 
-      shown.consonante === combination.consonante && shown.vocal === combination.vocal
-    ));
-    this.shownCombinationsLevel2.push(combination);
-    return combination;
-  }
-
-  refreshLevel1Pool() {
-    const allCombinations = this.getAllPossibleLevel1Combinations();
-    this.level1Pool = this.shuffleArray(allCombinations).slice(0, this.level1PoolSize);
-  }
-
-  getAllPossibleLevel1Combinations() {
-    const allCombinations = [];
-    for (const type in combinacionesDosLetras) {
-      combinacionesDosLetras[type].forEach(combo => {
-        if (type === 'vc') {
-          allCombinations.push({ consonante: combo[1], vocal: combo[0] });
-        } else {
-          allCombinations.push({ consonante: combo[0], vocal: combo[1] });
-        }
-      });
-    }
-    return allCombinations;
-  }
-
-  shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-  }
-
-  getAllPossibleLevel1Combinations() {
-    const allCombinations = [];
-    for (const type in combinacionesDosLetras) {
-      combinacionesDosLetras[type].forEach(combo => {
-        if (type === 'vc') {
-          allCombinations.push({ consonante: combo[1], vocal: combo[0] });
-        } else {
-          allCombinations.push({ consonante: combo[0], vocal: combo[1] });
-        }
-      });
-    }
-    return allCombinations;
   }
   
-  getUniqueWord(wordsArray, shownWords) {
-    if (shownWords.length === wordsArray.length) {
-      shownWords.length = 0;
+  getAllPossibleLevel1Combinations() {
+    const allCombinations = [];
+    for (const type in combinacionesDosLetras) {
+      combinacionesDosLetras[type].forEach(combo => {
+        if (type === 'vc') {
+          allCombinations.push({ consonante: combo[1], vocal: combo[0] });
+        } else {
+          allCombinations.push({ consonante: combo[0], vocal: combo[1] });
+        }
+      });
     }
-    let availableWords = wordsArray.filter(word => !shownWords.includes(word));
-    let randomWord = availableWords[Math.floor(Math.random() * availableWords.length)];
-    shownWords.push(randomWord);
-    return this.nivel === 3 ? { palabra: randomWord } : { frase: randomWord };
+    return allCombinations;
   }
-
+    
   setNivel(newNivel) {
     if (this.nivel !== newNivel) {
       this.nivel = newNivel;
@@ -290,10 +227,6 @@ class MetodoLectura {
     container.appendChild(errorSpan);
   }
   
-  render() {
-    this.renderContenido();
-    this.updateLevelButtons();
-  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
