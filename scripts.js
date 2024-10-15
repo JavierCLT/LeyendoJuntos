@@ -1,40 +1,33 @@
-import { combinacionesDosLetras } from './data/combinacionesDosLetras.js';
-import { combinacionesTresLetras } from './data/combinacionesTresLetras.js';
-import { palabrasNivel3 } from './data/palabrasNivel3.js';
-import { frasesNivel4 } from './data/frasesNivel4.js';
-import { consonantColorMap } from './data/colorMap.js';
-
-const vocales = ['a', 'e', 'i', 'o', 'u', 'á', 'é', 'í', 'ó', 'ú'];
-
-// Arrays to keep track of shown words for each level
-const shownWordsLevel3 = [];
-const shownWordsLevel4 = [];
-
 class MetodoLectura {
   constructor() {
     this.nivel = 1;
     this.contenido = {};
     this.uniqueConsonants = new Set();
     this.shownCombinationsLevel1 = [];
+    this.shownCombinationsLevel2 = [];
+    this.shownWordsLevel3 = [];
+    this.shownWordsLevel4 = [];
     this.level1Pool = [];
     this.level1PoolSize = 30;
-    this.shownCombinationsLevel2 = [];
     this.init();
   }
 
   init() {
     this.refreshLevel1Pool();
-    this.generarContenido();
     this.setupEventListeners();
+    this.generarContenido();
     this.render();
   }
 
-
   setupEventListeners() {
+    // Only add event listeners once
     document.getElementById('nextButton').addEventListener('click', () => this.generarContenido());
+
+    // Bind level buttons only to update the level, no reinitialization
     document.querySelectorAll('.level-button').forEach(button => {
       button.addEventListener('click', (e) => this.setNivel(parseInt(e.target.dataset.level)));
     });
+
     document.getElementById('shareButton').addEventListener('click', () => this.shareApp());
     document.getElementById('contactButton').addEventListener('click', () => {
       window.open('https://www.linkedin.com/in/javiersz/', '_blank');
@@ -63,27 +56,25 @@ class MetodoLectura {
     }
   }
 
-  generarSilabaSimple() {
-    const tipos = ['vc', 'cv', 'vv'];
-    const tipoAleatorio = tipos[Math.floor(Math.random() * tipos.length)];
-    const combinaciones = combinacionesDosLetras[tipoAleatorio];
-    const combinacionAleatoria = combinaciones[Math.floor(Math.random() * combinaciones.length)];
-
-    if (tipoAleatorio === 'vc') {
-      return { consonante: combinacionAleatoria[1], vocal: combinacionAleatoria[0] };
-    } else if (tipoAleatorio === 'cv') {
-      return { consonante: combinacionAleatoria[0], vocal: combinacionAleatoria[1] };
-    } else {
-      return { consonante: combinacionAleatoria[0], vocal: combinacionAleatoria[1] };
+  setNivel(newNivel) {
+    // Only update the level, don't generate new content immediately
+    if (this.nivel !== newNivel) {
+      this.nivel = newNivel;
+      this.updateLevelButtons();
     }
   }
 
-  generarContenidoNivel2() {
-    const combinacionAleatoria = combinacionesTresLetras.cvc[Math.floor(Math.random() * combinacionesTresLetras.cvc.length)];
-    return {
-      consonante: combinacionAleatoria.slice(0, -1),
-      vocal: combinacionAleatoria.slice(-1)
-    };
+  updateLevelButtons() {
+    document.querySelectorAll('.level-button').forEach(button => {
+      const buttonLevel = parseInt(button.dataset.level);
+      if (buttonLevel === this.nivel) {
+        button.classList.remove('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
+        button.classList.add('bg-green-500', 'hover:bg-green-600', 'text-white');
+      } else {
+        button.classList.remove('bg-green-500', 'hover:bg-green-600', 'text-white');
+        button.classList.add('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
+      }
+    });
   }
 
   generarContenido() {
@@ -97,10 +88,10 @@ class MetodoLectura {
           siguiente = this.getUniqueLevel2Combination();
           break;
         case 3:
-          siguiente = this.getUniqueWord(palabrasNivel3, shownWordsLevel3);
+          siguiente = this.getUniqueWord(palabrasNivel3, this.shownWordsLevel3);
           break;
         case 4:
-          siguiente = this.getUniqueWord(frasesNivel4, shownWordsLevel4);
+          siguiente = this.getUniqueWord(frasesNivel4, this.shownWordsLevel4);
           break;
         default:
           siguiente = this.generarSilabaSimple();
@@ -123,13 +114,13 @@ class MetodoLectura {
 
   getUniqueLevel2Combination() {
     if (this.shownCombinationsLevel2.length === combinacionesTresLetras.cvc.length) {
-      this.shownCombinationsLevel2 = []; // Reset if all combinations have been shown
+      this.shownCombinationsLevel2 = [];
     }
 
     let combination;
     do {
       combination = this.generarContenidoNivel2();
-    } while (this.shownCombinationsLevel2.some(shown => 
+    } while (this.shownCombinationsLevel2.some(shown =>
       shown.consonante === combination.consonante && shown.vocal === combination.vocal
     ));
 
@@ -164,80 +155,21 @@ class MetodoLectura {
     return array;
   }
 
-  getAllPossibleLevel1Combinations() {
-    const allCombinations = [];
-    for (const type in combinacionesDosLetras) {
-      combinacionesDosLetras[type].forEach(combo => {
-        if (type === 'vc') {
-          allCombinations.push({ consonante: combo[1], vocal: combo[0] });
-        } else {
-          allCombinations.push({ consonante: combo[0], vocal: combo[1] });
-        }
-      });
-    }
-    return allCombinations;
-  }
-  
   getUniqueWord(wordsArray, shownWords) {
     if (shownWords.length === wordsArray.length) {
-      shownWords.length = 0; // Reset the shown words list
+      shownWords.length = 0; // Reset when all words have been shown
     }
 
-    let availableWords = wordsArray.filter(word => !shownWords.includes(word));
-    let randomWord = availableWords[Math.floor(Math.random() * availableWords.length)];
-    
-    shownWords.push(randomWord);
+    const remainingWords = wordsArray.filter(word => !shownWords.includes(word));
+    const randomWord = remainingWords[Math.floor(Math.random() * remainingWords.length)];
 
-    return this.nivel === 3 ? { palabra: randomWord } : { frase: randomWord };
+    shownWords.push(randomWord);  // Keep track to avoid repetition
+    return { palabra: randomWord };
   }
 
-  setNivel(newNivel) {
-    if (this.nivel !== newNivel) {
-      this.nivel = newNivel;
-      this.generarContenido();
-      this.updateLevelButtons();
-    }
-  }
-
-  updateLevelButtons() {
-    document.querySelectorAll('.level-button').forEach((button, index) => {
-      const level = index + 1;
-      if (level === this.nivel) {
-        button.classList.remove('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
-        button.classList.add(`active-nivel-${level}`, 'text-nivel');
-      } else {
-        button.classList.remove(`active-nivel-${level}`, 'text-nivel');
-        button.classList.add('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
-      }
-    });
-  }
-
-  getConsonantColor(consonant) {
-    consonant = consonant.toLowerCase();
-    if (!this.uniqueConsonants.has(consonant)) {
-      this.uniqueConsonants.add(consonant);
-    }
-    return consonantColorMap[consonant] || '#000000'; // Default to black if consonant not found
-  }
-
-  renderLetra(letra, index) {
-    const span = document.createElement('span');
-    span.textContent = letra;
-    const isConsonant = !vocales.includes(letra.toLowerCase());
-
-    if (isConsonant) {
-      span.style.color = this.getConsonantColor(letra.toLowerCase());
-    } else {
-      span.style.color = 'black';
-    }
-
-    span.classList.add('inline-block', 'font-bold');
-    const sizeClass = this.nivel === 1 ? 'text-6xl' :
-      this.nivel === 2 ? 'text-5xl' :
-        this.nivel === 3 ? 'text-4xl' : 'text-3xl';
-    span.classList.add(sizeClass);
-
-    return span;
+  render() {
+    this.renderContenido();
+    this.updateLevelButtons();
   }
 
   renderContenido() {
@@ -271,7 +203,7 @@ class MetodoLectura {
 
         if (i < consonantes.length - 1) {
           const nextLetra = consonantes[i + 1];
-          if ((letra === 'c' && nextLetra === 'h') || (letra === 'l' && nextLetra === 'l') || (letra === 'r' && nextLetra === 'r') || (letra === 'c' && nextLetra === 'c') || (letra === 'q' && nextLetra === 'u')) {
+          if ((letra === 'c' && nextLetra === 'h') || (letra === 'l' && nextLetra === 'l') || (letra === 'r' && nextLetra === 'r')) {
             letra += nextLetra;
             i += 2;
             combined = true;
@@ -288,119 +220,23 @@ class MetodoLectura {
       vocales.split('').forEach((letra, index) => {
         container.appendChild(this.renderLetra(letra, index, false));
       });
-    } else {
-      const errorSpan = document.createElement('span');
-      errorSpan.textContent = 'Error';
-      errorSpan.className = 'text-3xl text-red-500';
-      container.appendChild(errorSpan);
     }
   }
 
-  render() {
-    this.renderContenido();
-    this.updateLevelButtons();
+  renderLetra(letra) {
+    const span = document.createElement('span');
+    span.textContent = letra;
+    span.style.color = vocales.includes(letra.toLowerCase()) ? 'black' : this.getConsonantColor(letra.toLowerCase());
+    span.classList.add('inline-block', 'font-bold');
+    span.classList.add(this.nivel === 1 ? 'text-6xl' : this.nivel === 2 ? 'text-5xl' : this.nivel === 3 ? 'text-4xl' : 'text-3xl');
+    return span;
+  }
+
+  getConsonantColor(consonant) {
+    return consonantColorMap[consonant.toLowerCase()] || '#000000'; // Default to black if not found
   }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  const metodoLectura = new MetodoLectura();
-
-  // Ripple effect for button clicks
-  function createRipple(event) {
-  const button = event.currentTarget;
-  const rect = button.getBoundingClientRect();  // Get button's bounding box
-
-  const circle = document.createElement("span");
-  const diameter = Math.max(rect.width, rect.height);
-  const radius = diameter / 2;
-
-  circle.style.width = circle.style.height = `${diameter}px`;
-
-  // Adjust positioning to be relative to the button itself
-  circle.style.left = `${event.clientX - rect.left - radius}px`;
-  circle.style.top = `${event.clientY - rect.top - radius}px`;
-
-  circle.classList.add("ripple");
-
-  const ripple = button.getElementsByClassName("ripple")[0];
-  if (ripple) {
-    ripple.remove();
-  }
-
-  button.appendChild(circle);
-}
-
-  const buttons = document.getElementsByTagName("button");
-  for (const button of buttons) {
-    button.addEventListener("click", createRipple);
-  }
-
-  // Highlight tutorial button on page load
-  const tutorialButton = document.getElementById('tutorialButton');
-  tutorialButton.classList.add('highlight');
-
-  setTimeout(() => {
-    tutorialButton.classList.remove('highlight');
-  }, 1000);
-
-  // Show/Hide Popup logic
-  const popup = document.getElementById('popup');
-  const overlay = document.getElementById('overlay');
-  const closePopupButton = document.getElementById('closePopup');
-  const scrollIndicator = document.getElementById('scrollIndicator');
-  
-
-  function showPopup() {
-    popup.style.display = 'block';
-    overlay.style.display = 'block';
-    popup.scrollTop = 0; // Reset scroll position
-    checkScrollIndicator();
-    if (scrollIndicator) {
-      scrollIndicator.classList.remove('hidden');
-      scrollIndicator.classList.add('bounce');
-      setTimeout(() => {
-        scrollIndicator.classList.remove('bounce');
-      }, 1000);
-    }
-  }
-
-  function hidePopup() {
-    popup.style.display = 'none';
-    overlay.style.display = 'none';
-  }
-
-  function checkScrollIndicator() {
-    if (scrollIndicator && popup) {
-      if (popup.scrollHeight > popup.clientHeight && popup.scrollTop < 5) {
-        scrollIndicator.classList.remove('hidden');
-      } else {
-        scrollIndicator.classList.add('hidden');
-      }
-    }
-  }
-
-  if (popup && scrollIndicator) {
-    popup.addEventListener('scroll', checkScrollIndicator);
-  }
-
-  // This to disable double-tap zoom on mobile
-  document.addEventListener('touchstart', function(event) {
-    if (event.touches.length > 1) {
-      event.preventDefault();
-    }
-  }, { passive: false });
-
-  let lastTouchEnd = 0;
-  document.addEventListener('touchend', function(event) {
-    const now = Date.now();
-    if (now - lastTouchEnd <= 300) {
-      event.preventDefault();
-    }
-    lastTouchEnd = now;
-  }, false);
-  
-  tutorialButton.addEventListener('click', showPopup);
-  closePopupButton.addEventListener('click', hidePopup);
-  overlay.addEventListener('click', hidePopup);
-  window.addEventListener('resize', checkScrollIndicator);
+  new MetodoLectura();
 });
