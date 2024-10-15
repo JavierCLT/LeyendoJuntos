@@ -240,14 +240,6 @@ class MetodoLectura {
   }
 }
 
-  renderError(container) {
-    const errorSpan = document.createElement('span');
-    errorSpan.textContent = 'Error';
-    errorSpan.className = 'text-3xl text-red-500';
-    container.appendChild(errorSpan);
-  }
-}
-
 document.addEventListener('DOMContentLoaded', () => {
   const metodoLectura = new MetodoLectura();
 
