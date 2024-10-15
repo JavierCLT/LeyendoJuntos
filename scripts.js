@@ -1,3 +1,15 @@
+import { combinacionesDosLetras } from './data/combinacionesDosLetras.js';
+import { combinacionesTresLetras } from './data/combinacionesTresLetras.js';
+import { palabrasNivel3 } from './data/palabrasNivel3.js';
+import { frasesNivel4 } from './data/frasesNivel4.js';
+import { consonantColorMap } from './data/colorMap.js';
+
+const vocales = ['a', 'e', 'i', 'o', 'u', 'á', 'é', 'í', 'ó', 'ú'];
+
+// Arrays to keep track of shown words for each level
+const shownWordsLevel3 = [];
+const shownWordsLevel4 = [];
+
 class MetodoLectura {
   constructor() {
     this.nivel = 1;
@@ -239,4 +251,103 @@ class MetodoLectura {
 
 document.addEventListener('DOMContentLoaded', () => {
   new MetodoLectura();
+
+  // Ripple effect for button clicks
+  function createRipple(event) {
+  const button = event.currentTarget;
+  const rect = button.getBoundingClientRect();  // Get button's bounding box
+
+  const circle = document.createElement("span");
+  const diameter = Math.max(rect.width, rect.height);
+  const radius = diameter / 2;
+
+  circle.style.width = circle.style.height = `${diameter}px`;
+
+  // Adjust positioning to be relative to the button itself
+  circle.style.left = `${event.clientX - rect.left - radius}px`;
+  circle.style.top = `${event.clientY - rect.top - radius}px`;
+
+  circle.classList.add("ripple");
+
+  const ripple = button.getElementsByClassName("ripple")[0];
+  if (ripple) {
+    ripple.remove();
+  }
+
+  button.appendChild(circle);
+}
+
+  const buttons = document.getElementsByTagName("button");
+  for (const button of buttons) {
+    button.addEventListener("click", createRipple);
+  }
+
+  // Highlight tutorial button on page load
+  const tutorialButton = document.getElementById('tutorialButton');
+  tutorialButton.classList.add('highlight');
+
+  setTimeout(() => {
+    tutorialButton.classList.remove('highlight');
+  }, 1000);
+
+  // Show/Hide Popup logic
+  const popup = document.getElementById('popup');
+  const overlay = document.getElementById('overlay');
+  const closePopupButton = document.getElementById('closePopup');
+  const scrollIndicator = document.getElementById('scrollIndicator');
+  
+
+  function showPopup() {
+    popup.style.display = 'block';
+    overlay.style.display = 'block';
+    popup.scrollTop = 0; // Reset scroll position
+    checkScrollIndicator();
+    if (scrollIndicator) {
+      scrollIndicator.classList.remove('hidden');
+      scrollIndicator.classList.add('bounce');
+      setTimeout(() => {
+        scrollIndicator.classList.remove('bounce');
+      }, 1000);
+    }
+  }
+
+  function hidePopup() {
+    popup.style.display = 'none';
+    overlay.style.display = 'none';
+  }
+
+  function checkScrollIndicator() {
+    if (scrollIndicator && popup) {
+      if (popup.scrollHeight > popup.clientHeight && popup.scrollTop < 5) {
+        scrollIndicator.classList.remove('hidden');
+      } else {
+        scrollIndicator.classList.add('hidden');
+      }
+    }
+  }
+
+  if (popup && scrollIndicator) {
+    popup.addEventListener('scroll', checkScrollIndicator);
+  }
+
+  // This to disable double-tap zoom on mobile
+  document.addEventListener('touchstart', function(event) {
+    if (event.touches.length > 1) {
+      event.preventDefault();
+    }
+  }, { passive: false });
+
+  let lastTouchEnd = 0;
+  document.addEventListener('touchend', function(event) {
+    const now = Date.now();
+    if (now - lastTouchEnd <= 300) {
+      event.preventDefault();
+    }
+    lastTouchEnd = now;
+  }, false);
+  
+  tutorialButton.addEventListener('click', showPopup);
+  closePopupButton.addEventListener('click', hidePopup);
+  overlay.addEventListener('click', hidePopup);
+  window.addEventListener('resize', checkScrollIndicator);
 });
