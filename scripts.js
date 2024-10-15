@@ -11,7 +11,11 @@ class MetodoLectura {
     this.nivel = 1;
     this.contenido = {};
     this.uniqueConsonants = new Set();
-    this.shownContent = [new Set(), new Set(), new Set(), new Set()];
+    this.shownCombinationsLevel1 = [];
+    this.shownCombinationsLevel2 = [];
+    this.shownWordsLevel3 = [];
+    this.shownWordsLevel4 = [];
+    this.currentIndex = [0, 0, 0, 0];
     this.contentArrays = [
       this.getAllPossibleLevel1Combinations(),
       combinacionesTresLetras.cvc,
@@ -61,37 +65,50 @@ class MetodoLectura {
   }
 
   generarContenido() {
-    const levelIndex = this.nivel - 1;
-    const contentArray = this.contentArrays[levelIndex];
-    const shownSet = this.shownContent[levelIndex];
-
-    let item;
-    if (shownSet.size === contentArray.length) {
-      shownSet.clear();
-    }
-
-    do {
-      item = contentArray[Math.floor(Math.random() * contentArray.length)];
-    } while (shownSet.has(JSON.stringify(item)));
-
-    shownSet.add(JSON.stringify(item));
-
     switch (this.nivel) {
       case 1:
-        this.contenido = { consonante: item.consonante, vocal: item.vocal };
+        this.contenido = this.getUniqueLevel1Combination();
         break;
       case 2:
-        this.contenido = { consonante: item.slice(0, -1), vocal: item.slice(-1) };
+        this.contenido = this.getUniqueLevel2Combination();
         break;
       case 3:
-        this.contenido = { palabra: item };
+        this.contenido = { palabra: this.getUniqueWord(2) };
         break;
       case 4:
-        this.contenido = { frase: item };
+        this.contenido = { frase: this.getUniqueWord(3) };
         break;
     }
-
     this.renderContenido();
+  }
+
+  getUniqueLevel1Combination() {
+    const combinations = this.contentArrays[0];
+    const index = this.getNextIndex(0);
+    const item = combinations[index];
+    return { consonante: item.consonante, vocal: item.vocal };
+  }
+
+  getUniqueLevel2Combination() {
+    const combinations = this.contentArrays[1];
+    const index = this.getNextIndex(1);
+    const item = combinations[index];
+    return { consonante: item.slice(0, -1), vocal: item.slice(-1) };
+  }
+
+  getUniqueWord(levelIndex) {
+    const words = this.contentArrays[levelIndex];
+    const index = this.getNextIndex(levelIndex);
+    return words[index];
+  }
+
+  getNextIndex(levelIndex) {
+    let index = this.currentIndex[levelIndex];
+    if (index >= this.contentArrays[levelIndex].length) {
+      index = 0;
+    }
+    this.currentIndex[levelIndex] = (index + 1) % this.contentArrays[levelIndex].length;
+    return index;
   }
 
   getAllPossibleLevel1Combinations() {
@@ -105,15 +122,21 @@ class MetodoLectura {
         }
       });
     }
-    return allCombinations;
+    return this.shuffleArray(allCombinations);
+  }
+
+  shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
   }
     
   setNivel(newNivel) {
-    if (this.nivel !== newNivel) {
-      this.nivel = newNivel;
-      this.updateLevelButtons();
-      this.generarContenido();
-    }
+    this.nivel = newNivel;
+    this.updateLevelButtons();
+    this.generarContenido();
   }
 
   updateLevelButtons() {
@@ -208,6 +231,14 @@ class MetodoLectura {
       container.appendChild(this.renderLetra(letra));
     });
   }
+
+  renderError(container) {
+    const errorSpan = document.createElement('span');
+    errorSpan.textContent = 'Error';
+    errorSpan.className = 'text-3xl text-red-500';
+    container.appendChild(errorSpan);
+  }
+}
 
   renderError(container) {
     const errorSpan = document.createElement('span');
