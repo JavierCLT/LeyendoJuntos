@@ -19,14 +19,16 @@ class MetodoLectura {
     this.level1Pool = [];
     this.level1PoolSize = 30;
     this.shownCombinationsLevel2 = [];
+    this.shownWordsLevel3 = [];
+    this.shownWordsLevel4 = [];
     this.init();
   }
 
   init() {
     this.refreshLevel1Pool();
-    this.generarContenido();
     this.setupEventListeners();
-    this.render();
+    this.updateLevelButtons();
+    this.generarContenido(); // Generate initial content
   }
 
 
@@ -88,30 +90,24 @@ class MetodoLectura {
 
   generarContenido() {
     let siguiente;
-    try {
-      switch (this.nivel) {
-        case 1:
-          siguiente = this.getUniqueLevel1Combination();
-          break;
-        case 2:
-          siguiente = this.getUniqueLevel2Combination();
-          break;
-        case 3:
-          siguiente = this.getUniqueWord(palabrasNivel3, shownWordsLevel3);
-          break;
-        case 4:
-          siguiente = this.getUniqueWord(frasesNivel4, shownWordsLevel4);
-          break;
-        default:
-          siguiente = this.generarSilabaSimple();
-      }
-    } catch (error) {
-      console.error("Error generando contenido:", error);
-      siguiente = { consonante: 'e', vocal: 'r' };
+    switch (this.nivel) {
+      case 1:
+        siguiente = this.getUniqueLevel1Combination();
+        break;
+      case 2:
+        siguiente = this.getUniqueLevel2Combination();
+        break;
+      case 3:
+        siguiente = this.getUniqueWord(palabrasNivel3, this.shownWordsLevel3);
+        break;
+      case 4:
+        siguiente = this.getUniqueWord(frasesNivel4, this.shownWordsLevel4);
+        break;
+      default:
+        siguiente = this.generarSilabaSimple();
     }
-
     this.contenido = siguiente;
-    this.render();
+    this.renderContenido();
   }
 
   getUniqueLevel1Combination() {
@@ -123,16 +119,14 @@ class MetodoLectura {
 
   getUniqueLevel2Combination() {
     if (this.shownCombinationsLevel2.length === combinacionesTresLetras.cvc.length) {
-      this.shownCombinationsLevel2 = []; // Reset if all combinations have been shown
+      this.shownCombinationsLevel2 = [];
     }
-
     let combination;
     do {
       combination = this.generarContenidoNivel2();
     } while (this.shownCombinationsLevel2.some(shown => 
       shown.consonante === combination.consonante && shown.vocal === combination.vocal
     ));
-
     this.shownCombinationsLevel2.push(combination);
     return combination;
   }
@@ -180,22 +174,19 @@ class MetodoLectura {
   
   getUniqueWord(wordsArray, shownWords) {
     if (shownWords.length === wordsArray.length) {
-      shownWords.length = 0; // Reset the shown words list
+      shownWords.length = 0;
     }
-
     let availableWords = wordsArray.filter(word => !shownWords.includes(word));
     let randomWord = availableWords[Math.floor(Math.random() * availableWords.length)];
-    
     shownWords.push(randomWord);
-
     return this.nivel === 3 ? { palabra: randomWord } : { frase: randomWord };
   }
 
   setNivel(newNivel) {
     if (this.nivel !== newNivel) {
       this.nivel = newNivel;
-      this.generarContenido();
       this.updateLevelButtons();
+      this.generarContenido(); // Generate new content for the new level
     }
   }
 
@@ -213,30 +204,22 @@ class MetodoLectura {
   }
 
   getConsonantColor(consonant) {
-    consonant = consonant.toLowerCase();
     if (!this.uniqueConsonants.has(consonant)) {
       this.uniqueConsonants.add(consonant);
     }
-    return consonantColorMap[consonant] || '#000000'; // Default to black if consonant not found
+    return consonantColorMap[consonant] || '#000000';
   }
 
-  renderLetra(letra, index) {
+  renderLetra(letra) {
     const span = document.createElement('span');
     span.textContent = letra;
     const isConsonant = !vocales.includes(letra.toLowerCase());
-
-    if (isConsonant) {
-      span.style.color = this.getConsonantColor(letra.toLowerCase());
-    } else {
-      span.style.color = 'black';
-    }
-
+    span.style.color = isConsonant ? this.getConsonantColor(letra.toLowerCase()) : 'black';
     span.classList.add('inline-block', 'font-bold');
     const sizeClass = this.nivel === 1 ? 'text-6xl' :
       this.nivel === 2 ? 'text-5xl' :
-        this.nivel === 3 ? 'text-4xl' : 'text-3xl';
+      this.nivel === 3 ? 'text-4xl' : 'text-3xl';
     span.classList.add(sizeClass);
-
     return span;
   }
 
@@ -246,56 +229,67 @@ class MetodoLectura {
     container.className = 'flex flex-wrap justify-center items-center';
 
     if ('frase' in this.contenido) {
-      this.contenido.frase.split(' ').forEach((palabra, idx) => {
-        const palabraDiv = document.createElement('div');
-        palabraDiv.className = 'flex mr-4 mb-2';
-        palabra.split('').forEach((letra, letraIdx, arr) => {
-          palabraDiv.appendChild(this.renderLetra(letra, letraIdx, letraIdx === arr.length - 1));
-        });
-        container.appendChild(palabraDiv);
-      });
+      this.renderFrase(container);
     } else if ('palabra' in this.contenido) {
-      const palabraDiv = document.createElement('div');
-      palabraDiv.className = 'flex';
-      this.contenido.palabra.split('').forEach((letra, index) => {
-        palabraDiv.appendChild(this.renderLetra(letra, index));
-      });
-      container.appendChild(palabraDiv);
+      this.renderPalabra(container);
     } else if ('consonante' in this.contenido && 'vocal' in this.contenido) {
-      const consonantes = this.contenido.consonante;
-      const vocales = this.contenido.vocal;
-      let i = 0;
-      while (i < consonantes.length) {
-        let letra = consonantes[i];
-        let combined = false;
-
-        if (i < consonantes.length - 1) {
-          const nextLetra = consonantes[i + 1];
-          if ((letra === 'c' && nextLetra === 'h') || (letra === 'l' && nextLetra === 'l') || (letra === 'r' && nextLetra === 'r') || (letra === 'c' && nextLetra === 'c') || (letra === 'q' && nextLetra === 'u')) {
-            letra += nextLetra;
-            i += 2;
-            combined = true;
-          } else {
-            i += 1;
-          }
-        } else {
-          i += 1;
-        }
-
-        container.appendChild(this.renderLetra(letra, i, combined));
-      }
-
-      vocales.split('').forEach((letra, index) => {
-        container.appendChild(this.renderLetra(letra, index, false));
-      });
+      this.renderSilaba(container);
     } else {
-      const errorSpan = document.createElement('span');
-      errorSpan.textContent = 'Error';
-      errorSpan.className = 'text-3xl text-red-500';
-      container.appendChild(errorSpan);
+      this.renderError(container);
     }
   }
 
+  renderFrase(container) {
+    this.contenido.frase.split(' ').forEach((palabra) => {
+      const palabraDiv = document.createElement('div');
+      palabraDiv.className = 'flex mr-4 mb-2';
+      palabra.split('').forEach((letra) => {
+        palabraDiv.appendChild(this.renderLetra(letra));
+      });
+      container.appendChild(palabraDiv);
+    });
+  }
+
+  renderPalabra(container) {
+    const palabraDiv = document.createElement('div');
+    palabraDiv.className = 'flex';
+    this.contenido.palabra.split('').forEach((letra) => {
+      palabraDiv.appendChild(this.renderLetra(letra));
+    });
+    container.appendChild(palabraDiv);
+  }
+
+  renderSilaba(container) {
+    const consonantes = this.contenido.consonante;
+    const vocales = this.contenido.vocal;
+    let i = 0;
+    while (i < consonantes.length) {
+      let letra = consonantes[i];
+      if (i < consonantes.length - 1) {
+        const nextLetra = consonantes[i + 1];
+        if (['ch', 'll', 'rr', 'cc', 'qu'].includes(letra + nextLetra)) {
+          letra += nextLetra;
+          i += 2;
+        } else {
+          i += 1;
+        }
+      } else {
+        i += 1;
+      }
+      container.appendChild(this.renderLetra(letra));
+    }
+    vocales.split('').forEach((letra) => {
+      container.appendChild(this.renderLetra(letra));
+    });
+  }
+
+  renderError(container) {
+    const errorSpan = document.createElement('span');
+    errorSpan.textContent = 'Error';
+    errorSpan.className = 'text-3xl text-red-500';
+    container.appendChild(errorSpan);
+  }
+  
   render() {
     this.renderContenido();
     this.updateLevelButtons();
