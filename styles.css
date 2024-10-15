@@ -162,3 +162,8 @@ body {
   user-select: none;
   touch-action: manipulation;
 }
+
+button {
+  touch-action: manipulation;
+}
+
