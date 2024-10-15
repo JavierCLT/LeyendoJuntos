@@ -31,9 +31,11 @@ class MetodoLectura {
 
   setupEventListeners() {
     document.getElementById('nextButton').addEventListener('click', () => this.generarContenido());
-    document.querySelectorAll('.level-button').forEach(button => {
-      button.addEventListener('click', (e) => this.setNivel(parseInt(e.target.dataset.level)));
-    });
+  
+  // Update level when level buttons are clicked, but do not generate content
+  document.querySelectorAll('.level-button').forEach(button => {
+    button.addEventListener('click', (e) => this.setNivel(parseInt(e.target.dataset.level)));
+  });
     document.getElementById('shareButton').addEventListener('click', () => this.shareApp());
     document.getElementById('contactButton').addEventListener('click', () => {
       window.open('https://www.linkedin.com/in/javiersz/', '_blank');
