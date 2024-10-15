@@ -25,38 +25,44 @@ class MetodoLectura {
   }
 
   setupEventListeners() {
-  document.getElementById('nextButton').addEventListener('click', () => this.generarContenido());
+    document.getElementById('nextButton').addEventListener('click', () => this.generarContenido());
 
-  // Handle level button clicks
-  document.querySelectorAll('.level-button').forEach(button => {
-    button.addEventListener('click', (e) => {
-      const newNivel = parseInt(e.target.dataset.level);
+    // Handle level button clicks
+    document.querySelectorAll('.level-button').forEach(button => {
+      button.addEventListener('click', (e) => {
+        const newNivel = parseInt(e.target.dataset.level);
+        if (newNivel !== this.nivel) {
+          this.setNivel(newNivel);
+        }
+        this.updateLevelButtons();
+      });
 
-      // Check if the level is the same as the current level
-      if (newNivel !== this.nivel) {
-        this.setNivel(newNivel);
-      }
+      // Prevent zooming when double-tapping level buttons on mobile devices
+      button.addEventListener('touchstart', (event) => {
+        if (event.touches.length > 1) {
+          event.preventDefault(); // Prevent zoom
+        }
+      }, { passive: false });
 
-      // Apply immediate color change for the active level
-      this.updateLevelButtons();
+      button.addEventListener('touchend', (e) => {
+        e.preventDefault(); // Prevent default touch behavior
+        const newNivel = parseInt(e.target.dataset.level);
+        if (newNivel !== this.nivel) {
+          this.setNivel(newNivel);
+        }
+        this.updateLevelButtons();
+      });
+
+      button.addEventListener('dblclick', (event) => {
+        event.preventDefault(); // Prevent zooming
+      });
     });
 
-    // Prevent zooming when double-tapping level buttons on mobile devices
-    button.addEventListener('touchstart', (event) => {
-      if (event.touches.length > 1) {
-        event.preventDefault(); // Prevent zoom
-      }
-    }, { passive: false });
-    button.addEventListener('dblclick', (event) => {
-  event.preventDefault(); // Prevent zooming
+    document.getElementById('shareButton').addEventListener('click', () => this.shareApp());
+    document.getElementById('contactButton').addEventListener('click', () => {
+      window.open('https://www.linkedin.com/in/javiersz/', '_blank');
     });
-  });
-
-  document.getElementById('shareButton').addEventListener('click', () => this.shareApp());
-  document.getElementById('contactButton').addEventListener('click', () => {
-    window.open('https://www.linkedin.com/in/javiersz/', '_blank');
-  });
-}
+  }
 
   shareApp() {
     if (navigator.share) {
