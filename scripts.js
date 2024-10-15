@@ -264,4 +264,4 @@ document.addEventListener('DOMContentLoaded', () => {
   overlay.addEventListener('click', hidePopup);
 
   window.addEventListener('resize', checkScrollIndicator);
-});
+
