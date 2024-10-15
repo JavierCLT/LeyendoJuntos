@@ -114,12 +114,13 @@ class MetodoLectura {
   }
 
   getUniqueLevel1Combination() {
-    if (this.level1Pool.length === 0) {
-      this.refreshLevel1Pool();
-    }
-    const combination = this.level1Pool.pop();
-    return combination;
+  // Ensure the pool is populated before accessing it
+  if (this.level1Pool.length === 0) {
+    this.refreshLevel1Pool(); // This should fill the pool with combinations
   }
+  const combination = this.level1Pool.pop();
+  return combination;
+}
 
   refreshLevel1Pool() {
     const allCombinations = this.getAllPossibleLevel1Combinations();
