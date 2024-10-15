@@ -23,6 +23,7 @@ class MetodoLectura {
   }
 
   init() {
+    this.refreshLevel1Pool();
     this.generarContenido();
     this.setupEventListeners();
     this.render();
