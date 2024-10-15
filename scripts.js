@@ -11,17 +11,20 @@ class MetodoLectura {
     this.nivel = 1;
     this.contenido = {};
     this.uniqueConsonants = new Set();
-    this.shownContentLevel1 = [];
-    this.shownContentLevel2 = [];
-    this.shownContentLevel3 = []; 
-    this.shownContentLevel4 = [];
+    this.shownContent = [[], [], [], []];  // One array for each level
+    this.contentArrays = [
+      this.getAllPossibleLevel1Combinations(),
+      combinacionesTresLetras.cvc,
+      palabrasNivel3,
+      frasesNivel4
+    ];
     this.init();
   }
 
   init() {
     this.setupEventListeners();
     this.updateLevelButtons();
-    this.generarContenido(); // Generate initial content
+    this.generarContenido();
   }
 
   setupEventListeners() {
@@ -60,26 +63,36 @@ class MetodoLectura {
   
 
   generarContenido() {
-  let siguiente;
-  switch (this.nivel) {
-    case 1:
-      siguiente = this.getUniqueContent(this.getAllPossibleLevel1Combinations(), this.shownContentLevel1);
-      break;
-    case 2:
-      siguiente = this.getUniqueContent(combinacionesTresLetras.cvc, this.shownContentLevel2);
-      break;
-    case 3:
-      siguiente = this.getUniqueContent(palabrasNivel3, this.shownContentLevel3);
-      break;
-    case 4:
-      siguiente = this.getUniqueContent(frasesNivel4, this.shownContentLevel4);
-      break;
-    default:
-      siguiente = this.getUniqueContent(this.getAllPossibleLevel1Combinations(), this.shownContentLevel1);
+    const levelIndex = this.nivel - 1;
+    const contentArray = this.contentArrays[levelIndex];
+    const shownContent = this.shownContent[levelIndex];
+
+    if (shownContent.length === contentArray.length) {
+      shownContent.length = 0;  // Reset when all content has been shown
+    }
+
+    let availableContent = contentArray.filter(item => !shownContent.includes(item));
+    let randomItem = availableContent[Math.floor(Math.random() * availableContent.length)];
+    
+    shownContent.push(randomItem);
+    
+    switch (this.nivel) {
+      case 1:
+        this.contenido = { consonante: randomItem.consonante, vocal: randomItem.vocal };
+        break;
+      case 2:
+        this.contenido = { consonante: randomItem.slice(0, -1), vocal: randomItem.slice(-1) };
+        break;
+      case 3:
+        this.contenido = { palabra: randomItem };
+        break;
+      case 4:
+        this.contenido = { frase: randomItem };
+        break;
+    }
+
+    this.renderContenido();
   }
-  this.contenido = siguiente;
-  this.renderContenido();
-}
 
   getUniqueContent(contentArray, shownContent) {
     if (shownContent.length === contentArray.length) {
