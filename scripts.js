@@ -92,18 +92,20 @@ class MetodoLectura {
     this.render();
   }
 
-  getUniqueWord(wordsArray, shownWords) {
-    if (shownWords.length === wordsArray.length) {
-      shownWords.length = 0; // Reset the shown words list if all have been displayed
-    }
+  getUniqueWord(wordsObject, shownWords) {
+  const wordsArray = Array.isArray(wordsObject) ? wordsObject : Object.values(wordsObject).flat();
 
-    const availableWords = wordsArray.filter(word => !shownWords.includes(word));
-    const randomWord = availableWords[Math.floor(Math.random() * availableWords.length)];
-    
-    shownWords.push(randomWord);
-
-    return this.nivel === 4 ? { frase: randomWord } : { palabra: randomWord };
+  if (shownWords.length === wordsArray.length) {
+    shownWords.length = 0; // Reset the shown words list if all have been displayed
   }
+
+  const availableWords = wordsArray.filter(word => !shownWords.includes(word));
+  const randomWord = availableWords[Math.floor(Math.random() * availableWords.length)];
+  
+  shownWords.push(randomWord);
+
+  return this.nivel === 4 ? { frase: randomWord } : { palabra: randomWord };
+}
 
   setNivel(newNivel) {
     this.nivel = newNivel;
