@@ -1,1 +1,21 @@
-export const palabrasNivel3 = ['casa', 'perro', 'gato', 'árbol', 'flor', 'sol', 'luna', 'estrella', 'agua', 'fuego', 'tierra', 'aire', 'libro', 'mesa', 'silla', 'cama', 'puerta', 'ventana', 'coche', 'bici', 'tren', 'avión', 'barco', 'pez', 'pájaro', 'mano', 'pie', 'ojo', 'nariz', 'boca', 'oreja', 'diente', 'pelo', 'brazo', 'pierna', 'dedo', 'uña', 'corazón', 'cerebro', 'hueso', 'rojo', 'azul', 'verde', 'amarillo', 'blanco', 'negro', 'rosa', 'naranja', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez', 'niño', 'papel', 'lápiz', 'sopa', 'planta', 'escuela', 'calor', 'nieve', 'hoja', 'camisa', 'reloj', 'pelota', 'gafas', 'fruta'];
+export const palabrasNivel3 = [
+  'casa', 'perro', 'gato', 'árbol', 'flor', 'sol', 'luna', 'estrella', 'agua', 'fuego', 'tierra', 'aire',
+  'libro', 'mesa', 'silla', 'cama', 'puerta', 'ventana', 'coche', 'bici', 'tren', 'avión', 'barco', 'pez',
+  'pájaro', 'mano', 'pie', 'ojo', 'nariz', 'boca', 'oreja', 'diente', 'pelo', 'brazo', 'pierna', 'dedo',
+  'uña', 'corazón', 'cerebro', 'hueso', 'rojo', 'azul', 'verde', 'amarillo', 'blanco', 'negro', 'rosa',
+  'naranja', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez', 'niño',
+  'papel', 'lápiz', 'sopa', 'planta', 'escuela', 'calor', 'nieve', 'hoja', 'camisa', 'reloj', 'pelota',
+  'gafas', 'fruta', 'nube', 'viento', 'lluvia', 'montaña', 'valle', 'mar', 'río', 'lago', 'isla', 'playa',
+  'jardín', 'parque', 'ciudad', 'pueblo', 'calle', 'camino', 'puente', 'edificio', 'torre', 'pared',
+  'techo', 'suelo', 'espejo', 'cuchara', 'tenedor', 'cuchillo', 'plato', 'taza', 'vaso', 'botella',
+  'mochila', 'sombrero', 'zapato', 'calcetín', 'chaqueta', 'pantalón', 'bufanda', 'guante', 'sombrilla',
+  'caballo', 'vaca', 'oveja', 'cerdo', 'gallina', 'pato', 'ratón', 'lobo', 'zorro', 'conejo', 'jirafa',
+  'león', 'tigre', 'elefante', 'mono', 'oso', 'águila', 'tiburón', 'ballena', 'delfín', 'mariposa',
+  'cebolla', 'zanahoria', 'lechuga', 'calabaza', 'ajo', 'pimiento', 'tomate', 'pepino', 'fresa', 'uva',
+  'manzana', 'pera', 'plátano', 'sandía', 'melón', 'mango', 'piña', 'melocotón', 'cereza', 'kiwi',
+  'lápices', 'colores', 'cuaderno', 'bolígrafo', 'regla', 'borrador', 'tijeras', 'pegamento',
+  'helado', 'pastel', 'caramelo', 'chocolate', 'galleta', 'pan', 'queso', 'huevo', 'leche', 'yogur',
+  'pollo', 'carne', 'pescado', 'arroz', 'frijoles', 'sopa', 'pizza', 'hamburguesa', 'patatas',
+  'bicicleta', 'camión', 'motocicleta', 'tractor', 'ambulancia', 'bomberos', 'helicóptero', 'barco', 'submarino',
+  'cajón', 'almohada', 'escalera', 'lavadora', 'cortina', 'ventilador', 'lámpara', 'interruptor', 'refrigerador', 'microondas'
+];
