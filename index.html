@@ -79,9 +79,19 @@
             z-index: 999;
         }
         #speakButton {
-            font-size: 1.5rem;
-            padding: 0.5rem;
-            margin-right: 0.5rem;
+            background: none;
+            border: none;
+            padding: 0.25rem;
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+        }
+        #speakButton svg {
+            fill: #3b82f6; /* Matches blue-500 for consistency */
+            transition: fill 0.3s ease;
+        }
+        #speakButton:hover svg {
+            fill: #2563eb; /* Matches hover:bg-blue-600 */
         }
     </style>
     <script type="application/ld+json">
@@ -106,10 +116,12 @@
         
         <footer class="w-full max-w-md mx-auto pb-2">
             <!-- Yellow area start -->
-            <div class="space-y-2"> <!-- This creates 0.5em vertical gap between children -->
+            <div class="space-y-2">
                 <div class="flex items-center justify-center">
-                    <button id="speakButton" class="button-ripple bg-blue-500 hover:bg-blue-600 text-white rounded-full transition duration-300 ease-in-out">
-                        🔊
+                    <button id="speakButton" class="button-ripple">
+                        <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                        </svg>
                     </button>
                     <button id="nextButton" class="button-ripple w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg transition duration-300 ease-in-out transform" style="touch-action: manipulation; margin-bottom:0.5em;">
                         Siguiente
@@ -126,7 +138,7 @@
             <!-- Yellow area end -->
             
             <!-- Bottom Buttons -->
-            <div class="grid grid-cols-3 gap-2" style="grid-template-columns: repeat(3, minmax(0, 1fr));"> <!-- Added mt-2 for consistent spacing -->
+            <div class="grid grid-cols-3 gap-2" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
                 <button id="shareButton" class="button-ripple flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold text-sm py-2 px-4 rounded-lg transition duration-300 ease-in-out">Compartir</button>
                 <button id="contactButton" class="button-ripple flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold text-sm py-2 px-4 rounded-lg transition duration-300 ease-in-out">Contacto</button>
                 <button id="tutorialButton" class="button-ripple flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold text-sm py-2 px-4 rounded-lg transition duration-300 ease-in-out">Tutorial</button>
