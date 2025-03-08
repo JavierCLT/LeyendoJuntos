@@ -276,127 +276,50 @@ class MetodoLectura {
   }
 
   speakContent() {
-  if (!('speechSynthesis' in window)) {
-    console.error('Web Speech API is not supported.');
-    alert('Lo siento, la lectura en voz alta no está disponible en este navegador.');
-    return;
-  }
-
-  if (!this.voices.length) {
-    console.warn('Voices not loaded yet. Retrying...');
-    this.initializeSpeech();
-    setTimeout(() => this.speakContent(), 500);
-    return;
-  }
-  
-  // Cancel any ongoing speech
-  window.speechSynthesis.cancel();
-
-  // Get text content to speak
-  let textToSpeak = this.nivel === 4 ? this.contenido.frase : this.contenido.palabra;
-  
-  // Apply text transformation to prevent abbreviation interpretation
-  textToSpeak = this.preventAbbreviationReading(textToSpeak);
-  
-  const utterance = new SpeechSynthesisUtterance();
-  utterance.text = textToSpeak;
-  
-  // Detect iOS
-  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-  
-  // Configure speech parameters
-  utterance.lang = 'es-ES';  // Always specify Castilian Spanish
-  utterance.volume = 1;
-  utterance.rate = isIOS ? 0.6 : 0.7;  // Even slower rate to better articulate syllables
-  utterance.pitch = 1;
-
-  // First time check - if on iOS and no appropriate voice found, show detailed instructions
-  const isFirstUse = !localStorage.getItem('voiceInstructionsShown');
-  if (isIOS && (!this.spanishVoice || this.spanishVoice.lang !== 'es-ES') && isFirstUse) {
-    localStorage.setItem('voiceInstructionsShown', 'true');
-    
-    // Show detailed iOS-specific instructions
-    alert('Para conseguir una voz española nativa, sigue estos pasos:\n\n' +
-          '1. Ve a Ajustes > Accesibilidad > Contenido hablado\n' +
-          '2. Toca en "Voces"\n' +
-          '3. Selecciona "Español (España)"\n' +
-          '4. Descarga una voz como "Jorge" o "Mónica"\n' +
-          '5. Vuelve a la aplicación y reiníciala');
-  }
-
-  if (this.spanishVoice) {
-    utterance.voice = this.spanishVoice;
-    console.log('Speaking with voice:', this.spanishVoice.name, this.spanishVoice.lang);
-  } else {
-    console.warn('No Spanish voice available. Using default voice.');
-  }
-
-  utterance.onend = () => {
-    console.log('Speech finished');
-  };
-
-  utterance.onerror = (event) => {
-    console.error('Speech synthesis error:', event.error);
-    if (event.error === 'not-allowed' || event.error === 'network') {
-      alert('Error al reproducir el audio. Verifica los permisos o la conexión.');
+    if (!('speechSynthesis' in window)) {
+      console.error('Web Speech API is not supported.');
+      alert('Lo siento, la lectura en voz alta no está disponible en este navegador.');
+      return;
     }
-  };
 
-  window.speechSynthesis.speak(utterance);
-}
+    if (!this.voices.length) {
+      console.warn('Voices not loaded yet. Retrying...');
+      this.initializeSpeech();
+      setTimeout(() => this.speakContent(), 500);
+      return;
+    }
 
-// Method to prevent text being interpreted as abbreviations
-preventAbbreviationReading(text) {
-  // List of known problematic abbreviations in Spanish TTS
-  const knownAbbreviations = [
-    { abbr: 'vo', fullText: 'versión original' },
-    { abbr: 'va', fullText: 'versión alternativa' },
-    { abbr: 'dr', fullText: 'doctor' },
-    { abbr: 'sr', fullText: 'señor' },
-    { abbr: 'vs', fullText: 'versus' },
-    { abbr: 'km', fullText: 'kilómetro' },
-    // Add more as you discover them
-  ];
-  
-  // Original text for logging
-  const originalText = text;
-  
-  // Check if the text is exactly a known abbreviation
-  const exactMatch = knownAbbreviations.find(a => a.abbr.toLowerCase() === text.toLowerCase());
-  if (exactMatch) {
-    // Handle exact match by adding spaces between letters
-    console.log(`Detected abbreviation "${text}" that would be read as "${exactMatch.fullText}"`);
-    return text.split('').join(' ');
-  }
-  
-  // For two and three letter syllables, separate with spaces to ensure correct reading
-  if (text.length <= 3 && !text.includes(' ')) {
-    console.log(`Short text "${text}" - separating letters to ensure proper pronunciation`);
-    return text.split('').join(' ');
-  }
-  
-  // For words that might contain abbreviations, check each syllable
-  const words = text.split(' ');
-  const processedWords = words.map(word => {
-    // If word is short (2-3 letters), treat it specially
-    if (word.length <= 3) {
-      const matchingAbbr = knownAbbreviations.find(a => a.abbr.toLowerCase() === word.toLowerCase());
-      if (matchingAbbr) {
-        return word.split('').join(' ');
+    // Cancel any ongoing speech
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance();
+    utterance.text = this.nivel === 4 ? this.contenido.frase : this.contenido.palabra;
+    utterance.lang = 'es-ES';  // Explicitly set to Castilian Spanish
+    utterance.volume = 1;
+    utterance.rate = 0.6;      // Slightly slower for better clarity
+    utterance.pitch = 1;
+
+    if (this.spanishVoice) {
+      utterance.voice = this.spanishVoice;
+      console.log('Speaking with voice:', this.spanishVoice.name, this.spanishVoice.lang);
+    } else {
+      console.warn('No Spanish voice available. Using default voice.');
+      alert('La voz española no está disponible en este dispositivo. Usando voz predeterminada. En iOS, activa las voces españolas en Ajustes > Accesibilidad > Contenido hablado > Voces.');
+    }
+
+    utterance.onend = () => {
+      console.log('Speech finished');
+    };
+
+    utterance.onerror = (event) => {
+      console.error('Speech synthesis error:', event.error);
+      if (event.error === 'not-allowed' || event.error === 'network') {
+        alert('Error al reproducir el audio. Verifica los permisos o la conexión.');
       }
-    }
-    return word;
-  });
-  
-  const processedText = processedWords.join(' ');
-  
-  // Only log if changes were made
-  if (processedText !== originalText) {
-    console.log(`Modified text for TTS: "${originalText}" -> "${processedText}"`);
+    };
+
+    window.speechSynthesis.speak(utterance);
   }
-  
-  return processedText;
-}
 
   render() {
     this.renderContenido();
