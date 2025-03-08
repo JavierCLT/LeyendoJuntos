@@ -296,7 +296,7 @@ class MetodoLectura {
     utterance.text = this.nivel === 4 ? this.contenido.frase : this.contenido.palabra;
     utterance.lang = 'es-ES';  // Explicitly set to Castilian Spanish
     utterance.volume = 1;
-    utterance.rate = 0.6;      // Slightly slower for better clarity
+    utterance.rate = 0.4;      // Slightly slower for better clarity
     utterance.pitch = 1;
 
     if (this.spanishVoice) {
