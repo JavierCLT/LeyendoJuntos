@@ -22,6 +22,34 @@ class MetodoLectura {
     this.generarContenido();
     this.setupEventListeners();
     this.render();
+    this.initializeSpeech(); // Ensure speech is initialized
+  }
+
+  // Initialize speech synthesis and wait for voices to load
+  initializeSpeech() {
+    if (!('speechSynthesis' in window)) {
+      console.error('Web Speech API is not supported in this browser.');
+      return;
+    }
+
+    // Load voices asynchronously
+    const loadVoices = () => {
+      this.voices = window.speechSynthesis.getVoices();
+      if (this.voices.length === 0) {
+        // If no voices are loaded yet, wait and try again
+        setTimeout(loadVoices, 100);
+      } else {
+        // Select a Spanish (Spain) voice
+        this.spanishVoice = this.voices.find(voice => voice.lang === 'es-ES') || this.voices.find(voice => voice.lang.startsWith('es-'));
+        if (!this.spanishVoice) {
+          console.warn('No Spanish voice found. Using default voice.');
+        }
+      }
+    };
+    loadVoices();
+
+    // Handle voice changes (some browsers load voices dynamically)
+    window.speechSynthesis.onvoiceschanged = loadVoices;
   }
 
   setupEventListeners() {
@@ -198,14 +226,33 @@ class MetodoLectura {
     }
   }
 
-  // Method to speak the content
+  // Method to speak the content with a Spanish voice
   speakContent() {
+    if (!('speechSynthesis' in window)) {
+      console.error('Web Speech API is not supported.');
+      alert('Lo siento, la lectura en voz alta no está disponible en este navegador.');
+      return;
+    }
+
+    if (!this.spanishVoice) {
+      console.warn('Spanish voice not loaded yet. Trying with default.');
+      this.initializeSpeech(); // Try to reload voices
+    }
+
     const utterance = new SpeechSynthesisUtterance();
     utterance.text = this.nivel === 4 ? this.contenido.frase : this.contenido.palabra;
-    utterance.lang = 'es-ES'; // Set to Spanish (Spain)
+    utterance.lang = 'es-ES'; // Explicitly set Spanish
     utterance.volume = 1; // 0 to 1
     utterance.rate = 0.9; // Slow it down slightly for kids
     utterance.pitch = 1; // Normal pitch
+
+    // Assign the Spanish voice if available
+    if (this.spanishVoice) {
+      utterance.voice = this.spanishVoice;
+      console.log('Using voice:', this.spanishVoice.name);
+    } else {
+      console.warn('Falling back to default voice.');
+    }
 
     // Handle end of speech
     utterance.onend = () => {
