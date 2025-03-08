@@ -24,10 +24,9 @@ class MetodoLectura {
     this.generarContenido();
     this.setupEventListeners();
     this.render();
-    this.initializeSpeech(); // Ensure speech is initialized
+    this.initializeSpeech();
   }
 
-  // Initialize speech synthesis and wait for voices to load
   initializeSpeech() {
     if (!('speechSynthesis' in window)) {
       console.error('Web Speech API is not supported in this browser.');
@@ -37,10 +36,8 @@ class MetodoLectura {
     const loadVoices = () => {
       this.voices = window.speechSynthesis.getVoices();
       if (this.voices.length === 0) {
-        // If no voices are loaded yet, wait and try again
         setTimeout(loadVoices, 100);
       } else {
-        // Prioritize a Spanish (Spain) voice
         this.spanishVoice = this.voices.find(voice => voice.lang === 'es-ES') || 
                            this.voices.find(voice => voice.lang.startsWith('es-'));
         if (this.spanishVoice) {
@@ -51,7 +48,6 @@ class MetodoLectura {
       }
     };
 
-    // Load voices immediately and handle dynamic loading
     loadVoices();
     window.speechSynthesis.onvoiceschanged = loadVoices;
   }
@@ -60,7 +56,6 @@ class MetodoLectura {
     document.getElementById('nextButton').addEventListener('click', () => this.generarContenido());
     document.getElementById('speakButton').addEventListener('click', () => this.speakContent());
 
-    // Handle level button clicks
     document.querySelectorAll('.level-button').forEach(button => {
       button.addEventListener('click', (e) => {
         const newNivel = parseInt(e.target.dataset.level);
@@ -70,15 +65,14 @@ class MetodoLectura {
         this.updateLevelButtons();
       });
 
-      // Prevent zooming when double-tapping level buttons on mobile devices
       button.addEventListener('touchstart', (event) => {
         if (event.touches.length > 1) {
-          event.preventDefault(); // Prevent zoom
+          event.preventDefault();
         }
       }, { passive: false });
 
       button.addEventListener('touchend', (e) => {
-        e.preventDefault(); // Prevent default touch behavior
+        e.preventDefault();
         const newNivel = parseInt(e.target.dataset.level);
         if (newNivel !== this.nivel) {
           this.setNivel(newNivel);
@@ -87,7 +81,7 @@ class MetodoLectura {
       });
 
       button.addEventListener('dblclick', (event) => {
-        event.preventDefault(); // Prevent zooming
+        event.preventDefault();
       });
     });
 
@@ -151,7 +145,7 @@ class MetodoLectura {
     const wordsArray = Array.isArray(wordsObject) ? wordsObject : Object.values(wordsObject).flat();
 
     if (shownWords.length === wordsArray.length) {
-      shownWords.length = 0; // Reset the shown words list if all have been displayed
+      shownWords.length = 0;
     }
 
     const availableWords = wordsArray.filter(word => !shownWords.includes(word));
@@ -166,10 +160,9 @@ class MetodoLectura {
     this.nivel = newNivel;
     this.updateLevelButtons();
 
-    // Disable the button for the current level
     document.querySelectorAll('.level-button').forEach(button => {
       const level = parseInt(button.dataset.level);
-      button.disabled = level === newNivel;  // Disable the button for the current level
+      button.disabled = level === newNivel;
     });
 
     this.generarContenido();
@@ -181,7 +174,7 @@ class MetodoLectura {
       if (level === this.nivel) {
         button.classList.remove('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
         button.classList.add(`active-nivel-${level}`, 'text-nivel');
-        button.classList.add('text-red-500'); // Ensure immediate red color for the active button
+        button.classList.add('text-red-500');
       } else {
         button.classList.remove(`active-nivel-${level}`, 'text-nivel', 'text-red-500');
         button.classList.add('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
@@ -190,7 +183,7 @@ class MetodoLectura {
   }
 
   getConsonantColor(consonant) {
-    return consonantColorMap[consonant.toLowerCase()] || '#000000'; // Default to black if not found
+    return consonantColorMap[consonant.toLowerCase()] || '#000000';
   }
 
   renderLetra(letra) {
@@ -240,18 +233,17 @@ class MetodoLectura {
     if (!this.voices.length) {
       console.warn('Voices not loaded yet. Retrying...');
       this.initializeSpeech();
-      setTimeout(() => this.speakContent(), 500); // Retry after voices load
+      setTimeout(() => this.speakContent(), 500);
       return;
     }
 
     const utterance = new SpeechSynthesisUtterance();
     utterance.text = this.nivel === 4 ? this.contenido.frase : this.contenido.palabra;
-    utterance.lang = 'es-ES'; // Explicitly set Spanish
-    utterance.volume = 1; // 0 to 1
-    utterance.rate = 0.9; // Slow it down slightly for kids
-    utterance.pitch = 1; // Normal pitch
+    utterance.lang = 'es-ES';
+    utterance.volume = 1;
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
 
-    // Assign the Spanish voice if available
     if (this.spanishVoice) {
       utterance.voice = this.spanishVoice;
       console.log('Using voice:', this.spanishVoice.name, this.spanishVoice.lang);
@@ -260,12 +252,10 @@ class MetodoLectura {
       alert('No se encontró una voz en español (España). Usando voz predeterminada.');
     }
 
-    // Handle end of speech
     utterance.onend = () => {
       console.log('Speech finished');
     };
 
-    // Handle errors
     utterance.onerror = (event) => {
       console.error('Speech synthesis error:', event.error);
       if (event.error === 'not-allowed' || event.error === 'network') {
@@ -286,10 +276,9 @@ document.addEventListener('DOMContentLoaded', () => {
   new MetodoLectura();
 });
 
-// Ripple effect for button clicks
 function createRipple(event) {
   const button = event.currentTarget;
-  const rect = button.getBoundingClientRect();  // Get button's bounding box
+  const rect = button.getBoundingClientRect();
 
   const circle = document.createElement("span");
   const diameter = Math.max(rect.width, rect.height);
@@ -315,7 +304,6 @@ for (const button of buttons) {
   button.addEventListener("click", createRipple);
 }
 
-// Highlight tutorial button on page load
 const tutorialButton = document.getElementById('tutorialButton');
 tutorialButton.classList.add('highlight');
 
@@ -323,7 +311,6 @@ setTimeout(() => {
   tutorialButton.classList.remove('highlight');
 }, 1000);
 
-// Show/Hide Popup logic
 const popup = document.getElementById('popup');
 const overlay = document.getElementById('overlay');
 const closePopupButton = document.getElementById('closePopup');
@@ -332,7 +319,7 @@ const scrollIndicator = document.getElementById('scrollIndicator');
 function showPopup() {
   popup.style.display = 'block';
   overlay.style.display = 'block';
-  popup.scrollTop = 0; // Reset scroll position
+  popup.scrollTop = 0;
   checkScrollIndicator();
   if (scrollIndicator) {
     scrollIndicator.classList.remove('hidden');
