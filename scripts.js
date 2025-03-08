@@ -38,13 +38,19 @@ class MetodoLectura {
       if (this.voices.length === 0) {
         setTimeout(loadVoices, 100);
       } else {
-        this.spanishVoice = this.voices.find(voice => voice.lang === 'es-ES') || 
-                           this.voices.find(voice => voice.lang.startsWith('es-'));
+        // Prioritize Castilian Spanish voice (es-ES) with specific name checks
+        this.spanishVoice = this.voices.find(voice => 
+          voice.lang === 'es-ES' && 
+          (voice.name.includes('Spain') || voice.name.includes('Español') || voice.name.includes('Castilian'))
+        ) || this.voices.find(voice => voice.lang === 'es-ES') || 
+           this.voices.find(voice => voice.lang.startsWith('es-'));
         if (this.spanishVoice) {
           console.log('Selected voice:', this.spanishVoice.name, this.spanishVoice.lang);
         } else {
-          console.warn('No Spanish voice found. Using default voice.');
+          console.warn('No suitable Spanish voice found. Using default voice.');
         }
+        // Debug: Log all available voices
+        console.log('Available voices:', this.voices.map(v => `${v.name} (${v.lang})`));
       }
     };
 
@@ -248,8 +254,8 @@ class MetodoLectura {
       utterance.voice = this.spanishVoice;
       console.log('Using voice:', this.spanishVoice.name, this.spanishVoice.lang);
     } else {
-      console.warn('No Spanish voice available. Using default voice.');
-      alert('No se encontró una voz en español (España). Usando voz predeterminada.');
+      console.warn('No suitable Spanish voice available. Using default voice.');
+      alert('No se encontró una voz en español (España) adecuada. Usando voz predeterminada. Ajusta los ajustes de idioma de tu dispositivo para añadir una voz en español de España.');
     }
 
     utterance.onend = () => {
