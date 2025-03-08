@@ -78,6 +78,11 @@
             background-color: rgba(0,0,0,0.5);
             z-index: 999;
         }
+        #speakButton {
+            font-size: 1.5rem;
+            padding: 0.5rem;
+            margin-right: 0.5rem;
+        }
     </style>
     <script type="application/ld+json">
     {
@@ -99,18 +104,17 @@
         
         <main id="contenidoContainer" class="flex-grow flex justify-center items-center text-6xl md:text-7xl lg:text-8xl font-bold text-center" style="margin-bottom:-2em; margin-left:1em;"></main>
         
-        <div id="audioControl" class="text-center mt-4">
-            <button id="speakButton" class="button-ripple bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out">
-                🎙️ Leer en Voz Alta
-            </button>
-        </div>
-        
         <footer class="w-full max-w-md mx-auto pb-2">
             <!-- Yellow area start -->
             <div class="space-y-2"> <!-- This creates 0.5em vertical gap between children -->
-                <button id="nextButton" class="button-ripple w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg transition duration-300 ease-in-out transform" style="touch-action: manipulation; margin-bottom:0.5em;">
-                    Siguiente
-                </button>
+                <div class="flex items-center justify-center">
+                    <button id="speakButton" class="button-ripple bg-blue-500 hover:bg-blue-600 text-white rounded-full transition duration-300 ease-in-out">
+                        🔊
+                    </button>
+                    <button id="nextButton" class="button-ripple w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg transition duration-300 ease-in-out transform" style="touch-action: manipulation; margin-bottom:0.5em;">
+                        Siguiente
+                    </button>
+                </div>
                 <!-- Level Buttons -->
                 <div class="grid grid-cols-4 gap-2" style="margin-bottom:2em;">
                     <button class="button-ripple level-button bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out" data-level="1">Nivel 1</button>
