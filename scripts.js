@@ -38,7 +38,6 @@ class MetodoLectura {
       if (this.voices.length === 0) {
         setTimeout(loadVoices, 100);
       } else {
-        // Prioritize Castilian Spanish voice (es-ES) with specific name checks
         this.spanishVoice = this.voices.find(voice => 
           voice.lang === 'es-ES' && 
           (voice.name.includes('Spain') || voice.name.includes('Español') || voice.name.includes('Castilian'))
@@ -49,7 +48,6 @@ class MetodoLectura {
         } else {
           console.warn('No suitable Spanish voice found. Using default voice.');
         }
-        // Debug: Log all available voices
         console.log('Available voices:', this.voices.map(v => `${v.name} (${v.lang})`));
       }
     };
