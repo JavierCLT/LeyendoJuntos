@@ -38,41 +38,71 @@ class MetodoLectura {
       if (this.voices.length === 0) {
         setTimeout(loadVoices, 100);
       } else {
+        // Log all available voices to help with debugging
+        console.log('All available voices:', this.voices.map(v => `${v.name} (${v.lang})`));
+        
         // Detect platform
         const isApple = /iPhone|iPad|iPod|Mac/.test(navigator.userAgent);
+        console.log('Is Apple device:', isApple);
 
-        // Prioritize voice selection based on platform
-        if (isApple) {
-          // Target Castilian Spanish voices on Apple devices (e.g., Monica Spain, Jorge Spain)
-          this.spanishVoice = this.voices.find(voice => 
-            voice.lang === 'es-ES' && 
-            (voice.name.includes('Spain') || voice.name.includes('Español (España)') || voice.name.includes('Castilian'))
-          ) || this.voices.find(voice => voice.lang === 'es-ES') || 
-             this.voices.find(voice => voice.lang.startsWith('es-'));
-        } else {
-          // Target Microsoft Helena on non-Apple devices (e.g., Windows)
-          this.spanishVoice = this.voices.find(voice => 
-            voice.name === 'Microsoft Helena - Spanish (Spain)' && voice.lang === 'es-ES'
-          ) || this.voices.find(voice => 
-            voice.lang === 'es-ES' && 
-            (voice.name.includes('Spain') || voice.name.includes('Español') || voice.name.includes('Castilian'))
-          ) || this.voices.find(voice => voice.lang === 'es-ES') || 
-             this.voices.find(voice => voice.lang.startsWith('es-'));
+        // Set priority order for Castilian Spanish voices
+        const castilianVoicePriorities = [
+          // Names commonly found on iOS/macOS for Castilian Spanish
+          { name: 'Jorge', lang: 'es-ES' },
+          { name: 'Monica', lang: 'es-ES' },
+          { name: 'Diego', lang: 'es-ES' },
+          { name: 'Español (España)', lang: 'es-ES' },
+          { name: 'Spanish (Spain)', lang: 'es-ES' },
+          { nameIncludes: 'Spain', lang: 'es-ES' },
+          // Fallbacks
+          { lang: 'es-ES' },
+          { lang: 'es-MX' }, // Last resort: Mexican Spanish
+          { langStartsWith: 'es-' }
+        ];
+
+        // Try to find a voice matching the priorities
+        for (const priority of castilianVoicePriorities) {
+          let matchedVoice = null;
+          
+          if (priority.name) {
+            // Exact name match
+            matchedVoice = this.voices.find(voice => 
+              voice.name === priority.name && voice.lang === priority.lang
+            );
+          } else if (priority.nameIncludes) {
+            // Name includes a specific string
+            matchedVoice = this.voices.find(voice => 
+              voice.name.includes(priority.nameIncludes) && voice.lang === priority.lang
+            );
+          } else if (priority.lang) {
+            // Exact language match
+            matchedVoice = this.voices.find(voice => voice.lang === priority.lang);
+          } else if (priority.langStartsWith) {
+            // Language starts with a specific prefix
+            matchedVoice = this.voices.find(voice => voice.lang.startsWith(priority.langStartsWith));
+          }
+          
+          if (matchedVoice) {
+            this.spanishVoice = matchedVoice;
+            console.log('Selected voice:', this.spanishVoice.name, this.spanishVoice.lang);
+            break;
+          }
         }
 
-        if (this.spanishVoice) {
-          console.log('Selected voice:', this.spanishVoice.name, this.spanishVoice.lang);
-        } else {
-          console.warn('Preferred voice not found. Using default Spanish voice.');
+        if (!this.spanishVoice) {
+          console.warn('No suitable Spanish voice found. Using first available voice.');
+          this.spanishVoice = this.voices[0];
         }
-        // Debug: Log all available voices with platform info
-        console.log('Platform:', navigator.userAgent);
-        console.log('Available voices:', this.voices.map(v => `${v.name} (${v.lang})`));
       }
     };
 
+    // Initial load
     loadVoices();
-    window.speechSynthesis.onvoiceschanged = loadVoices;
+    
+    // Set up event handler for when voices are loaded
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
   }
 
   setupEventListeners() {
@@ -260,19 +290,22 @@ class MetodoLectura {
       return;
     }
 
+    // Cancel any ongoing speech
+    window.speechSynthesis.cancel();
+
     const utterance = new SpeechSynthesisUtterance();
     utterance.text = this.nivel === 4 ? this.contenido.frase : this.contenido.palabra;
-    utterance.lang = 'es-ES';
+    utterance.lang = 'es-ES';  // Explicitly set to Castilian Spanish
     utterance.volume = 1;
-    utterance.rate = 0.9;
+    utterance.rate = 0.8;      // Slightly slower for better clarity
     utterance.pitch = 1;
 
     if (this.spanishVoice) {
       utterance.voice = this.spanishVoice;
-      console.log('Using voice:', this.spanishVoice.name, this.spanishVoice.lang);
+      console.log('Speaking with voice:', this.spanishVoice.name, this.spanishVoice.lang);
     } else {
-      console.warn('Preferred voice not available. Using default voice.');
-      alert('La voz preferida no está disponible en este dispositivo. Usando voz predeterminada. En iOS, ajusta las voces en Ajustes > Accesibilidad > Contenido hablado.');
+      console.warn('No Spanish voice available. Using default voice.');
+      alert('La voz española no está disponible en este dispositivo. Usando voz predeterminada. En iOS, activa las voces españolas en Ajustes > Accesibilidad > Contenido hablado > Voces.');
     }
 
     utterance.onend = () => {
