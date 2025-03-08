@@ -38,16 +38,35 @@ class MetodoLectura {
       if (this.voices.length === 0) {
         setTimeout(loadVoices, 100);
       } else {
-        this.spanishVoice = this.voices.find(voice => 
-          voice.lang === 'es-ES' && 
-          (voice.name.includes('Spain') || voice.name.includes('Español') || voice.name.includes('Castilian'))
-        ) || this.voices.find(voice => voice.lang === 'es-ES') || 
-           this.voices.find(voice => voice.lang.startsWith('es-'));
+        // Detect platform
+        const isApple = /iPhone|iPad|iPod|Mac/.test(navigator.userAgent);
+
+        // Prioritize voice selection based on platform
+        if (isApple) {
+          // Target Castilian Spanish voices on Apple devices (e.g., Monica Spain, Jorge Spain)
+          this.spanishVoice = this.voices.find(voice => 
+            voice.lang === 'es-ES' && 
+            (voice.name.includes('Spain') || voice.name.includes('Español (España)') || voice.name.includes('Castilian'))
+          ) || this.voices.find(voice => voice.lang === 'es-ES') || 
+             this.voices.find(voice => voice.lang.startsWith('es-'));
+        } else {
+          // Target Microsoft Helena on non-Apple devices (e.g., Windows)
+          this.spanishVoice = this.voices.find(voice => 
+            voice.name === 'Microsoft Helena - Spanish (Spain)' && voice.lang === 'es-ES'
+          ) || this.voices.find(voice => 
+            voice.lang === 'es-ES' && 
+            (voice.name.includes('Spain') || voice.name.includes('Español') || voice.name.includes('Castilian'))
+          ) || this.voices.find(voice => voice.lang === 'es-ES') || 
+             this.voices.find(voice => voice.lang.startsWith('es-'));
+        }
+
         if (this.spanishVoice) {
           console.log('Selected voice:', this.spanishVoice.name, this.spanishVoice.lang);
         } else {
-          console.warn('No suitable Spanish voice found. Using default voice.');
+          console.warn('Preferred voice not found. Using default Spanish voice.');
         }
+        // Debug: Log all available voices with platform info
+        console.log('Platform:', navigator.userAgent);
         console.log('Available voices:', this.voices.map(v => `${v.name} (${v.lang})`));
       }
     };
@@ -252,8 +271,8 @@ class MetodoLectura {
       utterance.voice = this.spanishVoice;
       console.log('Using voice:', this.spanishVoice.name, this.spanishVoice.lang);
     } else {
-      console.warn('No suitable Spanish voice available. Using default voice.');
-      alert('No se encontró una voz en español (España) adecuada. Usando voz predeterminada. Ajusta los ajustes de idioma de tu dispositivo para añadir una voz en español de España.');
+      console.warn('Preferred voice not available. Using default voice.');
+      alert('La voz preferida no está disponible en este dispositivo. Usando voz predeterminada. En iOS, ajusta las voces en Ajustes > Accesibilidad > Contenido hablado.');
     }
 
     utterance.onend = () => {
