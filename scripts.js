@@ -49,14 +49,13 @@ class MetodoLectura {
         const castilianVoicePriorities = [
           // Names commonly found on iOS/macOS for Castilian Spanish
           { name: 'Jorge', lang: 'es-ES' },
-          { name: 'Monica', lang: 'es-ES' },
-          { name: 'Diego', lang: 'es-ES' },
+          { name: 'Mónica', lang: 'es-ES' },
+          { name: 'Marisol', lang: 'es-ES' },
           { name: 'Español (España)', lang: 'es-ES' },
           { name: 'Spanish (Spain)', lang: 'es-ES' },
           { nameIncludes: 'Spain', lang: 'es-ES' },
           // Fallbacks
           { lang: 'es-ES' },
-          { lang: 'es-MX' }, // Last resort: Mexican Spanish
           { langStartsWith: 'es-' }
         ];
 
@@ -297,7 +296,7 @@ class MetodoLectura {
     utterance.text = this.nivel === 4 ? this.contenido.frase : this.contenido.palabra;
     utterance.lang = 'es-ES';  // Explicitly set to Castilian Spanish
     utterance.volume = 1;
-    utterance.rate = 0.8;      // Slightly slower for better clarity
+    utterance.rate = 0.6;      // Slightly slower for better clarity
     utterance.pitch = 1;
 
     if (this.spanishVoice) {
