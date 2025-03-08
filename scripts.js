@@ -26,6 +26,7 @@ class MetodoLectura {
 
   setupEventListeners() {
     document.getElementById('nextButton').addEventListener('click', () => this.generarContenido());
+    document.getElementById('speakButton').addEventListener('click', () => this.speakContent());
 
     // Handle level button clicks
     document.querySelectorAll('.level-button').forEach(button => {
@@ -115,19 +116,19 @@ class MetodoLectura {
   }
 
   getUniqueWord(wordsObject, shownWords) {
-  const wordsArray = Array.isArray(wordsObject) ? wordsObject : Object.values(wordsObject).flat();
+    const wordsArray = Array.isArray(wordsObject) ? wordsObject : Object.values(wordsObject).flat();
 
-  if (shownWords.length === wordsArray.length) {
-    shownWords.length = 0; // Reset the shown words list if all have been displayed
+    if (shownWords.length === wordsArray.length) {
+      shownWords.length = 0; // Reset the shown words list if all have been displayed
+    }
+
+    const availableWords = wordsArray.filter(word => !shownWords.includes(word));
+    const randomWord = availableWords[Math.floor(Math.random() * availableWords.length)];
+    
+    shownWords.push(randomWord);
+
+    return this.nivel === 4 ? { frase: randomWord } : { palabra: randomWord };
   }
-
-  const availableWords = wordsArray.filter(word => !shownWords.includes(word));
-  const randomWord = availableWords[Math.floor(Math.random() * availableWords.length)];
-  
-  shownWords.push(randomWord);
-
-  return this.nivel === 4 ? { frase: randomWord } : { palabra: randomWord };
-}
 
   setNivel(newNivel) {
     this.nivel = newNivel;
@@ -143,18 +144,18 @@ class MetodoLectura {
   }
 
   updateLevelButtons() {
-  document.querySelectorAll('.level-button').forEach((button, index) => {
-    const level = index + 1;
-    if (level === this.nivel) {
-      button.classList.remove('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
-      button.classList.add(`active-nivel-${level}`, 'text-nivel');
-      button.classList.add('text-red-500'); // Ensure immediate red color for the active button
-    } else {
-      button.classList.remove(`active-nivel-${level}`, 'text-nivel', 'text-red-500');
-      button.classList.add('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
-    }
-  });
-}
+    document.querySelectorAll('.level-button').forEach((button, index) => {
+      const level = index + 1;
+      if (level === this.nivel) {
+        button.classList.remove('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
+        button.classList.add(`active-nivel-${level}`, 'text-nivel');
+        button.classList.add('text-red-500'); // Ensure immediate red color for the active button
+      } else {
+        button.classList.remove(`active-nivel-${level}`, 'text-nivel', 'text-red-500');
+        button.classList.add('bg-gray-200', 'hover:bg-gray-300', 'text-gray-800');
+      }
+    });
+  }
 
   getConsonantColor(consonant) {
     return consonantColorMap[consonant.toLowerCase()] || '#000000'; // Default to black if not found
@@ -197,9 +198,33 @@ class MetodoLectura {
     }
   }
 
+  // Method to speak the content
+  speakContent() {
+    const utterance = new SpeechSynthesisUtterance();
+    utterance.text = this.nivel === 4 ? this.contenido.frase : this.contenido.palabra;
+    utterance.lang = 'es-ES'; // Set to Spanish (Spain)
+    utterance.volume = 1; // 0 to 1
+    utterance.rate = 0.9; // Slow it down slightly for kids
+    utterance.pitch = 1; // Normal pitch
+
+    // Handle end of speech
+    utterance.onend = () => {
+      console.log('Speech finished');
+    };
+
+    // Handle errors
+    utterance.onerror = (event) => {
+      console.error('Speech synthesis error:', event.error);
+    };
+
+    window.speechSynthesis.speak(utterance);
+  }
+
   render() {
     this.renderContenido();
     this.updateLevelButtons();
+    // Optional: Auto-speak on render (uncomment if desired)
+    // this.speakContent();
   }
 }
 
@@ -207,87 +232,84 @@ document.addEventListener('DOMContentLoaded', () => {
   new MetodoLectura();
 });
 
+// Ripple effect for button clicks
+function createRipple(event) {
+  const button = event.currentTarget;
+  const rect = button.getBoundingClientRect();  // Get button's bounding box
 
-  // Ripple effect for button clicks
-  function createRipple(event) {
-    const button = event.currentTarget;
-    const rect = button.getBoundingClientRect();  // Get button's bounding box
+  const circle = document.createElement("span");
+  const diameter = Math.max(rect.width, rect.height);
+  const radius = diameter / 2;
 
-    const circle = document.createElement("span");
-    const diameter = Math.max(rect.width, rect.height);
-    const radius = diameter / 2;
+  circle.style.width = `${diameter}px`;
+  circle.style.height = `${diameter}px`;
+  circle.style.left = `${event.clientX - rect.left - radius}px`;
+  circle.style.top = `${event.clientY - rect.top - radius}px`;
 
-    circle.style.width = `${diameter}px`;
-    circle.style.height = `${diameter}px`;
-    circle.style.left = `${event.clientX - rect.left - radius}px`;
-    circle.style.top = `${event.clientY - rect.top - radius}px`;
+  circle.classList.add("ripple");
 
-    circle.classList.add("ripple");
-
-    const ripple = button.getElementsByClassName("ripple")[0];
-    if (ripple) {
-      ripple.remove();
-    }
-
-    button.appendChild(circle);
+  const ripple = button.getElementsByClassName("ripple")[0];
+  if (ripple) {
+    ripple.remove();
   }
 
-  const buttons = document.getElementsByTagName("button");
-  for (const button of buttons) {
-    button.addEventListener("click", createRipple);
+  button.appendChild(circle);
+}
+
+const buttons = document.getElementsByTagName("button");
+for (const button of buttons) {
+  button.addEventListener("click", createRipple);
+}
+
+// Highlight tutorial button on page load
+const tutorialButton = document.getElementById('tutorialButton');
+tutorialButton.classList.add('highlight');
+
+setTimeout(() => {
+  tutorialButton.classList.remove('highlight');
+}, 1000);
+
+// Show/Hide Popup logic
+const popup = document.getElementById('popup');
+const overlay = document.getElementById('overlay');
+const closePopupButton = document.getElementById('closePopup');
+const scrollIndicator = document.getElementById('scrollIndicator');
+
+function showPopup() {
+  popup.style.display = 'block';
+  overlay.style.display = 'block';
+  popup.scrollTop = 0; // Reset scroll position
+  checkScrollIndicator();
+  if (scrollIndicator) {
+    scrollIndicator.classList.remove('hidden');
+    scrollIndicator.classList.add('bounce');
+    setTimeout(() => {
+      scrollIndicator.classList.remove('bounce');
+    }, 1000);
   }
+}
 
-  // Highlight tutorial button on page load
-  const tutorialButton = document.getElementById('tutorialButton');
-  tutorialButton.classList.add('highlight');
+function hidePopup() {
+  popup.style.display = 'none';
+  overlay.style.display = 'none';
+}
 
-  setTimeout(() => {
-    tutorialButton.classList.remove('highlight');
-  }, 1000);
-
-  // Show/Hide Popup logic
-  const popup = document.getElementById('popup');
-  const overlay = document.getElementById('overlay');
-  const closePopupButton = document.getElementById('closePopup');
-  const scrollIndicator = document.getElementById('scrollIndicator');
-
-
-  function showPopup() {
-    popup.style.display = 'block';
-    overlay.style.display = 'block';
-    popup.scrollTop = 0; // Reset scroll position
-    checkScrollIndicator();
-    if (scrollIndicator) {
+function checkScrollIndicator() {
+  if (scrollIndicator && popup) {
+    if (popup.scrollHeight > popup.clientHeight && popup.scrollTop < 5) {
       scrollIndicator.classList.remove('hidden');
-      scrollIndicator.classList.add('bounce');
-      setTimeout(() => {
-        scrollIndicator.classList.remove('bounce');
-      }, 1000);
+    } else {
+      scrollIndicator.classList.add('hidden');
     }
   }
+}
 
-  function hidePopup() {
-    popup.style.display = 'none';
-    overlay.style.display = 'none';
-  }
+if (popup && scrollIndicator) {
+  popup.addEventListener('scroll', checkScrollIndicator);
+}
 
-  function checkScrollIndicator() {
-    if (scrollIndicator && popup) {
-      if (popup.scrollHeight > popup.clientHeight && popup.scrollTop < 5) {
-        scrollIndicator.classList.remove('hidden');
-      } else {
-        scrollIndicator.classList.add('hidden');
-      }
-    }
-  }
+tutorialButton.addEventListener('click', showPopup);
+closePopupButton.addEventListener('click', hidePopup);
+overlay.addEventListener('click', hidePopup);
 
-  if (popup && scrollIndicator) {
-    popup.addEventListener('scroll', checkScrollIndicator);
-  }
-
-  tutorialButton.addEventListener('click', showPopup);
-  closePopupButton.addEventListener('click', hidePopup);
-  overlay.addEventListener('click', hidePopup);
-
-  window.addEventListener('resize', checkScrollIndicator);
-
+window.addEventListener('resize', checkScrollIndicator);
