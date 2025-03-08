@@ -15,6 +15,8 @@ class MetodoLectura {
   constructor() {
     this.nivel = 1;
     this.contenido = {};
+    this.voices = [];
+    this.spanishVoice = null;
     this.init();
   }
 
@@ -32,23 +34,25 @@ class MetodoLectura {
       return;
     }
 
-    // Load voices asynchronously
     const loadVoices = () => {
       this.voices = window.speechSynthesis.getVoices();
       if (this.voices.length === 0) {
         // If no voices are loaded yet, wait and try again
         setTimeout(loadVoices, 100);
       } else {
-        // Select a Spanish (Spain) voice
-        this.spanishVoice = this.voices.find(voice => voice.lang === 'es-ES') || this.voices.find(voice => voice.lang.startsWith('es-'));
-        if (!this.spanishVoice) {
+        // Prioritize a Spanish (Spain) voice
+        this.spanishVoice = this.voices.find(voice => voice.lang === 'es-ES') || 
+                           this.voices.find(voice => voice.lang.startsWith('es-'));
+        if (this.spanishVoice) {
+          console.log('Selected voice:', this.spanishVoice.name, this.spanishVoice.lang);
+        } else {
           console.warn('No Spanish voice found. Using default voice.');
         }
       }
     };
-    loadVoices();
 
-    // Handle voice changes (some browsers load voices dynamically)
+    // Load voices immediately and handle dynamic loading
+    loadVoices();
     window.speechSynthesis.onvoiceschanged = loadVoices;
   }
 
@@ -226,7 +230,6 @@ class MetodoLectura {
     }
   }
 
-  // Method to speak the content with a Spanish voice
   speakContent() {
     if (!('speechSynthesis' in window)) {
       console.error('Web Speech API is not supported.');
@@ -234,9 +237,11 @@ class MetodoLectura {
       return;
     }
 
-    if (!this.spanishVoice) {
-      console.warn('Spanish voice not loaded yet. Trying with default.');
-      this.initializeSpeech(); // Try to reload voices
+    if (!this.voices.length) {
+      console.warn('Voices not loaded yet. Retrying...');
+      this.initializeSpeech();
+      setTimeout(() => this.speakContent(), 500); // Retry after voices load
+      return;
     }
 
     const utterance = new SpeechSynthesisUtterance();
@@ -249,9 +254,10 @@ class MetodoLectura {
     // Assign the Spanish voice if available
     if (this.spanishVoice) {
       utterance.voice = this.spanishVoice;
-      console.log('Using voice:', this.spanishVoice.name);
+      console.log('Using voice:', this.spanishVoice.name, this.spanishVoice.lang);
     } else {
-      console.warn('Falling back to default voice.');
+      console.warn('No Spanish voice available. Using default voice.');
+      alert('No se encontró una voz en español (España). Usando voz predeterminada.');
     }
 
     // Handle end of speech
@@ -262,6 +268,9 @@ class MetodoLectura {
     // Handle errors
     utterance.onerror = (event) => {
       console.error('Speech synthesis error:', event.error);
+      if (event.error === 'not-allowed' || event.error === 'network') {
+        alert('Error al reproducir el audio. Verifica los permisos o la conexión.');
+      }
     };
 
     window.speechSynthesis.speak(utterance);
@@ -270,8 +279,6 @@ class MetodoLectura {
   render() {
     this.renderContenido();
     this.updateLevelButtons();
-    // Optional: Auto-speak on render (uncomment if desired)
-    // this.speakContent();
   }
 }
 
