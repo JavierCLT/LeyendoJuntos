@@ -31,25 +31,25 @@
             font-display: swap;
         }
         .button-ripple {
-        position: relative;
-        overflow: hidden;
-    }
-
-    .ripple {
-        position: absolute;
-        border-radius: 50%;
-        transform: scale(0);
-        animation: ripple 0.6s linear;
-        background-color: rgba(255, 255, 255, 0.7);
-    }
-
-    @keyframes ripple {
-        to {
-            transform: scale(4);
-            opacity: 0;
+            position: relative;
+            overflow: hidden;
         }
-    }
-    .highlight {
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+        .highlight {
             animation: pulse 2s;
         }
         @keyframes pulse {
@@ -86,11 +86,10 @@
       "name": "Leyendo Juntos",
       "url": "https://leyendojuntos.com/",
       "logo": "https://leyendojuntos.com/images/logo.png",
-      "description": "Plataforma gratuita para enseñar a niños a leer en español.",
-          }
+      "description": "Plataforma gratuita para enseñar a niños a leer en español."
+    }
     </script>
     <script defer data-domain="leyendojuntos.com" src="https://plausible.io/js/script.js"></script>
-    
 </head>
 <body class="font-['Andika_Basic'] bg-white h-screen flex justify-center items-center">
     <div class="container mx-auto flex flex-col justify-between h-screen max-w-2xl px-4">
@@ -99,6 +98,12 @@
         </header>
         
         <main id="contenidoContainer" class="flex-grow flex justify-center items-center text-6xl md:text-7xl lg:text-8xl font-bold text-center" style="margin-bottom:-2em; margin-left:1em;"></main>
+        
+        <div id="audioControl" class="text-center mt-4">
+            <button id="speakButton" class="button-ripple bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out">
+                🎙️ Leer en Voz Alta
+            </button>
+        </div>
         
         <footer class="w-full max-w-md mx-auto pb-2">
             <!-- Yellow area start -->
@@ -117,7 +122,7 @@
             <!-- Yellow area end -->
             
             <!-- Bottom Buttons -->
-            <div class="grid grid-cols-3 gap-2" style ="grid-template-columns: repeat(3, minmax(0, 1fr));"> <!-- Added mt-2 for consistent spacing -->
+            <div class="grid grid-cols-3 gap-2" style="grid-template-columns: repeat(3, minmax(0, 1fr));"> <!-- Added mt-2 for consistent spacing -->
                 <button id="shareButton" class="button-ripple flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold text-sm py-2 px-4 rounded-lg transition duration-300 ease-in-out">Compartir</button>
                 <button id="contactButton" class="button-ripple flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold text-sm py-2 px-4 rounded-lg transition duration-300 ease-in-out">Contacto</button>
                 <button id="tutorialButton" class="button-ripple flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold text-sm py-2 px-4 rounded-lg transition duration-300 ease-in-out">Tutorial</button>
@@ -125,29 +130,29 @@
         </footer>
     </div>
     <div id="overlay" class="overlay"></div>
-<div id="popup" class="popup">
-  ¡Bienvenido a Leyendo Juntos!<br>
-  Diseñado para pasar tiempo de calidad con nuestros hijos mientras les enseñamos a leer.
-  <br><br>
-  <strong class="nivel-1">Nivel 1: Sílabas simples</strong><br>
-  El niño aprende combinaciones básicas de consonantes y vocales, como "ma".<br><br>
-  <strong class="nivel-2">Nivel 2: Sílabas complejas</strong><br>
-  Se introducen sílabas y palabras de tres letras.<br><br>
-  <strong class="nivel-3">Nivel 3: Palabras</strong><br>
-  Lee palabras más largas como "perro" o "amarillo". ¡Es emocionante!<br><br>
-  <strong class="nivel-4">Nivel 4: Frases</strong><br>
-  <p>Será inolvidable ver cómo consigue leer las frases del nivel 4. ¡Celebradlo!</p><br>
-  <p>Aprenderán rápido con sólo unos minutos cada día. Comparte esta aplicación gratuita con otros padres y educadores para que llegue a más personas.</p><br>
-  <p>Saludos,</p>
-  <p>Javier</p>
-    <div id="scrollIndicator" class="scroll-indicator">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M12 5v14"></path>
-      <path d="M19 12l-7 7-7-7"></path>
-    </svg>
+    <div id="popup" class="popup">
+        ¡Bienvenido a Leyendo Juntos!<br>
+        Diseñado para pasar tiempo de calidad con nuestros hijos mientras les enseñamos a leer.
+        <br><br>
+        <strong class="nivel-1">Nivel 1: Sílabas simples</strong><br>
+        El niño aprende combinaciones básicas de consonantes y vocales, como "ma".<br><br>
+        <strong class="nivel-2">Nivel 2: Sílabas complejas</strong><br>
+        Se introducen sílabas y palabras de tres letras.<br><br>
+        <strong class="nivel-3">Nivel 3: Palabras</strong><br>
+        Lee palabras más largas como "perro" o "amarillo". ¡Es emocionante!<br><br>
+        <strong class="nivel-4">Nivel 4: Frases</strong><br>
+        <p>Será inolvidable ver cómo consigue leer las frases del nivel 4. ¡Celebradlo!</p><br>
+        <p>Aprenderán rápido con sólo unos minutos cada día. Comparte esta aplicación gratuita con otros padres y educadores para que llegue a más personas.</p><br>
+        <p>Saludos,</p>
+        <p>Javier</p>
+        <div id="scrollIndicator" class="scroll-indicator">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 5v14"></path>
+                <path d="M19 12l-7 7-7-7"></path>
+            </svg>
+        </div>
+        <button id="closePopup">Cerrar</button>
     </div>
-  <button id="closePopup">Cerrar</button>
-</div>
     <script src="scripts.js" type="module"></script>
 </body>
 </html>
