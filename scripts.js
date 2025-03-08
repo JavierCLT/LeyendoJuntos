@@ -364,7 +364,7 @@ tutorialButton.classList.add('highlight');
 
 setTimeout(() => {
   tutorialButton.classList.remove('highlight');
-}, 1000);
+}, 2000);
 
 const popup = document.getElementById('popup');
 const overlay = document.getElementById('overlay');
