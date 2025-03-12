@@ -25,6 +25,7 @@ class MetodoLectura {
     this.setupEventListeners();
     this.render();
     this.initializeSpeech();
+    this.updateSpeechButtonVisibility(); // Initialize speech button visibility
   }
 
   initializeSpeech() {
@@ -211,6 +212,9 @@ class MetodoLectura {
   setNivel(newNivel) {
     this.nivel = newNivel;
     this.updateLevelButtons();
+    
+    // Update speech button visibility based on level
+    this.updateSpeechButtonVisibility();
 
     document.querySelectorAll('.level-button').forEach(button => {
       const level = parseInt(button.dataset.level);
@@ -218,6 +222,19 @@ class MetodoLectura {
     });
 
     this.generarContenido();
+  }
+
+  // New method to handle speech button visibility
+  updateSpeechButtonVisibility() {
+    const speakButton = document.getElementById('speakButton');
+    if (speakButton) {
+      if (this.nivel >= 3) {
+        speakButton.style.display = 'inline-block'; // Show speak button for levels 3 and 4
+        speakButton.disabled = false;
+      } else {
+        speakButton.style.display = 'none'; // Hide speak button for levels 1 and 2
+      }
+    }
   }
 
   updateLevelButtons() {
@@ -276,6 +293,13 @@ class MetodoLectura {
   }
 
   speakContent() {
+    // Only allow speech for levels 3 and 4
+    if (this.nivel < 3) {
+      console.log('Speech is only available for levels 3 and 4');
+      // No alert needed since the button should be hidden
+      return;
+    }
+
     if (!('speechSynthesis' in window)) {
       console.error('Web Speech API is not supported.');
       alert('Lo siento, la lectura en voz alta no está disponible en este navegador.');
@@ -296,7 +320,7 @@ class MetodoLectura {
     utterance.text = this.nivel === 4 ? this.contenido.frase : this.contenido.palabra;
     utterance.lang = 'es-ES';  // Explicitly set to Castilian Spanish
     utterance.volume = 1;
-    utterance.rate = 0.4;      // Slightly slower for better clarity
+    utterance.rate = 0.4;      // Slow rate for better clarity
     utterance.pitch = 1;
 
     if (this.spanishVoice) {
