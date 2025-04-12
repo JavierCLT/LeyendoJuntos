@@ -28,5 +28,5 @@ export const frasesNivel4 = [
   'Los lobos viven en manada', 'El tomate es una fruta', 'La cebolla crece bajo tierra', 'El viento mueve los molinos', 
   'Los planetas giran alrededor del Sol', 'El oro es un metal valioso', 'Los árboles limpian el aire', 
   'El chocolate se hace con cacao', 'El trueno suena después del relámpago', 'Las tortugas pueden vivir cien años', 
-  'Las nubes están hechas de agua'.
+  'Las nubes están hechas de agua'
 ];
