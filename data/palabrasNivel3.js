@@ -34,5 +34,5 @@ export const palabrasNivel3 = [
 'computadora', 'pantalla', 'ratón', 'teclado', 'impresora', 'cámara', 'teléfono', 'tableta', 'reloj', 'televisión',
 'medicina', 'pastilla', 'jarabe', 'venda', 'termómetro', 'inyección', 'curita', 'hospital', 'clínica', 'doctor',
 'planeta', 'estrella', 'galaxia', 'cometa', 'meteorito', 'astronauta', 'cohete', 'nave espacial', 'telescopio', 'universo',
-'pez', 'delfín', 'ballena', 'tiburón', 'cangrejo', 'estrella de mar', 'medusa', 'pulpo', 'caballito de mar', 'langosta'.
+'pez', 'delfín', 'ballena', 'tiburón', 'cangrejo', 'estrella de mar', 'medusa', 'pulpo', 'caballito de mar', 'langosta'
 ];
