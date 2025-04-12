@@ -18,7 +18,7 @@ export const frasesNivel4 = [
   'Mi perro tiene una pelota roja', 'El río es largo y ancho', 'La noche está tranquila', 'Madrid es la capital de España',
   'El fuego quema', 'El agua se congela a cero grados', 'El corazón late todo el día', 'Los peces respiran bajo el agua', 
   'El Sol es una estrella', 'La Tierra gira alrededor del Sol', 'Las abejas fabrican miel', 'La jirafa es el animal más alto', 
-  'Los pingüinos viven en lugares fríos', 'El elefante tiene trompa', 'Murciélago tiene las cinco vocales', 
+  'Los pingüinos viven en lugares fríos', 'El elefante tiene trompa', 'La palabra murciélago tiene las cinco vocales', 
   'El camello guarda agua en su joroba', 'Las estrellas salen de noche', 'La Luna no tiene luz propia', 
   'El canguro lleva a su bebé en una bolsa', 'Los delfines son muy inteligentes', 'Las hormigas pueden cargar cosas muy pesadas', 
   'El tiburón tiene muchos dientes', 'Las plantas necesitan agua y sol', 'El arcoíris tiene muchos colores', 
@@ -28,5 +28,4 @@ export const frasesNivel4 = [
   'Los lobos viven en manada', 'El tomate es una fruta', 'La cebolla crece bajo tierra', 'El viento mueve los molinos', 
   'Los planetas giran alrededor del Sol', 'El oro es un metal valioso', 'Los árboles limpian el aire', 
   'El chocolate se hace con cacao', 'El trueno suena después del relámpago', 'Las tortugas pueden vivir cien años', 
-  'Las nubes están hechas de agua'
-];
+  'Las nubes están hechas de agua'];
